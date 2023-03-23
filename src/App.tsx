@@ -85,7 +85,7 @@ function App() {
     setSymbol(symbol.label);
   };
 
-  const analyzeSymbol = async (): Promise<Promise<SymbolData> | undefined> => {
+  const analyzeSymbol = async (): Promise<Array<SymbolData> | undefined> => {
     if (!symbol) return;
 
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
