@@ -70,7 +70,7 @@ enum RecommendationType {
 interface ISupportedSymbols {
   label: string;
 }
-console.log("test");
+// console.log("test");
 
 function App() {
   const [symbol, setSymbol] = useState<string>("");
@@ -85,7 +85,7 @@ function App() {
     setSymbol(symbol.label);
   };
 
-  const analyzeSymbol = async (): Promise<Array<SymbolData> | undefined> => {
+  const analyzeSymbol = async (): Promise<Promise<SymbolData> | undefined> => {
     if (!symbol) return;
 
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
