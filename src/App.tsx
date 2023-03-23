@@ -81,7 +81,7 @@ function App() {
     Array<ISupportedSymbols>
   >([]);
 
-  const onStockInputChange = (e: any, symbol: { label: string }) => {
+  const onStockInputChange = (e: any, symbol: ISupportedSymbols) => {
     setSymbol(symbol.label);
   };
 
@@ -238,8 +238,7 @@ function App() {
       >
         <Grid2 xs={2}>
           <Autocomplete
-            onChange={onStockInputChange}
-            variant="standard"
+            onChange={(e, value) => setSymbol(value ? value.label : "")}
             disablePortal
             options={supportedSymbols}
             sx={{ width: 300 }}
