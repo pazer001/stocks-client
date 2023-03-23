@@ -1,0 +1,257 @@
+import axios, { AxiosResponse } from "axios";
+import React, { useState } from "react";
+import { Button, TextField } from "@mui/material";
+import HighchartsReact from "highcharts-react-official";
+import HighchartsStock from "highcharts/highstock";
+import HighContrastDark from "highcharts/themes/high-contrast-dark";
+import AnnotationsModule from "highcharts/modules/annotations";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import CircularProgress from "@mui/material/CircularProgress";
+// @ts-ignore
+import AnyChart from "anychart-react";
+
+AnnotationsModule(HighchartsStock);
+HighContrastDark(HighchartsStock);
+
+interface SymbolData {
+  point: {
+    adjClose: number;
+    close: number;
+    timestamp: number;
+    high: number;
+    low: number;
+    open: number;
+    volume: number;
+  };
+  recommendation: Recommendation;
+}
+
+interface Recommendation {
+  buyCount: number;
+  buyReasons: Array<string>;
+  sellCount: number;
+  sellReasons: Array<string>;
+}
+
+enum RecommendationType {
+  neutral,
+  buy,
+  sell,
+}
+
+const getRecommendationType = (
+  recommendation: Recommendation
+): RecommendationType => {
+  let recommendationType = RecommendationType.neutral;
+  if (recommendation.buyCount > recommendation.sellCount) {
+    recommendationType = RecommendationType.buy;
+  } else if (recommendation.sellCount > recommendation.buyCount) {
+    recommendationType = RecommendationType.sell;
+  }
+
+  return recommendationType;
+};
+
+function App() {
+  const [symbol, setSymbol] = useState<string>("");
+  const [symbolData, setSymbolData] = useState<Array<SymbolData>>([]);
+  const [loadingSymbolData, setLoadingSymbolData] = useState<boolean>(false);
+  const onStockInputChange = (e: { target: { value: any } }) => {
+    const symbol = e.target.value;
+    setSymbol(symbol);
+  };
+
+  const analyzeSymbol = async (): Promise<
+    Promise<Array<SymbolData>> | undefined
+  > => {
+    if (!symbol) return;
+    setLoadingSymbolData(true);
+    const symbolAnalyze: AxiosResponse<Array<SymbolData>> = await axios.get(
+      `http://localhost:3000/analyze/${symbol}`
+    );
+
+    setSymbolData(symbolAnalyze.data);
+    // @ts-ignore
+    setStockChartOptions((prevStockChartOptions) => ({
+      ...prevStockChartOptions,
+      title: {
+        text: `${symbol} Chart`,
+      },
+      plotOptions: {
+        column: {
+          colorByPoint: true,
+          colors: symbolAnalyze.data.map((data) =>
+            data.recommendation.buyCount - data.recommendation.sellCount > 0
+              ? `green`
+              : `red`
+          ),
+        },
+      },
+      series: [
+        {
+          upColor: `green`,
+          type: "candlestick",
+          name: symbol,
+          data: symbolAnalyze.data.map((data) => [
+            data.point.timestamp,
+            data.point.open,
+            data.point.high,
+            data.point.low,
+            data.point.close,
+          ]),
+          yAxis: 0,
+          allowPointSelect: true,
+          colors: symbolAnalyze.data.map((data, index) => {
+            if (
+              symbolAnalyze.data[index - 1] &&
+              symbolAnalyze.data[index].point.close >
+                symbolAnalyze.data[index - 1].point.close
+            ) {
+              return `green`;
+            } else {
+              return `red`;
+            }
+          }),
+        },
+        {
+          upColor: `green`,
+          type: "column",
+          name: "Signals",
+          useHTML: true,
+          data: symbolAnalyze.data.map((data) => [
+            data.point.timestamp,
+            data.recommendation.buyCount - data.recommendation.sellCount,
+          ]),
+          yAxis: 1,
+          // colors: symbolAnalyze.data.map((data) =>
+          //   data.recommendation.buyCount  data.recommendation.sellCount > 0
+          //     ? `green`
+          //     : `red`
+          // ),
+        },
+      ],
+    }));
+    setLoadingSymbolData(false);
+    return symbolAnalyze.data;
+  };
+
+  const [stockChartOptions, setStockChartOptions] = useState({
+    chart: {
+      height: `45%`,
+    },
+    yAxis: [
+      {
+        labels: {
+          align: "right",
+          x: -3,
+        },
+        title: {
+          text: "Stock",
+        },
+        height: "60%",
+        lineWidth: 2,
+        resize: {
+          enabled: true,
+        },
+      },
+      {
+        labels: {
+          align: "right",
+          x: -3,
+        },
+        title: {
+          text: "Signals",
+        },
+        top: "65%",
+        height: "35%",
+        offset: 0,
+        lineWidth: 2,
+      },
+    ],
+    plotOptions: {
+      series: {
+        colorByPoint: true,
+      },
+    },
+    // tooltip: {
+    //   enabled: true,
+    //   useHTML: true,
+    //   shared: false,
+    //   split: false,
+    //   formatter: function (this: Highcharts.TooltipFormatterContextObject) {
+    //     if (this.series.index == 1) {
+    //       const index: number = this.point.index;
+    //       const data: SymbolData = symbolData[index];
+    //       if (data) {
+    //         const recommendation = data.recommendation;
+    /*        const recommendationType = getRecommendationType(*/
+    /*          data.recommendation*/
+    //         );
+    //
+    //         return `<p class="${recommendationType}">Signal: ${recommendation.buyCount}</p>`;
+    //       } else {
+    //         return ``;
+    //       }
+    //     } else {
+    //       return "Stock: " + this.y;
+    //     }
+    //   },
+    // },
+  });
+
+  return (
+    <>
+      <Grid2
+        container
+        display="flex"
+        justifyContent="start"
+        alignItems="center"
+      >
+        <Grid2 xs={2}>
+          <TextField
+            onChange={onStockInputChange}
+            label="Symbol"
+            variant="standard"
+          />
+        </Grid2>
+        <Grid2 xs={2}>
+          <Button variant="contained" onClick={analyzeSymbol} size="large">
+            Analyze
+          </Button>
+        </Grid2>
+        <Grid2 xs={1}>
+          {loadingSymbolData && <CircularProgress color="info" />}
+        </Grid2>
+      </Grid2>
+      <Grid2 container>
+        <Grid2 xs={12}>
+          <AnyChart
+            type="candlestick"
+            data={[
+              [Date.UTC(2007, 7, 23), 23.55, 23.88, 23.38, 23.62],
+              [Date.UTC(2007, 7, 24), 22.65, 23.7, 22.65, 23.36],
+              [Date.UTC(2007, 7, 25), 22.75, 23.7, 22.69, 23.44],
+              [Date.UTC(2007, 7, 26), 23.2, 23.39, 22.87, 22.92],
+              [Date.UTC(2007, 7, 27), 23.98, 24.49, 23.47, 23.49],
+              [Date.UTC(2007, 7, 30), 23.55, 23.88, 23.38, 23.62],
+              [Date.UTC(2007, 7, 31), 23.88, 23.93, 23.24, 23.25],
+              [Date.UTC(2007, 8, 1), 23.17, 23.4, 22.85, 23.25],
+              [Date.UTC(2007, 8, 2), 22.65, 23.7, 22.65, 23.36],
+              [Date.UTC(2007, 8, 3), 23.2, 23.39, 22.87, 22.92],
+              [Date.UTC(2007, 8, 6), 23.03, 23.15, 22.44, 22.97],
+              [Date.UTC(2007, 8, 7), 22.75, 23.7, 22.69, 23.44],
+            ]}
+            title="Simple pie chart"
+          />
+          {/*<HighchartsReact*/}
+          {/*  constructorType={"stockChart"}*/}
+          {/*  highcharts={HighchartsStock}*/}
+          {/*  options={stockChartOptions}*/}
+          {/*/>*/}
+        </Grid2>
+      </Grid2>
+    </>
+  );
+}
+
+export default App;
