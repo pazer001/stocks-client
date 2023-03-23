@@ -70,6 +70,7 @@ enum RecommendationType {
 interface ISupportedSymbols {
   label: string;
 }
+console.log("test");
 
 function App() {
   const [symbol, setSymbol] = useState<string>("");
