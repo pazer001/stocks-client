@@ -89,7 +89,7 @@ function App() {
     if (!symbol) return;
 
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-      `http://stockserver-env.eba-mrsmcfgs.eu-north-1.elasticbeanstalk.com:3000/analyze/analyzedResult/${symbol}/1d`
+      `http://stockserver-env.eba-mrsmcfgs.eu-north-1.elasticbeanstalk.com/analyze/analyzedResult/${symbol}/1d`
     );
 
     if (!symbolAnalyze || !symbolAnalyze.data) {
