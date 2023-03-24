@@ -70,7 +70,7 @@ enum RecommendationType {
 interface ISupportedSymbols {
   label: string;
 }
-console.log("test");
+
 
 function App() {
   const [symbol, setSymbol] = useState<string>("");
@@ -89,7 +89,7 @@ function App() {
     if (!symbol) return;
 
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-      `http://localhost:3000/analyze/analyzedResult/${symbol}/1d`
+      `http://stockserver-env.eba-mrsmcfgs.eu-north-1.elasticbeanstalk.com:3000/analyze/analyzedResult/${symbol}/1d`
     );
 
     if (!symbolAnalyze || !symbolAnalyze.data) {
@@ -150,7 +150,7 @@ function App() {
   useEffect(() => {
     const getSupportedSymbols = async () => {
       const supportedSymbolsResult: AxiosResponse<Array<{ symbol: string }>> =
-        await axios.get(`http://localhost:3000/analyze/supportedSymbols`);
+        await axios.get(`http://stockserver-env.eba-mrsmcfgs.eu-north-1.elasticbeanstalk.com/analyze/supportedSymbols`);
 
       setSupportedSymbols(
         supportedSymbolsResult.data.map((item: { symbol: any }) => ({
