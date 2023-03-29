@@ -22,6 +22,8 @@ import { startCase } from "lodash";
 AnnotationsModule(HighchartsStock);
 HighContrastDark(HighchartsStock);
 
+const API_HOST = `http://localhost:3000`;
+
 const descriptions: Record<string, string> = {
   RSIOverboughtOversold: `The RSI Overbought/Oversold strategy is a technical analysis trading strategy that uses the Relative Strength Index (RSI) indicator to identify potential buy or sell signals based on market conditions. This strategy is commonly used by professional traders to help identify potential overbought or oversold conditions in the market.
 
@@ -147,15 +149,11 @@ function App() {
     Array<ISupportedSymbols>
   >([]);
 
-  const onStockInputChange = (e: any, symbol: ISupportedSymbols) => {
-    setSymbol(symbol.label);
-  };
-
   const analyzeSymbol = async (): Promise<Promise<SymbolData> | undefined> => {
     if (!symbol) return;
 
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-      `http://stockserver-env.eba-mrsmcfgs.eu-north-1.elasticbeanstalk.com/analyze/analyzedResult/${symbol}/1d`
+      `${API_HOST}/analyze/analyzedResult/${symbol}/1d`
     );
 
     if (!symbolAnalyze || !symbolAnalyze.data) {
@@ -163,14 +161,68 @@ function App() {
       return;
     }
 
-    setSymbolData(symbolAnalyze.data);
+    setSymbolData((prevSymbolData) => symbolAnalyze.data);
     // @ts-ignore
     setStockChartOptions((prevStockChartOptions) => ({
       ...prevStockChartOptions,
       title: {
         text: `${symbol} Chart`,
       },
-
+      yAxis: [
+        {
+          labels: {
+            align: "right",
+            x: -3,
+          },
+          title: {
+            text: "Stock",
+          },
+          height: "60%",
+          lineWidth: 2,
+          resize: {
+            enabled: true,
+          },
+        },
+        {
+          labels: {
+            align: "right",
+            x: -3,
+          },
+          title: {
+            text: "Win Rate Score",
+          },
+          top: "65%",
+          height: "35%",
+          offset: 0,
+          lineWidth: 2,
+          plotLines: [
+            {
+              value:
+                symbolAnalyze.data.recommendationBacktest.bestPermutation
+                  .minBuy,
+              color: "green",
+              dashStyle: "shortdash",
+              width: 2,
+              label: {
+                text: "Buy",
+                color: "white",
+              },
+            },
+            {
+              value:
+                symbolAnalyze.data.recommendationBacktest.bestPermutation
+                  .minSell,
+              color: "red",
+              dashStyle: "shortdash",
+              width: 2,
+              label: {
+                text: "Sell",
+                color: "white",
+              },
+            },
+          ],
+        },
+      ],
       series: [
         {
           upColor: `green`,
@@ -209,20 +261,18 @@ function App() {
         },
       ],
     }));
-    setLoadingSymbolData(false);
+    setLoadingSymbolData((prevLoadingSymbolData) => false);
     return symbolAnalyze.data;
   };
 
   useEffect(() => {
     const getSupportedSymbols = async () => {
-      const supportedSymbolsResult: AxiosResponse<Array<{ symbol: string }>> =
-        await axios.get(
-          `http://stockserver-env.eba-mrsmcfgs.eu-north-1.elasticbeanstalk.com/analyze/supportedSymbols`
-        );
+      const supportedSymbolsResult: AxiosResponse<Array<string>> =
+        await axios.get(`${API_HOST}/analyze/supportedSymbols`);
 
       setSupportedSymbols(
-        supportedSymbolsResult.data.map((item: { symbol: any }) => ({
-          label: item.symbol,
+        supportedSymbolsResult.data.map((symbol: string) => ({
+          label: symbol,
         }))
       );
     };
@@ -264,55 +314,6 @@ function App() {
         },
       },
     },
-    yAxis: [
-      {
-        labels: {
-          align: "right",
-          x: -3,
-        },
-        title: {
-          text: "Stock",
-        },
-        height: "60%",
-        lineWidth: 2,
-        resize: {
-          enabled: true,
-        },
-      },
-      {
-        labels: {
-          align: "right",
-          x: -3,
-        },
-        title: {
-          text: "Win Rate Score",
-        },
-        top: "65%",
-        height: "35%",
-        offset: 0,
-        lineWidth: 2,
-        plotLines: [
-          {
-            value: symbolData?.recommendationBacktest.bestPermutation.minBuy,
-            color: "green",
-            dashStyle: "shortdash",
-            width: 2,
-            label: {
-              text: "Buy",
-            },
-          },
-          {
-            value: symbolData?.recommendationBacktest.bestPermutation.minSell,
-            color: "red",
-            dashStyle: "shortdash",
-            width: 2,
-            label: {
-              text: "Sell",
-            },
-          },
-        ],
-      },
-    ],
   });
 
   return (
