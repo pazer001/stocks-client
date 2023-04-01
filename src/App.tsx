@@ -1,3 +1,4 @@
+import "./App.css";
 import axios, { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import {
@@ -6,9 +7,13 @@ import {
   Card,
   CardContent,
   CardHeader,
+  List,
+  ListItemButton,
+  ListItem,
   Paper,
   TextField,
   Typography,
+  ListItemText,
 } from "@mui/material";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsStock from "highcharts/highstock";
@@ -141,7 +146,7 @@ interface ISupportedSymbols {
 }
 
 function App() {
-  const [symbol, setSymbol] = useState<string>("");
+  const [currentSymbol, setCurrentSymbol] = useState<string>("");
   const [symbolData, setSymbolData] = useState<SymbolData>();
   const [loadingSymbolData, setLoadingSymbolData] = useState<boolean>(false);
   const [selectedSignal, setSelectedSignal] = useState();
@@ -149,7 +154,9 @@ function App() {
     Array<ISupportedSymbols>
   >([]);
 
-  const analyzeSymbol = async (): Promise<Promise<SymbolData> | undefined> => {
+  const analyzeSymbol = async (
+    symbol: string
+  ): Promise<Promise<SymbolData> | undefined> => {
     if (!symbol) return;
 
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
@@ -262,6 +269,7 @@ function App() {
       ],
     }));
     setLoadingSymbolData((prevLoadingSymbolData) => false);
+    setCurrentSymbol(symbol);
     return symbolAnalyze.data;
   };
 
@@ -282,7 +290,7 @@ function App() {
 
   const [stockChartOptions, setStockChartOptions] = useState({
     chart: {
-      height: `30%`,
+      height: `58%`,
       // width: "70%",
     },
     plotOptions: {
@@ -325,26 +333,26 @@ function App() {
         justifyContent="start"
         alignItems="center"
       >
-        <Grid2 xs={2}>
-          <Autocomplete
-            onChange={(e, value) => setSymbol(value ? value.label : "")}
-            disablePortal
-            options={supportedSymbols}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Symbol" />}
-          />
-        </Grid2>
-        <Grid2 xs={2}>
-          <Button variant="contained" onClick={analyzeSymbol} size="large">
-            Analyze
-          </Button>
-        </Grid2>
-        <Grid2 xs={1}>
-          {loadingSymbolData && <CircularProgress color="info" />}
-        </Grid2>
+        {/*<Grid2 xs={2}>*/}
+        {/*  <Autocomplete*/}
+        {/*    onChange={(e, value) => setSymbol(value ? value.label : "")}*/}
+        {/*    disablePortal*/}
+        {/*    options={supportedSymbols}*/}
+        {/*    sx={{ width: 300 }}*/}
+        {/*    renderInput={(params) => <TextField {...params} label="Symbol" />}*/}
+        {/*  />*/}
+        {/*</Grid2>*/}
+        {/*<Grid2 xs={2}>*/}
+        {/*  <Button variant="contained" onClick={analyzeSymbol} size="large">*/}
+        {/*    Analyze*/}
+        {/*  </Button>*/}
+        {/*</Grid2>*/}
+        {/*<Grid2 xs={1}>*/}
+        {/*  {loadingSymbolData && <CircularProgress color="info" />}*/}
+        {/*</Grid2>*/}
       </Grid2>
-      <Grid2 container spacing={2}>
-        <Grid2 xs={12}>
+      <Grid2 container spacing={2} sx={{ height: "100%" }}>
+        <Grid2 xs={10} sx={{ height: "100%" }}>
           <Paper>
             <HighchartsStyle>
               <HighchartsReact
@@ -355,81 +363,137 @@ function App() {
             </HighchartsStyle>
           </Paper>
         </Grid2>
-      </Grid2>
-      <Grid2 container spacing={2}>
-        <Grid2 xs={6}>
+        <Grid2 xs={2} sx={{ height: "100%" }}>
+          <Paper
+            sx={{
+              height: "48%",
+              overflowY: "scroll",
+            }}
+          >
+            <List dense>
+              {supportedSymbols.map((symbol, key) => (
+                <ListItem disablePadding key={key}>
+                  <ListItemButton
+                    onClick={() => analyzeSymbol(symbol.label)}
+                    selected={symbol.label === currentSymbol}
+                  >
+                    <ListItemText primary={symbol.label} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+          <br />
           <Paper>
-            <Typography variant="h5">Strategies results:</Typography>
-            {symbolData &&
-              Object.keys(symbolData?.analyzedResult?.results).map(
-                (strategyName) => {
-                  const {
-                    bestPermutation,
-                    scannedPermutations,
-                    plAmount,
-                    winRate,
-                  } = symbolData?.analyzedResult?.results[strategyName];
-
-                  if (!bestPermutation) return null;
-
-                  return (
-                    <Paper key={strategyName}>
-                      <Card>
-                        <CardHeader
-                          title={startCase(strategyName)}
-                        ></CardHeader>
-                        <CardContent>
-                          <Typography variant="body2">
-                            <b>Best Permutation:</b> [
-                            {Object.keys(bestPermutation)
-                              .map(
-                                (param) => `${param}: ${bestPermutation[param]}`
-                              )
-                              .join(", ")}
-                            ]
-                          </Typography>
-                          <Typography variant="body2">
-                            <b>scanned Permutations:</b>
-                            {scannedPermutations}
-                          </Typography>
-                          <Typography variant="body2">
-                            <b>PL Amount:</b>
-                            {plAmount.toFixed(2)}
-                          </Typography>
-                          <Typography variant="body2">
-                            <b>Win Rate:</b>
-                            {winRate.toFixed(2)}%
-                          </Typography>
-                          <Typography>
-                            <b>Description:</b> {descriptions[strategyName]}
-                          </Typography>
-                        </CardContent>
-                      </Card>
-                    </Paper>
-                  );
-                }
-              )}
+            <Typography>
+              <b>Win Rate: </b>
+              {symbolData?.recommendationBacktest.winRate.toFixed(2)}%
+            </Typography>
+          </Paper>
+          <br />
+          <Paper>
+            {symbolData && selectedSignal && (
+              <Paper>
+                <Typography variant="body2">
+                  <b>Reasons to buy:</b>{" "}
+                  <ul>
+                    {symbolData?.prices[
+                      selectedSignal
+                    ].recommendation.buyReasons.map((reason) => (
+                      <li key={reason}>{startCase(reason)}</li>
+                    ))}
+                  </ul>
+                </Typography>
+                <br />
+                <Typography variant="body2">
+                  <b>Reasons to sell:</b>{" "}
+                  <ul>
+                    {symbolData?.prices[
+                      selectedSignal
+                    ].recommendation.sellReasons.map((reason) => (
+                      <li key={reason}>{startCase(reason)}</li>
+                    ))}
+                  </ul>
+                </Typography>
+              </Paper>
+            )}
           </Paper>
         </Grid2>
-        <Grid2 xs={6}>
-          {symbolData && selectedSignal && (
-            <Paper>
-              <Typography variant="body2">
-                <b>Reasons to buy:</b>{" "}
-                {symbolData?.prices[selectedSignal].recommendation.buyReasons
-                  .map((reason) => startCase(reason))
-                  .join(", ")}
-              </Typography>
-              <Typography variant="body2">
-                <b>Reasons to sell:</b>{" "}
-                {symbolData?.prices[selectedSignal].recommendation.sellReasons
-                  .map((reason) => startCase(reason))
-                  .join(", ")}
-              </Typography>
-            </Paper>
-          )}
-        </Grid2>
       </Grid2>
+      {/*<Grid2 container spacing={2}>*/}
+      {/*  <Grid2 xs={6}>*/}
+      {/*    <Paper>*/}
+      {/*      <Typography variant="h5">Strategies results:</Typography>*/}
+      {/*      {symbolData &&*/}
+      {/*        Object.keys(symbolData?.analyzedResult?.results).map(*/}
+      {/*          (strategyName) => {*/}
+      {/*            const {*/}
+      {/*              bestPermutation,*/}
+      {/*              scannedPermutations,*/}
+      {/*              plAmount,*/}
+      {/*              winRate,*/}
+      {/*            } = symbolData?.analyzedResult?.results[strategyName];*/}
+
+      {/*            if (!bestPermutation) return null;*/}
+
+      {/*            return (*/}
+      {/*              <Paper key={strategyName}>*/}
+      {/*                <Card>*/}
+      {/*                  <CardHeader*/}
+      {/*                    title={startCase(strategyName)}*/}
+      {/*                  ></CardHeader>*/}
+      {/*                  <CardContent>*/}
+      {/*                    <Typography variant="body2">*/}
+      {/*                      <b>Best Permutation:</b> [*/}
+      {/*                      {Object.keys(bestPermutation)*/}
+      {/*                        .map(*/}
+      {/*                          (param) => `${param}: ${bestPermutation[param]}`*/}
+      {/*                        )*/}
+      {/*                        .join(", ")}*/}
+      {/*                      ]*/}
+      {/*                    </Typography>*/}
+      {/*                    <Typography variant="body2">*/}
+      {/*                      <b>scanned Permutations:</b>*/}
+      {/*                      {scannedPermutations}*/}
+      {/*                    </Typography>*/}
+      {/*                    <Typography variant="body2">*/}
+      {/*                      <b>PL Amount:</b>*/}
+      {/*                      {plAmount.toFixed(2)}*/}
+      {/*                    </Typography>*/}
+      {/*                    <Typography variant="body2">*/}
+      {/*                      <b>Win Rate:</b>*/}
+      {/*                      {winRate.toFixed(2)}%*/}
+      {/*                    </Typography>*/}
+      {/*                    <Typography>*/}
+      {/*                      <b>Description:</b> {descriptions[strategyName]}*/}
+      {/*                    </Typography>*/}
+      {/*                  </CardContent>*/}
+      {/*                </Card>*/}
+      {/*              </Paper>*/}
+      {/*            );*/}
+      {/*          }*/}
+      {/*        )}*/}
+      {/*    </Paper>*/}
+      {/*  </Grid2>*/}
+      {/*  <Grid2 xs={6}>*/}
+      {/*    {symbolData && selectedSignal && (*/}
+      {/*      <Paper>*/}
+      {/*        <Typography variant="body2">*/}
+      {/*          <b>Reasons to buy:</b>{" "}*/}
+      {/*          {symbolData?.prices[selectedSignal].recommendation.buyReasons*/}
+      {/*            .map((reason) => startCase(reason))*/}
+      {/*            .join(", ")}*/}
+      {/*        </Typography>*/}
+      {/*        <Typography variant="body2">*/}
+      {/*          <b>Reasons to sell:</b>{" "}*/}
+      {/*          {symbolData?.prices[selectedSignal].recommendation.sellReasons*/}
+      {/*            .map((reason) => startCase(reason))*/}
+      {/*            .join(", ")}*/}
+      {/*        </Typography>*/}
+      {/*      </Paper>*/}
+      {/*    )}*/}
+      {/*  </Grid2>*/}
+      {/*</Grid2>*/}
     </>
   );
 }
