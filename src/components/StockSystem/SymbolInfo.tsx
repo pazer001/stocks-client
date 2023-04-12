@@ -2,6 +2,8 @@ import React, { useMemo, useState } from "react";
 import { startCase } from "lodash";
 import {
   Box,
+  Card,
+  CardContent,
   Dialog,
   DialogContent,
   DialogContentText,
@@ -28,7 +30,7 @@ const SymbolInfo = () => {
     setStrategyModalOpen(() => true);
   };
   const getRecommendation = () => {
-    if (symbolData !== undefined) {
+    if (symbolData !== undefined && symbolData.recommendationBacktest) {
       const { minBuy, minSell } =
         symbolData.recommendationBacktest.bestPermutation;
       const currentRecommendation =
@@ -41,6 +43,8 @@ const SymbolInfo = () => {
       } else {
         return `Hold`;
       }
+    } else {
+      return `Not enough data`;
     }
   };
 
@@ -90,89 +94,97 @@ const SymbolInfo = () => {
             </DialogContent>
           </Dialog>
         )}
-
-        {symbolData !== undefined && (
-          <>
-            {/*<Box>*/}
-            <Typography>
-              <b>Indicator Win Rate: </b>
-              {symbolData?.recommendationBacktest.winRate.toFixed(2)}%
-            </Typography>
-            <Typography>
-              <b>Indicator Profit: </b>
-              {symbolData?.recommendationBacktest.profit.toFixed(2)}
-            </Typography>
-            {/*</Box>*/}
-
-            {/*<Box>*/}
-            <Typography>
-              <b>Indicator recommendations:</b> {getRecommendation()}
-            </Typography>
-            {/*</Box>*/}
-          </>
-        )}
-        <br />
-        {symbolData && selectedSignal === undefined && (
-          <Typography>
-            Click on a signal on the indicator to get full details ...
-          </Typography>
-        )}
-        {selectedSignal !== undefined && (
-          <>
-            {Boolean(
-              symbolData?.prices[selectedSignal].recommendation.buyReasons
-                .length
-            ) && (
-              <Box>
-                <b>Reasons to buy:</b>{" "}
-                <List dense disablePadding>
-                  {symbolData?.prices[
-                    selectedSignal
-                  ].recommendation.buyReasons.map((strategyName: string) => (
-                    <ListItem key={strategyName} dense disablePadding>
-                      <ListItemIcon
-                        onClick={() => showStrategyModal(strategyName)}
-                      >
-                        <IconButton>
-                          <InfoIcon />
-                        </IconButton>
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={startCase(strategyName)}
-                      ></ListItemText>
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
+        <Card>
+          <CardContent>
+            {symbolData !== undefined && (
+              <>
+                {symbolData?.recommendationBacktest && (
+                  <Typography>
+                    <b>Indicator Win Rate: </b>
+                    {symbolData?.recommendationBacktest.winRate.toFixed(2)}%
+                  </Typography>
+                )}
+                {symbolData?.recommendationBacktest && (
+                  <Typography>
+                    <b>Indicator Profit: </b>
+                    {symbolData?.recommendationBacktest.profit.toFixed(2)}
+                  </Typography>
+                )}
+                <Typography>
+                  <b>Indicator recommendations:</b> {getRecommendation()}
+                </Typography>
+              </>
             )}
-            {Boolean(
-              symbolData?.prices[selectedSignal].recommendation.sellReasons
-                .length
-            ) && (
-              <Box>
-                <b>Reasons to sell:</b>{" "}
-                <List dense disablePadding>
-                  {symbolData?.prices[
-                    selectedSignal
-                  ].recommendation.sellReasons.map((strategyName: string) => (
-                    <ListItem key={strategyName} dense disablePadding>
-                      <ListItemIcon
-                        onClick={() => showStrategyModal(strategyName)}
-                      >
-                        <IconButton>
-                          <InfoIcon />
-                        </IconButton>
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={startCase(strategyName)}
-                      ></ListItemText>
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
+            <br />
+            {symbolData &&
+              selectedSignal === undefined &&
+              symbolData?.recommendationBacktest && (
+                <Typography>
+                  Click on a signal on the indicator to get full details ...
+                </Typography>
+              )}
+            {selectedSignal !== undefined && (
+              <>
+                {Boolean(
+                  symbolData?.prices[selectedSignal].recommendation.buyReasons
+                    .length
+                ) && (
+                  <>
+                    <b>Reasons to buy:</b>{" "}
+                    <List dense disablePadding>
+                      {symbolData?.prices[
+                        selectedSignal
+                      ].recommendation.buyReasons.map(
+                        (strategyName: string) => (
+                          <ListItem key={strategyName} dense disablePadding>
+                            <ListItemIcon
+                              onClick={() => showStrategyModal(strategyName)}
+                            >
+                              <IconButton>
+                                <InfoIcon />
+                              </IconButton>
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={startCase(strategyName)}
+                            ></ListItemText>
+                          </ListItem>
+                        )
+                      )}
+                    </List>
+                  </>
+                )}
+                {Boolean(
+                  symbolData?.prices[selectedSignal].recommendation.sellReasons
+                    .length
+                ) && (
+                  <>
+                    <b>Reasons to sell:</b>{" "}
+                    <List dense disablePadding>
+                      {symbolData?.prices[
+                        selectedSignal
+                      ].recommendation.sellReasons.map(
+                        (strategyName: string) => (
+                          <ListItem key={strategyName} dense disablePadding>
+                            <ListItemIcon
+                              onClick={() => showStrategyModal(strategyName)}
+                            >
+                              <IconButton>
+                                <InfoIcon />
+                              </IconButton>
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={startCase(strategyName)}
+                            ></ListItemText>
+                          </ListItem>
+                        )
+                      )}
+                    </List>
+                  </>
+                )}
+              </>
             )}
-          </>
-        )}
+          </CardContent>
+        </Card>
       </>
     ),
     [symbolData, strategyModalOpen, strategyResultModal, selectedSignal]

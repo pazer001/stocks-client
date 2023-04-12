@@ -1,7 +1,7 @@
 import "./App.css";
 import React from "react";
-import { Paper } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Box, Paper } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
 import Chart from "./components/StockSystem/Chart";
 import SymbolsList from "./components/StockSystem/SymbolsList";
@@ -17,38 +17,38 @@ function App() {
       {mainLoaderShow && (
         <LinearProgress sx={{ position: "fixed", width: "100%" }} />
       )}
-      <Grid2
+      <Grid
         container
         sx={{ height: "100vh", width: "100%" }}
         direction="column"
       >
-        <Grid2 sx={{ height: "5%" }}>
+        <Grid item sx={{ height: "6%" }}>
           <Toolbox />
-        </Grid2>
-        <Grid2 sx={{ height: "95%" }}>
-          <Grid2 container spacing={1} sx={{ height: "100%" }}>
-            <Grid2 xs={10} md={10}>
+        </Grid>
+        <Grid item sx={{ height: "94%" }}>
+          <Grid container spacing={1} sx={{ height: "100%" }}>
+            <Grid item xs={9} md={9}>
               <Paper>
                 <Chart />
               </Paper>
-            </Grid2>
-            <Grid2 xs={2} md={2}>
-              <Grid2 container direction="column">
-                <Grid2 xs md>
+            </Grid>
+            <Grid item xs={3} md={3}>
+              <Grid container direction="column">
+                <Grid item xs md sx={{ height: "50%" }}>
                   <Paper>
                     <SymbolsList />
                   </Paper>
-                </Grid2>
-                <Grid2 xs md>
+                </Grid>
+                <Grid item xs md sx={{ height: "44%" }}>
                   <Paper>
                     <SymbolInfo />
                   </Paper>
-                </Grid2>
-              </Grid2>
-            </Grid2>
-          </Grid2>
-        </Grid2>
-      </Grid2>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
     </>
   );
 }

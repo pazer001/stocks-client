@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom, selector, useRecoilState } from "recoil";
 
 interface Recommendation {
   buyCount: number;
@@ -51,7 +51,8 @@ interface ISymbolState {
   selectedSignal: number | undefined;
   settings: {
     byType: "byWinRate" | "byProfit";
-    interval: "1d";
+    interval: "1d" | "1wk" | "1mo";
+    intervals: Array<"1d" | "1wk" | "1mo">;
   };
 }
 
@@ -64,6 +65,7 @@ export const symbolAtom = atom({
     settings: {
       byType: "byWinRate",
       interval: "1d",
+      intervals: [],
     },
   } as ISymbolState,
 });
@@ -109,3 +111,34 @@ export const getInterval = selector({
     return get(symbolAtom).settings.interval;
   },
 });
+
+export const getIntervals = selector({
+  key: "getIntervals",
+  get: ({ get }) => {
+    return get(symbolAtom).settings.intervals;
+  },
+});
+
+export const useSymbol = () => {
+  const [symbol, setSymbolState] = useRecoilState(symbolAtom);
+  const { interval } = symbol.settings;
+
+  const changeSymbol = (
+    symbol: string,
+    intervals: Array<"1d" | "1wk" | "1mo">
+  ) => {
+    const newInterval = intervals.includes(interval) ? interval : intervals[0];
+
+    setSymbolState((prevSymbolState) => ({
+      ...prevSymbolState,
+      selectedSymbol: symbol,
+      settings: {
+        ...prevSymbolState.settings,
+        interval: newInterval,
+        intervals,
+      },
+    }));
+  };
+
+  return { changeSymbol };
+};

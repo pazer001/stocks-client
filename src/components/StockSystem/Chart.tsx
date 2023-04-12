@@ -7,6 +7,7 @@ import {
   SymbolData,
   symbolAtom,
   getByType,
+  getInterval,
 } from "../../atoms/symbol";
 import { useRecoilState, useRecoilValue } from "recoil";
 import AnnotationsModule from "highcharts/modules/annotations";
@@ -22,12 +23,12 @@ const Chart = () => {
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
   const [symbol, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
+  const interval = useRecoilValue(getInterval);
   const { mainLoaderShow } = useActions();
 
   const [stockChartOptions, setStockChartOptions] = useState({
     chart: {
-      height: `55%`,
-      // width: "50%",
+      height: `54%`,
     },
     plotOptions: {
       series: {
@@ -73,7 +74,7 @@ const Chart = () => {
 
     mainLoaderShow(true);
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-      `${API_HOST}/analyze/analyzedResult/${symbol}/1d/${byType}`
+      `${API_HOST}/analyze/analyzedResult/${symbol}/${interval}/${byType}`
     );
 
     setSymbol((prevSymbolState) => ({
@@ -117,7 +118,7 @@ const Chart = () => {
           plotLines: [
             {
               value:
-                symbolAnalyze.data.recommendationBacktest.bestPermutation
+                symbolAnalyze.data.recommendationBacktest?.bestPermutation
                   .minBuy,
               color: "green",
               dashStyle: "shortdash",
@@ -129,7 +130,7 @@ const Chart = () => {
             },
             {
               value:
-                symbolAnalyze.data.recommendationBacktest.bestPermutation
+                symbolAnalyze.data.recommendationBacktest?.bestPermutation
                   .minSell,
               color: "red",
               dashStyle: "shortdash",
@@ -191,7 +192,7 @@ const Chart = () => {
 
   useEffect(() => {
     analyzeSymbol(selectedSymbol, byType);
-  }, [selectedSymbol, byType]);
+  }, [selectedSymbol, byType, interval]);
 
   return useMemo(
     () => (

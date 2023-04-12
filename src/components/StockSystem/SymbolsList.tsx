@@ -1,24 +1,48 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  TextField,
-} from "@mui/material";
+import { Box } from "@mui/material";
+import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+
 import axios, { AxiosResponse } from "axios";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { FixedSizeList, ListChildComponentProps } from "react-window";
-import { getSelectedSymbol, symbolAtom } from "../../atoms/symbol";
+import { getSelectedSymbol, symbolAtom, useSymbol } from "../../atoms/symbol";
 
 interface ISupportedSymbols {
-  label: string;
+  _id: number;
+  exchange: string;
+  symbol: string;
+  currency: string;
+  esgPopulated: boolean;
+  exchangeTimezoneName: string;
+  exchangeTimezoneShortName: string;
+  financialCurrency: string;
+  firstTradeDateMilliseconds: number;
+  fullExchangeName: string;
+  gmtOffSetMilliseconds: number;
+  language: string;
+  longName: string;
+  market: string;
+  marketState: string;
+  quoteSourceName: string;
+  quoteType: string;
+  region: string;
+  shortName: string;
+  tradeable: boolean;
+  triggerable: boolean;
 }
 
 const API_HOST = `http://85.64.194.77:3000`;
 
+const columnDefinition: Array<GridColDef> = [
+  { field: "symbol", headerName: "Symbol" },
+  // { field: "exchange", headerName: "Exchange" },
+  { field: "currency", headerName: "Currency" },
+  { field: "fullExchangeName", headerName: "Full Exchange Name" },
+  // { field: "longName", headerName: "Long Name" },
+  { field: "quoteType", headerName: "Quote Type" },
+];
+
 const SymbolsList = () => {
+  const { changeSymbol } = useSymbol();
   const [symbolState, setSymbolState] = useRecoilState(symbolAtom);
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
   const [supportedSymbols, setSupportedSymbols] = useState<
@@ -26,55 +50,15 @@ const SymbolsList = () => {
   >([]);
   const [symbolFilterCriteria, setSymbolFilterCriteria] = useState("");
 
-  const onSearchSymbol = useCallback(
-    (event: { target: { value: React.SetStateAction<string> } }) => {
-      setSymbolFilterCriteria(event.target.value);
-    },
-    []
-  );
-
-  const filteredSymbols = useMemo(
-    () =>
-      Boolean(symbolFilterCriteria)
-        ? supportedSymbols.filter((symbol) =>
-            symbol.label.includes(symbolFilterCriteria.toUpperCase())
-          )
-        : supportedSymbols,
-    [symbolFilterCriteria, supportedSymbols]
-  );
-
-  const renderRow = (props: ListChildComponentProps) => {
-    const { index, style } = props;
-    const symbol = filteredSymbols[index];
-    return useMemo(
-      () => (
-        <ListItem style={style} dense disablePadding key={index}>
-          <ListItemButton
-            onClick={() =>
-              setSymbolState((prevSymbolState) => ({
-                ...prevSymbolState,
-                selectedSymbol: symbol.label,
-                selectedSignal: undefined,
-              }))
-            }
-            selected={symbol.label === selectedSymbol}
-          >
-            <ListItemText primary={symbol.label} />
-          </ListItemButton>
-        </ListItem>
-      ),
-      [index, symbol, style]
-    );
-  };
-
   useEffect(() => {
     const getSupportedSymbols = async () => {
-      const supportedSymbolsResult: AxiosResponse<Array<string>> =
+      const supportedSymbolsResult: AxiosResponse<Array<ISupportedSymbols>> =
         await axios.get(`${API_HOST}/analyze/supportedSymbols`);
 
       setSupportedSymbols(
-        supportedSymbolsResult.data.map((symbol: string) => ({
-          label: symbol,
+        supportedSymbolsResult.data.map((symbolData) => ({
+          ...symbolData,
+          id: symbolData._id,
         }))
       );
     };
@@ -83,26 +67,31 @@ const SymbolsList = () => {
 
   return useMemo(
     () => (
-      <Box>
-        <TextField
-          fullWidth
-          size="small"
-          label="Search symbol"
-          onChange={onSearchSymbol}
+      <Box sx={{ height: 440 }}>
+        <DataGrid
+          density="compact"
+          columns={columnDefinition}
+          rows={supportedSymbols}
+          // autoHeight
+          hideFooter
+          disableColumnFilter
+          // disableColumnSelector
+          // disableDensitySelector
+          onRowClick={(params) =>
+            changeSymbol(params.row.symbol, params.row.intervals)
+          }
+          loading={!supportedSymbols}
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
+            },
+          }}
         />
-        <List>
-          <FixedSizeList
-            height={390}
-            width="100%"
-            itemSize={30}
-            itemCount={filteredSymbols.length}
-          >
-            {renderRow}
-          </FixedSizeList>
-        </List>
       </Box>
     ),
-    [filteredSymbols]
+    [supportedSymbols]
   );
 };
 

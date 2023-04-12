@@ -23,15 +23,20 @@ import NotListedLocationRoundedIcon from "@mui/icons-material/NotListedLocationR
 import FiberManualRecordRoundedIcon from "@mui/icons-material/FiberManualRecordRounded";
 import HelpCenterRoundedIcon from "@mui/icons-material/HelpCenterRounded";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { getByType, getInterval, symbolAtom } from "../../atoms/symbol";
+import {
+  getByType,
+  getInterval,
+  getIntervals,
+  symbolAtom,
+} from "../../atoms/symbol";
 
 const Toolbox = () => {
   const [symbol, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
+  const intervals = useRecoilValue(getIntervals);
   const [helpDialogOpen, setHelpDialogOpen] = useState<boolean>(false);
   const [typeDialogOpen, setTypeDialogOpen] = useState<boolean>(false);
-
   return (
     <>
       <AppBar position="static">
@@ -85,7 +90,10 @@ const Toolbox = () => {
                 size="small"
                 value={interval}
               >
-                <ToggleButton value="1d">D</ToggleButton>
+                {Boolean(intervals.length) &&
+                  intervals.map((interval) => (
+                    <ToggleButton value={interval}>{interval}</ToggleButton>
+                  ))}
               </ToggleButtonGroup>
             </Box>
           </Toolbar>
