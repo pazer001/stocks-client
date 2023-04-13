@@ -28,7 +28,7 @@ export interface SymbolData {
     results: Record<
       string,
       {
-        plAmount: number;
+        profit: number;
         bestPermutation: Record<string, number>;
         scannedPermutations: number;
         winRate: number;
