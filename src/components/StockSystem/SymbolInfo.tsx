@@ -37,8 +37,12 @@ const SymbolInfo = () => {
         symbolData.prices[symbolData.prices.length - 1].recommendation;
 
       if (currentRecommendation.score > minBuy) {
+        return `Strong buy`;
+      } else if (currentRecommendation.score > 0) {
         return `Buy`;
       } else if (currentRecommendation.score < minSell) {
+        return `Strong sell`;
+      } else if (currentRecommendation.score < 0) {
         return `Sell`;
       } else {
         return `Hold`;
