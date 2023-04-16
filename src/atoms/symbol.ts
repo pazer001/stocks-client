@@ -25,15 +25,26 @@ export interface SymbolData {
   analyzedResult: {
     interval: string;
     symbol: string;
-    results: Record<
-      string,
-      {
-        profit: number;
-        bestPermutation: Record<string, number>;
-        scannedPermutations: number;
-        winRate: number;
-      }
-    >;
+    results: {
+      byWinRate: Record<
+        string,
+        {
+          profit: number;
+          bestPermutation: Record<string, number>;
+          scannedPermutations: number;
+          winRate: number;
+        }
+      >;
+      byProfit: Record<
+        string,
+        {
+          profit: number;
+          bestPermutation: Record<string, number>;
+          scannedPermutations: number;
+          winRate: number;
+        }
+      >;
+    };
   };
   recommendationBacktest: {
     bestPermutation: {
@@ -42,6 +53,9 @@ export interface SymbolData {
     };
     winRate: number;
     profit: number;
+    totalTrades: number;
+    goodTrades: number;
+    badTrades: number;
   };
 }
 

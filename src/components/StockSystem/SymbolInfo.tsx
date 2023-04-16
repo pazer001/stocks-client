@@ -17,11 +17,16 @@ import {
 } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 import { useRecoilValue } from "recoil";
-import { getSelectedSignal, getSymbolData } from "../../atoms/symbol";
+import {
+  getByType,
+  getSelectedSignal,
+  getSymbolData,
+} from "../../atoms/symbol";
 
 const SymbolInfo = () => {
   const symbolData = useRecoilValue(getSymbolData);
   const selectedSignal = useRecoilValue(getSelectedSignal);
+  const byType = useRecoilValue(getByType);
   const [strategyResultModal, setStrategyResult] = useState<string>("");
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
 
@@ -65,14 +70,15 @@ const SymbolInfo = () => {
               <DialogContentText>
                 <b>Best Permutation:</b> [
                 {Object.keys(
-                  symbolData.analyzedResult.results[strategyResultModal]
+                  symbolData.analyzedResult.results[byType][strategyResultModal]
                     .bestPermutation
                 )
                   .map(
                     (param) =>
                       `${startCase(param)}: ${
-                        symbolData.analyzedResult.results[strategyResultModal]
-                          .bestPermutation[param]
+                        symbolData.analyzedResult.results[byType][
+                          strategyResultModal
+                        ].bestPermutation[param]
                       }`
                   )
                   .join(", ")}
@@ -81,13 +87,13 @@ const SymbolInfo = () => {
               <DialogContentText>
                 <b>Scanned Permutations:</b>
                 {new Intl.NumberFormat().format(
-                  symbolData.analyzedResult.results[strategyResultModal]
+                  symbolData.analyzedResult.results[byType][strategyResultModal]
                     .scannedPermutations
                 )}
               </DialogContentText>
               <DialogContentText>
                 <b>Win Rate:</b>
-                {symbolData.analyzedResult.results[
+                {symbolData.analyzedResult.results[byType][
                   strategyResultModal
                 ].winRate.toFixed(2)}
                 %
@@ -116,6 +122,11 @@ const SymbolInfo = () => {
                 )}
                 <Typography>
                   <b>Indicator recommendations:</b> {getRecommendation()}
+                </Typography>
+
+                <Typography>
+                  <b>Based on: </b>
+                  {symbolData?.recommendationBacktest.totalTrades} trades
                 </Typography>
               </>
             )}
@@ -191,7 +202,7 @@ const SymbolInfo = () => {
         </Card>
       </>
     ),
-    [symbolData, strategyModalOpen, strategyResultModal, selectedSignal]
+    [symbolData, strategyModalOpen, strategyResultModal, selectedSignal, byType]
   );
 };
 
