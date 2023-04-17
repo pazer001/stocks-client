@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { startCase } from "lodash";
 import {
   Box,
@@ -22,16 +22,34 @@ import {
   getSelectedSignal,
   getSymbolData,
 } from "../../atoms/symbol";
+import axios from "axios";
 
+const API_HOST = `http://85.64.194.77:3000`;
 const SymbolInfo = () => {
   const symbolData = useRecoilValue(getSymbolData);
   const selectedSignal = useRecoilValue(getSelectedSignal);
   const byType = useRecoilValue(getByType);
-  const [strategyResultModal, setStrategyResult] = useState<string>("");
+  const [strategyName, setStrategyName] = useState<string>("");
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
+  const [strategyDescription, setStrategyDescription] = useState<string>("");
+
+  useEffect(() => {
+    const getStrategyDescription = async () => {
+      if (strategyName) {
+        const strategyDescriptionResult = await axios.get(
+          `${API_HOST}/strategies/strategyDescription/${strategyName}`
+        );
+        const strategyDescription = strategyDescriptionResult.data.description;
+        console.log(strategyDescription);
+        setStrategyDescription(strategyDescription);
+      }
+    };
+
+    getStrategyDescription();
+  }, [strategyName]);
 
   const showStrategyModal = (strategyName: string) => {
-    setStrategyResult(() => strategyName);
+    setStrategyName(() => strategyName);
     setStrategyModalOpen(() => true);
   };
   const getRecommendation = () => {
@@ -60,51 +78,57 @@ const SymbolInfo = () => {
   return useMemo(
     () => (
       <>
-        {symbolData && strategyModalOpen && strategyResultModal && (
-          <Dialog
-            open={strategyModalOpen}
-            onClose={() => setStrategyResult("")}
-          >
-            <DialogTitle>{startCase(strategyResultModal)}</DialogTitle>
+        {symbolData && strategyModalOpen && strategyName && (
+          <Dialog open={strategyModalOpen} onClose={() => setStrategyName("")}>
+            <DialogTitle>{startCase(strategyName)}</DialogTitle>
             <DialogContent>
               <DialogContentText>
                 <b>Best Permutation:</b> [
                 {Object.keys(
-                  symbolData.analyzedResult.results[byType][strategyResultModal]
+                  symbolData.analyzedResult.results[byType][strategyName]
                     .bestPermutation
                 )
                   .map(
                     (param) =>
                       `${startCase(param)}: ${
-                        symbolData.analyzedResult.results[byType][
-                          strategyResultModal
-                        ].bestPermutation[param]
+                        symbolData.analyzedResult.results[byType][strategyName]
+                          .bestPermutation[param]
                       }`
                   )
                   .join(", ")}
                 ]
               </DialogContentText>
               <DialogContentText>
-                <b>Scanned Permutations:</b>
+                <b>Scanned Permutations: </b>
                 {new Intl.NumberFormat().format(
-                  symbolData.analyzedResult.results[byType][strategyResultModal]
+                  symbolData.analyzedResult.results[byType][strategyName]
                     .scannedPermutations
                 )}
               </DialogContentText>
               <DialogContentText>
-                <b>Win Rate:</b>
+                <b>Win Rate: </b>
                 {symbolData.analyzedResult.results[byType][
-                  strategyResultModal
+                  strategyName
                 ].winRate.toFixed(2)}
                 %
               </DialogContentText>
-              {/*<DialogContentText>*/}
-              {/*  <b>Description:</b> {descriptions[strategyResultModal]}*/}
-              {/*</DialogContentText>*/}
+              <DialogContentText>
+                <b>Description: </b>{" "}
+                {strategyDescription
+                  .split(".")
+                  .filter((_) => _)
+                  .map((sentence) => (
+                    <>
+                      {sentence}.
+                      <br />
+                      <br />
+                    </>
+                  ))}
+              </DialogContentText>
             </DialogContent>
           </Dialog>
         )}
-        <Card>
+        <Card sx={{ overflowY: "scroll", height: "47vh" }}>
           <CardContent>
             {symbolData !== undefined && (
               <>
@@ -202,8 +226,10 @@ const SymbolInfo = () => {
         </Card>
       </>
     ),
-    [symbolData, strategyModalOpen, strategyResultModal, selectedSignal, byType]
+    [symbolData, strategyModalOpen, strategyName, selectedSignal, byType]
   );
 };
+
+const SymbolInfoHelper = () => {};
 
 export default SymbolInfo;
