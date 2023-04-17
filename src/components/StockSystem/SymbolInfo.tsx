@@ -36,12 +36,16 @@ const SymbolInfo = () => {
   useEffect(() => {
     const getStrategyDescription = async () => {
       if (strategyName) {
-        const strategyDescriptionResult = await axios.get(
-          `${API_HOST}/strategies/strategyDescription/${strategyName}`
-        );
-        const strategyDescription = strategyDescriptionResult.data.description;
-        console.log(strategyDescription);
-        setStrategyDescription(strategyDescription);
+        try {
+          const strategyDescriptionResult = await axios.get(
+            `${API_HOST}/strategies/strategyDescription/${strategyName}`
+          );
+          const strategyDescription =
+            strategyDescriptionResult.data.description;
+          setStrategyDescription(strategyDescription);
+        } catch (e) {
+          console.error(e);
+        }
       }
     };
 
@@ -141,7 +145,9 @@ const SymbolInfo = () => {
                 {symbolData?.recommendationBacktest && (
                   <Typography>
                     <b>Indicator Profit: </b>
-                    {symbolData?.recommendationBacktest.profit.toFixed(2)}
+                    {symbolData?.recommendationBacktest.profit
+                      ? symbolData?.recommendationBacktest.profit.toFixed(2)
+                      : 0}
                   </Typography>
                 )}
                 <Typography>
@@ -226,7 +232,14 @@ const SymbolInfo = () => {
         </Card>
       </>
     ),
-    [symbolData, strategyModalOpen, strategyName, selectedSignal, byType]
+    [
+      symbolData,
+      strategyModalOpen,
+      strategyName,
+      selectedSignal,
+      byType,
+      strategyName,
+    ]
   );
 };
 
