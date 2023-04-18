@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsStock from "highcharts/highstock";
-import { Paper } from "@mui/material";
 import {
   getSelectedSymbol,
   SymbolData,
