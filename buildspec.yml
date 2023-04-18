@@ -19,6 +19,5 @@ artifacts:
   files:
     - '**/*'
     - '!node_modules/**/*'
-    - '!**/*.map'
   #  discard-paths: yes
   name: stocks-client
