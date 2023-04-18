@@ -17,5 +17,8 @@ phases:
 artifacts:
   base-directory: dist
   files:
-    - 'dist/*'
+    - '**/*'
     - '!node_modules/**/*'
+    - '!**/*.map'
+  discard-paths: yes
+  name: stocks-client
