@@ -15,5 +15,6 @@ phases:
       - pnpm run build
 
 artifacts:
+  base-directory: dist
   files:
     - 'dist/*'
