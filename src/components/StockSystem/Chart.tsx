@@ -7,6 +7,7 @@ import {
   symbolAtom,
   getByType,
   getInterval,
+  getPricesMode,
 } from "../../atoms/symbol";
 import { useRecoilState, useRecoilValue } from "recoil";
 import AnnotationsModule from "highcharts/modules/annotations";
@@ -23,6 +24,7 @@ const Chart = () => {
   const [symbol, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
+  const pricesMode = useRecoilValue(getPricesMode);
   const { mainLoaderShow } = useActions();
 
   const [stockChartOptions, setStockChartOptions] = useState({
@@ -73,7 +75,7 @@ const Chart = () => {
 
     mainLoaderShow(true);
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-      `${API_HOST}/analyze/analyzedResult/${symbol}/${interval}/${byType}`
+      `${API_HOST}/analyze/analyzedResult/${symbol}/${interval}/${byType}/${pricesMode}`
     );
 
     setSymbol((prevSymbolState) => ({

@@ -27,6 +27,7 @@ import {
   getByType,
   getInterval,
   getIntervals,
+  getPricesMode,
   symbolAtom,
 } from "../../atoms/symbol";
 
@@ -34,6 +35,7 @@ const Toolbox = () => {
   const [symbol, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
+  const pricesMode = useRecoilValue(getPricesMode);
   const intervals = useRecoilValue(getIntervals);
   const [helpDialogOpen, setHelpDialogOpen] = useState<boolean>(false);
   const [typeDialogOpen, setTypeDialogOpen] = useState<boolean>(false);
@@ -96,6 +98,26 @@ const Toolbox = () => {
                       {interval}
                     </ToggleButton>
                   ))}
+              </ToggleButtonGroup>
+            </Box>
+            <Divider orientation="vertical" flexItem variant="middle" />
+            <Box>
+              <ToggleButtonGroup
+                onChange={(event, value) =>
+                  setSymbol((prevSymbol) => ({
+                    ...prevSymbol,
+                    settings: { ...prevSymbol.settings, pricesMode: value },
+                  }))
+                }
+                exclusive
+                color="primary"
+                size="small"
+                value={pricesMode}
+              >
+                <ToggleButton value="normal">Normal</ToggleButton>
+                <ToggleButton value="dividendsAdjusted">
+                  Adjust for Dividends
+                </ToggleButton>
               </ToggleButtonGroup>
             </Box>
           </Toolbar>

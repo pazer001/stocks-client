@@ -67,6 +67,7 @@ interface ISymbolState {
     byType: "byWinRate" | "byProfit";
     interval: "1d" | "1wk" | "1mo";
     intervals: Array<"1d" | "1wk" | "1mo">;
+    pricesMode: "normal" | "dividendsAdjusted";
   };
 }
 
@@ -80,6 +81,7 @@ export const symbolAtom = atom({
       byType: "byWinRate",
       interval: "1d",
       intervals: [],
+      pricesMode: "normal",
     },
   } as ISymbolState,
 });
@@ -130,6 +132,13 @@ export const getIntervals = selector({
   key: "getIntervals",
   get: ({ get }) => {
     return get(symbolAtom).settings.intervals;
+  },
+});
+
+export const getPricesMode = selector({
+  key: "getPricesMode",
+  get: ({ get }) => {
+    return get(symbolAtom).settings.pricesMode;
   },
 });
 
