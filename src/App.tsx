@@ -1,22 +1,28 @@
 import "./App.css";
 import React from "react";
-import { Box, Paper } from "@mui/material";
+import { Alert, Box, Paper, Snackbar } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
 import Chart from "./components/StockSystem/Chart";
 import SymbolsList from "./components/StockSystem/SymbolsList";
 import SymbolInfo from "./components/StockSystem/SymbolInfo";
 import Toolbox from "./components/StockSystem/Toolbox";
-import { getMainLoaderShow } from "./atoms/view";
+import { getAlertMessage, getAlertShow, getMainLoaderShow } from "./atoms/view";
 import { useRecoilValue } from "recoil";
 
 function App() {
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
+  const alertShow = useRecoilValue(getAlertShow);
+  const alertMessage = useRecoilValue(getAlertMessage);
   return (
     <>
       {mainLoaderShow && (
         <LinearProgress sx={{ position: "fixed", width: "100%" }} />
       )}
+
+      <Snackbar open={alertShow}>
+        <Alert severity="error">{alertMessage}</Alert>
+      </Snackbar>
       <Grid
         container
         sx={{ height: "100vh", width: "100%" }}

@@ -2,22 +2,24 @@ import React, { useEffect, useMemo, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsStock from "highcharts/highstock";
 import {
-  getSelectedSymbol,
-  SymbolData,
-  symbolAtom,
   getByType,
   getInterval,
   getPricesMode,
+  getSelectedSymbol,
+  symbolAtom,
+  SymbolData,
 } from "../../atoms/symbol";
 import { useRecoilState, useRecoilValue } from "recoil";
 import AnnotationsModule from "highcharts/modules/annotations";
 import HighContrastDark from "highcharts/themes/high-contrast-dark";
 import axios, { AxiosResponse } from "axios";
-import { useActions } from "../../atoms/view";
+import { useViewActions } from "../../atoms/view";
+import HSIndicators from "highcharts/indicators/indicators.js";
 
 AnnotationsModule(HighchartsStock);
 HighContrastDark(HighchartsStock);
-const API_HOST = `http://85.64.194.77:3000`;
+HSIndicators(HighchartsStock);
+const API_HOST = `http://85.64.202.217:3000`;
 
 const Chart = () => {
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
@@ -25,13 +27,19 @@ const Chart = () => {
   const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
   const pricesMode = useRecoilValue(getPricesMode);
-  const { mainLoaderShow } = useActions();
+  const { mainLoaderShow, setAlert } = useViewActions();
 
   const [stockChartOptions, setStockChartOptions] = useState({
     chart: {
       height: `54%`,
+      zooming: {
+        type: "xy",
+      },
     },
     plotOptions: {
+      candlestick: {
+        lineWidth: 1,
+      },
       series: {
         allowPointSelect: true,
         cursor: "pointer",
@@ -77,13 +85,25 @@ const Chart = () => {
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
       `${API_HOST}/analyze/analyzedResult/${symbol}/${interval}/${byType}/${pricesMode}`
     );
+    if (!symbolAnalyze.data.prices.length) {
+      setSymbol((prevSymbolState) => ({
+        ...prevSymbolState,
+        symbolData: undefined,
+        selectedSignal: 0,
+      }));
 
+      setAlert(true, "Error occured while trying to load data for this stock");
+      mainLoaderShow(false);
+      return;
+    }
+
+    setAlert(false);
     setSymbol((prevSymbolState) => ({
       ...prevSymbolState,
       symbolData: symbolAnalyze.data,
+      selectedSignal: symbolAnalyze.data.prices.length - 1,
     }));
 
-    // @ts-ignore
     setStockChartOptions((prevStockChartOptions) => ({
       ...prevStockChartOptions,
       title: {
@@ -144,8 +164,10 @@ const Chart = () => {
           ],
         },
       ],
+
       series: [
         {
+          id: "prices",
           upColor: `green`,
           // downColor: "red",
           type: "candlestick",
@@ -158,7 +180,7 @@ const Chart = () => {
             data.point.close,
           ]),
           yAxis: 0,
-          // allowPointSelect: true,
+          allowPointSelect: true,
           colors: symbolAnalyze.data.prices.map((data, index) => {
             if (
               symbolAnalyze.data.prices[index - 1] &&
@@ -183,17 +205,13 @@ const Chart = () => {
       ],
     }));
 
-    setSymbol((prevSymbolState) => ({
-      ...prevSymbolState,
-      symbolData: symbolAnalyze.data,
-    }));
     mainLoaderShow(false);
     return symbolAnalyze.data;
   };
 
   useEffect(() => {
     analyzeSymbol(selectedSymbol, byType);
-  }, [selectedSymbol, byType, interval]);
+  }, [selectedSymbol, byType, interval, pricesMode]);
 
   return useMemo(
     () => (

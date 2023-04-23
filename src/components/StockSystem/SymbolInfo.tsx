@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { startCase } from "lodash";
 import {
-  Box,
   Card,
   CardContent,
+  CardHeader,
   Dialog,
   DialogContent,
   DialogContentText,
@@ -19,19 +19,23 @@ import InfoIcon from "@mui/icons-material/Info";
 import { useRecoilValue } from "recoil";
 import {
   getByType,
+  getPricesMode,
   getSelectedSignal,
   getSymbolData,
 } from "../../atoms/symbol";
 import axios from "axios";
 
-const API_HOST = `http://85.64.194.77:3000`;
+const API_HOST = `http://85.64.202.217:3000`;
 const SymbolInfo = () => {
   const symbolData = useRecoilValue(getSymbolData);
   const selectedSignal = useRecoilValue(getSelectedSignal);
   const byType = useRecoilValue(getByType);
+  const priceMode = useRecoilValue(getPricesMode);
   const [strategyName, setStrategyName] = useState<string>("");
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
   const [strategyDescription, setStrategyDescription] = useState<string>("");
+  const [indicatorInfoDialog, setIndicatorInfoDialog] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const getStrategyDescription = async () => {
@@ -52,6 +56,7 @@ const SymbolInfo = () => {
     getStrategyDescription();
   }, [strategyName]);
 
+  // if (!symbolData) return null;
   const showStrategyModal = (strategyName: string) => {
     setStrategyName(() => strategyName);
     setStrategyModalOpen(() => true);
@@ -79,6 +84,19 @@ const SymbolInfo = () => {
     }
   };
 
+  const getTotalScannedPermutations = (strategies: any) => {
+    if (!strategies) return 0;
+    let totalScannedPermutation = 0;
+
+    for (let strategyName in strategies) {
+      const strategyData = strategies[strategyName];
+
+      totalScannedPermutation += strategyData.scannedPermutations;
+    }
+
+    return totalScannedPermutation.toLocaleString("en-US");
+  };
+
   return useMemo(
     () => (
       <>
@@ -89,14 +107,16 @@ const SymbolInfo = () => {
               <DialogContentText>
                 <b>Best Permutation:</b> [
                 {Object.keys(
-                  symbolData.analyzedResult.results[byType][strategyName]
-                    .bestPermutation
+                  symbolData.analyzedResult.results[priceMode][byType][
+                    strategyName
+                  ].bestPermutation
                 )
                   .map(
                     (param) =>
                       `${startCase(param)}: ${
-                        symbolData.analyzedResult.results[byType][strategyName]
-                          .bestPermutation[param]
+                        symbolData.analyzedResult.results[priceMode][byType][
+                          strategyName
+                        ].bestPermutation[param]
                       }`
                   )
                   .join(", ")}
@@ -105,34 +125,51 @@ const SymbolInfo = () => {
               <DialogContentText>
                 <b>Scanned Permutations: </b>
                 {new Intl.NumberFormat().format(
-                  symbolData.analyzedResult.results[byType][strategyName]
-                    .scannedPermutations
+                  symbolData.analyzedResult.results[priceMode][byType][
+                    strategyName
+                  ].scannedPermutations
                 )}
               </DialogContentText>
               <DialogContentText>
                 <b>Win Rate: </b>
-                {symbolData.analyzedResult.results[byType][
+                {symbolData.analyzedResult.results[priceMode][byType][
                   strategyName
                 ].winRate.toFixed(2)}
                 %
               </DialogContentText>
-              <DialogContentText>
-                <b>Description: </b>{" "}
-                {strategyDescription
-                  .split(".")
-                  .filter((_) => _)
-                  .map((sentence) => (
-                    <>
-                      {sentence}.
-                      <br />
-                      <br />
-                    </>
-                  ))}
-              </DialogContentText>
+              {strategyDescription && (
+                <DialogContentText>
+                  <b>Description: </b>{" "}
+                  {strategyDescription
+                    .split(".")
+                    .filter((_) => _)
+                    .map((sentence) => (
+                      <>
+                        {sentence}.
+                        <br />
+                        <br />
+                      </>
+                    ))}
+                </DialogContentText>
+              )}
             </DialogContent>
           </Dialog>
         )}
+
+        <IndicatorInfoDialog
+          open={indicatorInfoDialog}
+          onClose={() => setIndicatorInfoDialog(false)}
+        />
+
         <Card sx={{ overflowY: "scroll", height: "47vh" }}>
+          <CardHeader
+            title="Indicator info"
+            action={
+              <IconButton onClick={() => setIndicatorInfoDialog(true)}>
+                <InfoIcon />
+              </IconButton>
+            }
+          />
           <CardContent>
             {symbolData !== undefined && (
               <>
@@ -157,6 +194,12 @@ const SymbolInfo = () => {
                 <Typography>
                   <b>Based on: </b>
                   {symbolData?.recommendationBacktest.totalTrades} trades
+                </Typography>
+                <Typography>
+                  <b>Total scaned permutations: </b>
+                  {getTotalScannedPermutations(
+                    symbolData.analyzedResult.results[priceMode][byType]
+                  )}
                 </Typography>
               </>
             )}
@@ -239,7 +282,40 @@ const SymbolInfo = () => {
       selectedSignal,
       byType,
       strategyName,
+      indicatorInfoDialog,
+      strategyDescription,
     ]
+  );
+};
+
+interface IIndicatorInfoDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const IndicatorInfoDialog = (props: IIndicatorInfoDialogProps) => {
+  const { open, onClose } = props;
+  return useMemo(
+    () => (
+      <Dialog open={open} onClose={onClose}>
+        <DialogTitle>Indicator Info</DialogTitle>
+        <DialogContent>
+          After collecting data from various strategies, an accumulation
+          indicator is generated that summarizes the results of the strategies.{" "}
+          <br />
+          A logical approach is to initiate a long trade when the indicator
+          value is greater than 0 and to sell when it is less than 0. <br />
+          However, we conduct additional backtesting on the accumulation
+          indicator to determine the optimal threshold for buying/selling.{" "}
+          <br /> <br />
+          The outcome is represented by two lines - green and red - along with
+          corresponding Win Rate/Profit values. <br />
+          These metrics are derived from a subset of trades where the buy signal
+          was above the green line and the sell signal was below the red line.
+        </DialogContent>
+      </Dialog>
+    ),
+    [open, onClose]
   );
 };
 

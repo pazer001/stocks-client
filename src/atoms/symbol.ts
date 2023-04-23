@@ -26,24 +26,46 @@ export interface SymbolData {
     interval: string;
     symbol: string;
     results: {
-      byWinRate: Record<
-        string,
-        {
-          profit: number;
-          bestPermutation: Record<string, number>;
-          scannedPermutations: number;
-          winRate: number;
-        }
-      >;
-      byProfit: Record<
-        string,
-        {
-          profit: number;
-          bestPermutation: Record<string, number>;
-          scannedPermutations: number;
-          winRate: number;
-        }
-      >;
+      [PriceMode.normal]: {
+        [ByType.byWinRate]: Record<
+          string,
+          {
+            profit: number;
+            bestPermutation: Record<string, number>;
+            scannedPermutations: number;
+            winRate: number;
+          }
+        >;
+        [ByType.byProfit]: Record<
+          string,
+          {
+            profit: number;
+            bestPermutation: Record<string, number>;
+            scannedPermutations: number;
+            winRate: number;
+          }
+        >;
+      };
+      [PriceMode.dividendsAdjusted]: {
+        [ByType.byWinRate]: Record<
+          string,
+          {
+            profit: number;
+            bestPermutation: Record<string, number>;
+            scannedPermutations: number;
+            winRate: number;
+          }
+        >;
+        [ByType.byProfit]: Record<
+          string,
+          {
+            profit: number;
+            bestPermutation: Record<string, number>;
+            scannedPermutations: number;
+            winRate: number;
+          }
+        >;
+      };
     };
   };
   recommendationBacktest: {
@@ -59,10 +81,20 @@ export interface SymbolData {
   };
 }
 
+enum ByType {
+  byWinRate = "byWinRate",
+  byProfit = "byProfit",
+}
+
+enum PriceMode {
+  normal = "normal",
+  dividendsAdjusted = "dividendsAdjusted",
+}
+
 interface ISymbolState {
   selectedSymbol: string;
   symbolData: SymbolData | undefined;
-  selectedSignal: number | undefined;
+  selectedSignal: number;
   settings: {
     byType: "byWinRate" | "byProfit";
     interval: "1d" | "1wk" | "1mo";
@@ -76,7 +108,7 @@ export const symbolAtom = atom({
   default: {
     selectedSymbol: "",
     symbolData: undefined,
-    selectedSignal: undefined,
+    selectedSignal: 0,
     settings: {
       byType: "byWinRate",
       interval: "1d",

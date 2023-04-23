@@ -2,12 +2,16 @@ import { atom, selector, useRecoilState } from "recoil";
 
 interface IViewState {
   mainLoaderShow: boolean;
+  alertShow: boolean;
+  alertMessage?: string;
 }
 
 export const viewAtom = atom({
   key: "viewAtom",
   default: {
     mainLoaderShow: false,
+    alertShow: false,
+    alertMessage: "",
   } as IViewState,
 });
 
@@ -18,7 +22,21 @@ export const getMainLoaderShow = selector({
   },
 });
 
-export const useActions = () => {
+export const getAlertShow = selector({
+  key: "getAlertShow",
+  get: ({ get }) => {
+    return get(viewAtom).alertShow;
+  },
+});
+
+export const getAlertMessage = selector({
+  key: "getAlertMessage",
+  get: ({ get }) => {
+    return get(viewAtom).alertMessage;
+  },
+});
+
+export const useViewActions = () => {
   const [view, setView] = useRecoilState(viewAtom);
   const mainLoaderShow = (value: boolean) => {
     setView((prevView) => ({
@@ -27,5 +45,13 @@ export const useActions = () => {
     }));
   };
 
-  return { mainLoaderShow };
+  const setAlert = (alertShow: boolean, alertMessage?: string) => {
+    setView((prevView) => ({
+      ...prevView,
+      alertShow,
+      alertMessage,
+    }));
+  };
+
+  return { mainLoaderShow, setAlert };
 };
