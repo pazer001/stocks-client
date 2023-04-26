@@ -24,7 +24,7 @@ const API_HOST = import.meta.env.VITE_API_HOST;
 
 const Chart = () => {
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
-  const [symbol, setSymbol] = useRecoilState(symbolAtom);
+  const [_, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
   const pricesMode = useRecoilValue(getPricesMode);
