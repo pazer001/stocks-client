@@ -8,8 +8,7 @@ import {
 } from "@mui/x-data-grid";
 
 import axios, { AxiosResponse } from "axios";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { getSelectedSymbol, symbolAtom, useSymbol } from "../../atoms/symbol";
+import { useSymbol } from "../../atoms/symbol";
 import { startCase } from "lodash";
 
 interface ISupportedSymbols {
@@ -37,9 +36,13 @@ interface ISupportedSymbols {
   triggerable: boolean;
 }
 
-const API_HOST = `http://85.64.202.217:3000`;
+const API_HOST = import.meta.env.VITE_API_HOST;
 
-const currencies = {
+interface Currency {
+  [key: string]: string;
+}
+
+const currencies: Currency = {
   usd: "$",
   eur: "€",
   gbp: "£",
@@ -182,12 +185,9 @@ const columnDefinition: Array<GridColDef> = [
 
 const SymbolsList = () => {
   const { changeSymbol } = useSymbol();
-  const [symbolState, setSymbolState] = useRecoilState(symbolAtom);
-  const selectedSymbol = useRecoilValue(getSelectedSymbol);
   const [supportedSymbols, setSupportedSymbols] = useState<
     Array<ISupportedSymbols>
   >([]);
-  const [symbolFilterCriteria, setSymbolFilterCriteria] = useState("");
 
   useEffect(() => {
     const getSupportedSymbols = async () => {
@@ -223,8 +223,6 @@ const SymbolsList = () => {
           }}
           hideFooter
           disableColumnFilter
-          // disableColumnSelector
-          // disableDensitySelector
           onRowClick={(params) =>
             changeSymbol(params.row.symbol, params.row.intervals)
           }

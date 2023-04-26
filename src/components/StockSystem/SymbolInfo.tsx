@@ -25,7 +25,8 @@ import {
 } from "../../atoms/symbol";
 import axios from "axios";
 
-const API_HOST = `http://85.64.202.217:3000`;
+const API_HOST = import.meta.env.VITE_API_HOST;
+
 const SymbolInfo = () => {
   const symbolData = useRecoilValue(getSymbolData);
   const selectedSignal = useRecoilValue(getSelectedSignal);

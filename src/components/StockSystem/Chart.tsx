@@ -15,11 +15,12 @@ import HighContrastDark from "highcharts/themes/high-contrast-dark";
 import axios, { AxiosResponse } from "axios";
 import { useViewActions } from "../../atoms/view";
 import HSIndicators from "highcharts/indicators/indicators.js";
+import { Button } from "@mui/material";
 
 AnnotationsModule(HighchartsStock);
 HighContrastDark(HighchartsStock);
 HSIndicators(HighchartsStock);
-const API_HOST = `http://85.64.202.217:3000`;
+const API_HOST = import.meta.env.VITE_API_HOST;
 
 const Chart = () => {
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
@@ -215,11 +216,16 @@ const Chart = () => {
 
   return useMemo(
     () => (
-      <HighchartsReact
-        constructorType={"stockChart"}
-        highcharts={HighchartsStock}
-        options={stockChartOptions}
-      />
+      <>
+        <Button onClick={() => analyzeSymbol(selectedSymbol, byType)}>
+          Refresh
+        </Button>
+        <HighchartsReact
+          constructorType={"stockChart"}
+          highcharts={HighchartsStock}
+          options={stockChartOptions}
+        />
+      </>
     ),
     [stockChartOptions]
   );
