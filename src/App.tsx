@@ -45,7 +45,7 @@ function App() {
                     <SymbolsList />
                   </Paper>
                 </Grid>
-                <Grid item xs md sx={{ height: "44vh" }}>
+                <Grid item xs md sx={{ height: "44vh", paddingRight: "1px" }}>
                   <Paper>
                     <SymbolInfo />
                   </Paper>

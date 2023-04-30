@@ -1,11 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, IconButton, Tab, Tabs } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Tab,
+  Tabs,
+} from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import axios, { AxiosResponse } from "axios";
 import { useSymbol } from "../../atoms/symbol";
 import SymbolChooser from "./SymbolChooser";
-import { columnDefinition } from "./common";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -107,33 +114,42 @@ const SymbolsList = () => {
         </Tabs>
       </Box>
       <TabPanel value={tab} index={0}>
-        <DataGrid
-          sx={{ height: "100%" }}
-          density="compact"
-          columns={[
-            {
-              field: "symbol",
-              headerName: "Symbol",
-              description: "Symbol",
-              type: "string",
-            },
-          ]}
-          rows={supportedSymbols}
-          initialState={{
-            columns: {
-              columnVisibilityModel: {
-                fullExchangeName: false,
-                longName: false,
-                region: false,
-                displayName: false,
-              },
-            },
-          }}
-          getRowId={(row) => row.symbol}
-          hideFooter
-          onRowClick={(params) => changeSymbol(params.row.symbol)}
-          loading={!supportedSymbols}
-        />
+        <List dense disablePadding sx={{ height: "100%", overflowY: "auto" }}>
+          {supportedSymbols.map((item) => (
+            <ListItem dense disableGutters disablePadding divider>
+              <ListItemButton dense onClick={() => changeSymbol(item.symbol)}>
+                <ListItemText>{item.symbol}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        {/*<DataGrid*/}
+        {/*  sx={{ height: "100%" }}*/}
+        {/*  density="compact"*/}
+        {/*  columns={[*/}
+        {/*    {*/}
+        {/*      field: "symbol",*/}
+        {/*      headerName: "Symbol",*/}
+        {/*      description: "Symbol",*/}
+        {/*      type: "string",*/}
+        {/*    },*/}
+        {/*  ]}*/}
+        {/*  rows={supportedSymbols}*/}
+        {/*  initialState={{*/}
+        {/*    columns: {*/}
+        {/*      columnVisibilityModel: {*/}
+        {/*        fullExchangeName: false,*/}
+        {/*        longName: false,*/}
+        {/*        region: false,*/}
+        {/*        displayName: false,*/}
+        {/*      },*/}
+        {/*    },*/}
+        {/*  }}*/}
+        {/*  getRowId={(row) => row.symbol}*/}
+        {/*  hideFooter*/}
+        {/*  onRowClick={(params) => changeSymbol(params.row.symbol)}*/}
+        {/*  loading={!supportedSymbols}*/}
+        {/*/>*/}
       </TabPanel>
       <TabPanel value={tab} index={1}>
         <IconButton onClick={() => setOpenSymbolChooser(true)}>
@@ -148,34 +164,15 @@ const SymbolsList = () => {
           }}
         />
 
-        <DataGrid
-          sx={{ height: "91%" }}
-          density="compact"
-          columns={[
-            {
-              field: "symbol",
-              headerName: "Symbol",
-              description: "Symbol",
-              type: "string",
-            },
-          ]}
-          rows={watchlistItems}
-          initialState={{
-            columns: {
-              columnVisibilityModel: {
-                fullExchangeName: false,
-                longName: false,
-                region: false,
-                displayName: false,
-              },
-            },
-          }}
-          getRowId={(row) => row.symbol}
-          hideFooter
-          disableColumnFilter
-          onRowClick={(params) => changeSymbol(params.row.symbol)}
-          loading={!supportedSymbols}
-        />
+        <List dense disablePadding sx={{ height: "100%", overflowY: "auto" }}>
+          {watchlistItems.map((item) => (
+            <ListItem dense disableGutters disablePadding divider>
+              <ListItemButton dense onClick={() => changeSymbol(item.symbol)}>
+                <ListItemText>{item.symbol}</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
       </TabPanel>
     </Box>
   );
