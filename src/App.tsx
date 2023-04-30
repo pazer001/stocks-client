@@ -28,10 +28,10 @@ function App() {
         sx={{ height: "100vh", width: "100%" }}
         direction="column"
       >
-        <Grid item sx={{ height: "6%" }}>
+        <Grid item sx={{ minHeight: "6vh" }}>
           <Toolbox />
         </Grid>
-        <Grid item sx={{ height: "94%" }}>
+        <Grid item sx={{ height: "94vh" }}>
           <Grid container spacing={1} sx={{ height: "100%" }}>
             <Grid item xs={9} md={9}>
               <Paper>
@@ -40,12 +40,12 @@ function App() {
             </Grid>
             <Grid item xs={3} md={3}>
               <Grid container direction="column">
-                <Grid item xs md sx={{ height: "50%" }}>
+                <Grid item xs md sx={{ height: "50vh" }}>
                   <Paper>
                     <SymbolsList />
                   </Paper>
                 </Grid>
-                <Grid item xs md sx={{ height: "44%" }}>
+                <Grid item xs md sx={{ height: "44vh" }}>
                   <Paper>
                     <SymbolInfo />
                   </Paper>

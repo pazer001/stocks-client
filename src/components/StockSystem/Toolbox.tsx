@@ -23,6 +23,7 @@ import {
   symbolAtom,
 } from "../../atoms/symbol";
 import Logo from "../../assets/symbata-high-resolution-logo-color-on-transparent-background.svg";
+import Grid from "@mui/material/Grid";
 
 const Toolbox = () => {
   const [symbol, setSymbol] = useRecoilState(symbolAtom);
@@ -34,13 +35,13 @@ const Toolbox = () => {
   return (
     <>
       <AppBar position="static">
-        <Container maxWidth="xl">
+        <Grid container>
           <Toolbar
             variant="dense"
             disableGutters
-            sx={{ justifyContent: "space-evenly" }}
+            sx={{ justifyContent: "space-around" }}
           >
-            <img src={Logo} width="8%" alt="Symdata" />
+            <img src={Logo} width="6%" alt="Symdata" />
             <Divider orientation="vertical" flexItem variant="middle" />
             <Box>
               <ToggleButtonGroup
@@ -105,7 +106,7 @@ const Toolbox = () => {
               </ToggleButtonGroup>
             </Box>
           </Toolbar>
-        </Container>
+        </Grid>
       </AppBar>
 
       <Dialog open={typeDialogOpen} onClose={() => setTypeDialogOpen(false)}>
