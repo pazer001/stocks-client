@@ -131,9 +131,7 @@ const SymbolsList = () => {
           }}
           getRowId={(row) => row.symbol}
           hideFooter
-          onRowClick={(params) =>
-            changeSymbol(params.row.symbol, params.row.intervals)
-          }
+          onRowClick={(params) => changeSymbol(params.row.symbol)}
           loading={!supportedSymbols}
           // slots={{ toolbar: GridToolbar }}
           // slotProps={{
@@ -181,9 +179,7 @@ const SymbolsList = () => {
           getRowId={(row) => row.symbol}
           hideFooter
           disableColumnFilter
-          onRowClick={(params) =>
-            changeSymbol(params.row.symbol, params.row.intervals)
-          }
+          onRowClick={(params) => changeSymbol(params.row.symbol)}
           loading={!supportedSymbols}
           // slots={{ toolbar: GridToolbar }}
           // slotProps={{
