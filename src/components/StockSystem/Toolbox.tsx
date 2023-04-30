@@ -2,25 +2,17 @@ import React, { useState } from "react";
 import {
   AppBar,
   Box,
-  Button,
   Container,
   Dialog,
   DialogContent,
   DialogContentText,
-  DialogTitle,
   Divider,
   IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   ToggleButton,
   ToggleButtonGroup,
   Toolbar,
   Typography,
 } from "@mui/material";
-import NotListedLocationRoundedIcon from "@mui/icons-material/NotListedLocationRounded";
-import FiberManualRecordRoundedIcon from "@mui/icons-material/FiberManualRecordRounded";
 import HelpCenterRoundedIcon from "@mui/icons-material/HelpCenterRounded";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -30,6 +22,7 @@ import {
   getPricesMode,
   symbolAtom,
 } from "../../atoms/symbol";
+import Logo from "../../assets/symbata-high-resolution-logo-color-on-transparent-background.svg";
 
 const Toolbox = () => {
   const [symbol, setSymbol] = useRecoilState(symbolAtom);
@@ -37,7 +30,6 @@ const Toolbox = () => {
   const interval = useRecoilValue(getInterval);
   const pricesMode = useRecoilValue(getPricesMode);
   const intervals = useRecoilValue(getIntervals);
-  const [helpDialogOpen, setHelpDialogOpen] = useState<boolean>(false);
   const [typeDialogOpen, setTypeDialogOpen] = useState<boolean>(false);
   return (
     <>
@@ -48,15 +40,7 @@ const Toolbox = () => {
             disableGutters
             sx={{ justifyContent: "space-evenly" }}
           >
-            <Box>
-              <Button
-                color="primary"
-                size="small"
-                onClick={() => setHelpDialogOpen(true)}
-              >
-                Help
-              </Button>
-            </Box>
+            <img src={Logo} width="8%" alt="Symdata" />
             <Divider orientation="vertical" flexItem variant="middle" />
             <Box>
               <ToggleButtonGroup
@@ -123,177 +107,6 @@ const Toolbox = () => {
           </Toolbar>
         </Container>
       </AppBar>
-      <Dialog
-        open={helpDialogOpen}
-        fullWidth
-        onClose={() => setHelpDialogOpen(false)}
-      >
-        <DialogTitle>Help</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            <Typography variant="h6">Phylosophy</Typography>
-            <Typography variant="body1">
-              Utilizing technical analysis in trading for any given symbol, we
-              employ a combination of multiple indicators (RSI, CCI, MA, ADL,
-              etc.) to establish a comprehensive strategy. There is a vast array
-              of strategies available, each with differing expert opinions
-              regarding their optimal settings. <br />
-              <br />
-              For instance, consider the following example: A proposed strategy
-              involves waiting for the closing price to surpass the 150-day
-              Simple Moving Average (SMA) indicator, with the Relative Strength
-              Index (RSI) being below 30.
-              <br />
-              <br />
-              This raises several questions:
-              <br />
-              <List dense disablePadding>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <NotListedLocationRoundedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Which expert's advice should be considered when selecting a strategy?"></ListItemText>
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <NotListedLocationRoundedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="What is the appropriate configuration for the chosen strategy?"></ListItemText>
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <NotListedLocationRoundedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Will these strategies and settings yield consistent results across different symbols?"></ListItemText>
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <NotListedLocationRoundedIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="When backtesting a strategy, should the focus be on the Win Rate or Profit?"></ListItemText>
-                </ListItem>
-              </List>
-              This tool is designed to provide assistance in addressing these
-              crucial questions.
-            </Typography>
-            <br />
-            <Typography variant="h6">How it work</Typography>
-            <Typography variant="body1">
-              Suppose we wish to analyze Tesla stock (TSLA) to determine whether
-              now is an opportune time to buy or sell. Our system processes TSLA
-              stock data through a series of stages to facilitate this decision:
-              <List dense disablePadding>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <FiberManualRecordRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="We retrieve the stock data for the past year." />
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <FiberManualRecordRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="We apply a range of predefined strategies to the stock data." />
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <FiberManualRecordRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="For each strategy, we test it against all possible parameter values. For instance, a strategy may have two parameters - the SMA period and the threshold. We examine every feasible permutation, such as [20, 1], [20, 2], [21, 1], [21, 2], and so on." />
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <FiberManualRecordRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="We perform backtests for each strategy, determining the optimal permutation based on the win rate and profit (individually). Numerous strategies and millions of permutations are evaluated during this process." />
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <FiberManualRecordRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="When analyzing a specific stock symbol, we process the most recent data by aggregating the results from all strategies (using the optimal permutation) to generate a score ranging from -100 to 100. The weight of each strategy in the formula is determined by its backtest win rate or profit. For example, a strategy with an 88 win rate would carry more weight than one with a 71 win rate." />
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <FiberManualRecordRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="We generate an indicator graph displaying score values between -100 and 100. A more positive score generally indicates a stronger signal to buy." />
-                </ListItem>
-                <ListItem dense>
-                  <ListItemIcon>
-                    <FiberManualRecordRoundedIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText primary="We conduct an additional backtest on the resulting graph to identify the optimal buy and sell thresholds that yield the highest win rate or profit based on historical data. These thresholds are represented by green and red lines, respectively." />
-                </ListItem>
-              </List>
-              By following these steps, our system provides a professional
-              analysis of TSLA stock to help inform your decision to buy or
-              sell.
-            </Typography>
-            <br />
-            <Typography variant="h6">Q/A</Typography>
-            <Typography variant="body1">
-              Does the tool truly function as intended?
-            </Typography>
-            <Typography variant="body2">
-              While I am not a clairvoyant and cannot predict the future, this
-              tool is designed for symbol analysis through testing strategies,
-              permutations, and combinations. It relies on historical data and
-              cannot forecast future events. If you have faith in its underlying
-              concept, you may give it a try.
-            </Typography>
-            <br />
-            <Typography variant="body1">
-              Could you explain how signals are generated, including the
-              strategies and permutations used?
-            </Typography>
-            <Typography variant="body2">
-              Certainly. When you select the indicator, you will find all
-              relevant details in the right-hand panel. This includes the
-              strategies recommending buy and sell actions. For further
-              information, click the "Info" button.
-            </Typography>
-            <br />
-            <Typography variant="body1">
-              Should I prioritize Win Rate or Profit?
-            </Typography>
-            <Typography variant="body2">
-              This question pertains to one's personal philosophy, and I am
-              unable to provide a definitive answer.
-            </Typography>
-            <br />
-            <Typography variant="body1">
-              Why do all backtests only use one year of data?
-            </Typography>
-            <Typography variant="body2">
-              After testing the tool against multiple symbols with a range of 1
-              to 15 years, it was determined that the most optimal results
-              occurred within a one-year timeframe.
-            </Typography>
-            <br />
-            <Typography variant="body1">
-              Why can't I analyze all market stocks?{" "}
-            </Typography>
-            <Typography variant="body2">
-              The analysis of a single stock demands significant computational
-              resources. Consequently, the tool randomly selects a symbol for
-              analysis each time. As time progresses, more symbols will be added
-              to the pool.
-            </Typography>
-            <br />
-            <Typography variant="body1">Is the data current?</Typography>
-            <Typography variant="body2">
-              The symbol's data is up-to-date, and the indicator displayed on
-              the graph reflects the most recent score. However, the list of
-              tested strategies and chosen permutations is not current, as the
-              analysis for each symbol is time-consuming. Therefore, the
-              underlying analysis results are based on the date when the symbol
-              was last analyzed. Nonetheless, the discrepancy should be
-              relatively minor.
-            </Typography>
-          </DialogContentText>
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={typeDialogOpen} onClose={() => setTypeDialogOpen(false)}>
         <DialogContent>

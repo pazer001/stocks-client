@@ -61,8 +61,6 @@ const API_HOST = import.meta.env.VITE_API_HOST;
 const SymbolsList = () => {
   const { changeSymbol } = useSymbol();
   const [tab, setTab] = React.useState(0);
-  const [openSymbolChooser, setOpenSymbolChooser] =
-    React.useState<boolean>(false);
 
   const [supportedSymbols, setSupportedSymbols] = useState<Array<ISymbol>>([]);
   const [watchlistItems, setWatchlistItems] = useState<Array<ISymbol>>([]);
@@ -97,6 +95,8 @@ const SymbolsList = () => {
     };
     getInitialLists();
   }, []);
+
+  const [openSymbolChooser, setOpenSymbolChooser] = useState<boolean>(false);
 
   return (
     <Box sx={{ height: "100%" }}>
@@ -133,27 +133,21 @@ const SymbolsList = () => {
           hideFooter
           onRowClick={(params) => changeSymbol(params.row.symbol)}
           loading={!supportedSymbols}
-          // slots={{ toolbar: GridToolbar }}
-          // slotProps={{
-          //   toolbar: {
-          //     showQuickFilter: true,
-          //     quickFilterProps: { debounceMs: 500 },
-          //   },
-          // }}
         />
       </TabPanel>
       <TabPanel value={tab} index={1}>
         <IconButton onClick={() => setOpenSymbolChooser(true)}>
           <AddCircleOutlineRoundedIcon fontSize="small" />
-          <SymbolChooser
-            open={openSymbolChooser}
-            onClose={() => setOpenSymbolChooser(false)}
-            onConfirm={(ids: string[]) => {
-              setOpenSymbolChooser(false);
-              addWatchlistSymbols(ids);
-            }}
-          />
         </IconButton>
+        <SymbolChooser
+          open={openSymbolChooser}
+          onClose={() => setOpenSymbolChooser(false)}
+          onConfirm={(ids: string[]) => {
+            setOpenSymbolChooser((prevState) => false);
+            addWatchlistSymbols(ids);
+          }}
+        />
+
         <DataGrid
           sx={{ height: "91%" }}
           density="compact"
@@ -181,13 +175,6 @@ const SymbolsList = () => {
           disableColumnFilter
           onRowClick={(params) => changeSymbol(params.row.symbol)}
           loading={!supportedSymbols}
-          // slots={{ toolbar: GridToolbar }}
-          // slotProps={{
-          //   toolbar: {
-          //     showQuickFilter: true,
-          //     quickFilterProps: { debounceMs: 500 },
-          //   },
-          // }}
         />
       </TabPanel>
     </Box>
