@@ -110,9 +110,9 @@ export const symbolAtom = atom({
     symbolData: undefined,
     selectedSignal: 0,
     settings: {
-      byType: "byWinRate",
+      byType: "byProfit",
       interval: "1d",
-      intervals: [],
+      intervals: ["1d"],
       pricesMode: "normal",
     },
   } as ISymbolState,
@@ -178,19 +178,14 @@ export const useSymbol = () => {
   const [symbol, setSymbolState] = useRecoilState(symbolAtom);
   const { interval } = symbol.settings;
 
-  const changeSymbol = (
-    symbol: string,
-    intervals: Array<"1d" | "1wk" | "1mo">
-  ) => {
-    const newInterval = intervals.includes(interval) ? interval : intervals[0];
+  const changeSymbol = (symbol: string) => {
+    // const newInterval = intervals.includes(interval) ? interval : intervals[0];
 
     setSymbolState((prevSymbolState) => ({
       ...prevSymbolState,
       selectedSymbol: symbol,
       settings: {
         ...prevSymbolState.settings,
-        interval: newInterval,
-        intervals,
       },
     }));
   };

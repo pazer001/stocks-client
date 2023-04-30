@@ -83,131 +83,149 @@ const Chart = () => {
     if (!symbol) return;
 
     mainLoaderShow(true);
-    const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-      `${API_HOST}/analyze/analyzedResult/${symbol}/${interval}/${byType}/${pricesMode}`
-    );
-    if (!symbolAnalyze.data.prices.length) {
+    try {
+      const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
+        `${API_HOST}/analyze/analyzedResult/${symbol}/${interval}/${byType}/${pricesMode}`
+      );
+      if (!symbolAnalyze.data.prices.length) {
+        setSymbol((prevSymbolState) => ({
+          ...prevSymbolState,
+          symbolData: undefined,
+          selectedSignal: 0,
+        }));
+
+        setAlert(
+          true,
+          "Error occured while trying to load data for this stock"
+        );
+        mainLoaderShow(false);
+        return;
+      }
+
+      setAlert(false);
+      setSymbol((prevSymbolState) => ({
+        ...prevSymbolState,
+        symbolData: symbolAnalyze.data,
+        selectedSignal: symbolAnalyze.data.prices.length - 1,
+      }));
+
+      setStockChartOptions((prevStockChartOptions) => ({
+        ...prevStockChartOptions,
+        title: {
+          text: `${symbol} Chart`,
+        },
+        yAxis: [
+          {
+            labels: {
+              align: "right",
+              x: -3,
+            },
+            title: {
+              text: "Stock",
+            },
+            height: "60%",
+            lineWidth: 2,
+            resize: {
+              enabled: true,
+            },
+          },
+          {
+            labels: {
+              align: "right",
+              x: -3,
+            },
+            title: {
+              text: "Win Rate Score",
+            },
+            top: "65%",
+            height: "40%",
+            offset: 0,
+            lineWidth: 2,
+            plotLines: [
+              {
+                value:
+                  symbolAnalyze.data.recommendationBacktest?.bestPermutation
+                    .minBuy,
+                color: "green",
+                dashStyle: "shortdash",
+                width: 2,
+                label: {
+                  text: "Buy",
+                  color: "white",
+                },
+              },
+              {
+                value:
+                  symbolAnalyze.data.recommendationBacktest?.bestPermutation
+                    .minSell,
+                color: "red",
+                dashStyle: "shortdash",
+                width: 2,
+                label: {
+                  text: "Sell",
+                  color: "white",
+                },
+              },
+            ],
+          },
+        ],
+
+        series: [
+          {
+            id: "prices",
+            upColor: `green`,
+            // downColor: "red",
+            type: "candlestick",
+            name: symbol,
+            data: symbolAnalyze.data.prices.map((data) => [
+              data.point.timestamp,
+              data.point.open,
+              data.point.high,
+              data.point.low,
+              data.point.close,
+            ]),
+            yAxis: 0,
+            allowPointSelect: true,
+            colors: symbolAnalyze.data.prices.map((data, index) => {
+              if (
+                symbolAnalyze.data.prices[index - 1] &&
+                symbolAnalyze.data.prices[index].point.close >
+                  symbolAnalyze.data.prices[index - 1].point.close
+              ) {
+                return `green`;
+              } else {
+                return `red`;
+              }
+            }),
+          },
+          {
+            type: "area",
+            name: "Score",
+            data: symbolAnalyze.data.prices.map((data) => [
+              data.point.timestamp,
+              Number(data.recommendation.score),
+            ]),
+            yAxis: 1,
+          },
+        ],
+      }));
+
+      mainLoaderShow(false);
+      return symbolAnalyze.data;
+    } catch (e) {
+      console.error(e);
       setSymbol((prevSymbolState) => ({
         ...prevSymbolState,
         symbolData: undefined,
         selectedSignal: 0,
       }));
 
-      setAlert(true, "Error occured while trying to load data for this stock");
+      setAlert(
+        true,
+        "This symbol not analyzed yet but it's in our list to analyzed, so stay tuned."
+      );
       mainLoaderShow(false);
-      return;
     }
-
-    setAlert(false);
-    setSymbol((prevSymbolState) => ({
-      ...prevSymbolState,
-      symbolData: symbolAnalyze.data,
-      selectedSignal: symbolAnalyze.data.prices.length - 1,
-    }));
-
-    setStockChartOptions((prevStockChartOptions) => ({
-      ...prevStockChartOptions,
-      title: {
-        text: `${symbol} Chart`,
-      },
-      yAxis: [
-        {
-          labels: {
-            align: "right",
-            x: -3,
-          },
-          title: {
-            text: "Stock",
-          },
-          height: "60%",
-          lineWidth: 2,
-          resize: {
-            enabled: true,
-          },
-        },
-        {
-          labels: {
-            align: "right",
-            x: -3,
-          },
-          title: {
-            text: "Win Rate Score",
-          },
-          top: "65%",
-          height: "40%",
-          offset: 0,
-          lineWidth: 2,
-          plotLines: [
-            {
-              value:
-                symbolAnalyze.data.recommendationBacktest?.bestPermutation
-                  .minBuy,
-              color: "green",
-              dashStyle: "shortdash",
-              width: 2,
-              label: {
-                text: "Buy",
-                color: "white",
-              },
-            },
-            {
-              value:
-                symbolAnalyze.data.recommendationBacktest?.bestPermutation
-                  .minSell,
-              color: "red",
-              dashStyle: "shortdash",
-              width: 2,
-              label: {
-                text: "Sell",
-                color: "white",
-              },
-            },
-          ],
-        },
-      ],
-
-      series: [
-        {
-          id: "prices",
-          upColor: `green`,
-          // downColor: "red",
-          type: "candlestick",
-          name: symbol,
-          data: symbolAnalyze.data.prices.map((data) => [
-            data.point.timestamp,
-            data.point.open,
-            data.point.high,
-            data.point.low,
-            data.point.close,
-          ]),
-          yAxis: 0,
-          allowPointSelect: true,
-          colors: symbolAnalyze.data.prices.map((data, index) => {
-            if (
-              symbolAnalyze.data.prices[index - 1] &&
-              symbolAnalyze.data.prices[index].point.close >
-                symbolAnalyze.data.prices[index - 1].point.close
-            ) {
-              return `green`;
-            } else {
-              return `red`;
-            }
-          }),
-        },
-        {
-          type: "area",
-          name: "Score",
-          data: symbolAnalyze.data.prices.map((data) => [
-            data.point.timestamp,
-            Number(data.recommendation.score),
-          ]),
-          yAxis: 1,
-        },
-      ],
-    }));
-
-    mainLoaderShow(false);
-    return symbolAnalyze.data;
   };
 
   useEffect(() => {
