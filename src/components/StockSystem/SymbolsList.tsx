@@ -116,7 +116,13 @@ const SymbolsList = () => {
       <TabPanel value={tab} index={0}>
         <List dense disablePadding sx={{ height: "100%", overflowY: "auto" }}>
           {supportedSymbols.map((item) => (
-            <ListItem dense disableGutters disablePadding divider>
+            <ListItem
+              key={item._id}
+              dense
+              disableGutters
+              disablePadding
+              divider
+            >
               <ListItemButton dense onClick={() => changeSymbol(item.symbol)}>
                 <ListItemText>{item.symbol}</ListItemText>
               </ListItemButton>
@@ -166,7 +172,13 @@ const SymbolsList = () => {
 
         <List dense disablePadding sx={{ height: "100%", overflowY: "auto" }}>
           {watchlistItems.map((item) => (
-            <ListItem dense disableGutters disablePadding divider>
+            <ListItem
+              key={item._id}
+              dense
+              disableGutters
+              disablePadding
+              divider
+            >
               <ListItemButton dense onClick={() => changeSymbol(item.symbol)}>
                 <ListItemText>{item.symbol}</ListItemText>
               </ListItemButton>

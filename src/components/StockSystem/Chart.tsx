@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import HighchartsStock from "highcharts/highstock";
 import {
@@ -32,10 +32,15 @@ const Chart = () => {
 
   const [stockChartOptions, setStockChartOptions] = useState({
     chart: {
-      height: `54%`,
+      height: `58%`,
+
       zooming: {
         type: "xy",
       },
+      panning: {
+        enabled: true,
+      },
+      panKey: "ctrl",
     },
     plotOptions: {
       candlestick: {
@@ -75,6 +80,15 @@ const Chart = () => {
       },
     },
   });
+  const chartRef = useRef<HighchartsReact.RefObject>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (chartRef.current && chartRef.current.chart) {
+        chartRef.current.chart.reflow();
+      }
+    }, 0);
+  }, []);
 
   const analyzeSymbol = async (
     symbol: string,
@@ -242,6 +256,7 @@ const Chart = () => {
           constructorType={"stockChart"}
           highcharts={HighchartsStock}
           options={stockChartOptions}
+          ref={chartRef}
         />
       </>
     ),

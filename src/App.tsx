@@ -34,7 +34,7 @@ function App() {
         <Grid item sx={{ height: "94vh" }}>
           <Grid container spacing={1} sx={{ height: "100%" }}>
             <Grid item xs={9} md={9}>
-              <Paper>
+              <Paper sx={{ height: "100%", width: "100%" }}>
                 <Chart />
               </Paper>
             </Grid>
