@@ -50,10 +50,15 @@ const SymbolChooser = (props: ISymbolChooserProps) => {
       <DialogTitle>Choose symbol</DialogTitle>
       <DialogContent sx={{ minHeight: 400 }}>
         <TextField
+          autoFocus
           size="small"
           fullWidth
           label="Symbol search"
+          margin="dense"
           onChange={debounce((e) => searchSymbols(e.target.value))}
+          inputProps={{
+            style: { textTransform: "uppercase" },
+          }}
         />
 
         <DataGrid

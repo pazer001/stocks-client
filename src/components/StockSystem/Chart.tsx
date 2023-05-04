@@ -16,11 +16,14 @@ import axios, { AxiosResponse } from "axios";
 import { useViewActions } from "../../atoms/view";
 import HSIndicators from "highcharts/indicators/indicators.js";
 import { Button } from "@mui/material";
+import styled from "@emotion/styled";
 
 AnnotationsModule(HighchartsStock);
 HighContrastDark(HighchartsStock);
 HSIndicators(HighchartsStock);
 const API_HOST = import.meta.env.VITE_API_HOST;
+
+const ChartContainer = styled.div``;
 
 const Chart = () => {
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
@@ -87,7 +90,7 @@ const Chart = () => {
       if (chartRef.current && chartRef.current.chart) {
         chartRef.current.chart.reflow();
       }
-    }, 0);
+    }, 100);
   }, []);
 
   const analyzeSymbol = async (
@@ -193,10 +196,10 @@ const Chart = () => {
             name: symbol,
             data: symbolAnalyze.data.prices.map((data) => [
               data.point.timestamp,
-              data.point.open,
-              data.point.high,
-              data.point.low,
-              data.point.close,
+              Number(data.point.open.toFixed(3)),
+              Number(data.point.high.toFixed(3)),
+              Number(data.point.low.toFixed(3)),
+              Number(data.point.close.toFixed(3)),
             ]),
             yAxis: 0,
             allowPointSelect: true,
@@ -248,7 +251,7 @@ const Chart = () => {
 
   return useMemo(
     () => (
-      <>
+      <ChartContainer>
         <Button onClick={() => analyzeSymbol(selectedSymbol, byType)}>
           Refresh
         </Button>
@@ -258,7 +261,7 @@ const Chart = () => {
           options={stockChartOptions}
           ref={chartRef}
         />
-      </>
+      </ChartContainer>
     ),
     [stockChartOptions]
   );

@@ -8,11 +8,13 @@ import {
   ListItemText,
   Tab,
   Tabs,
+  TextField,
 } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import axios, { AxiosResponse } from "axios";
 import { useSymbol } from "../../atoms/symbol";
 import SymbolChooser from "./SymbolChooser";
+import Grid from "@mui/material/Grid";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -68,42 +70,9 @@ const API_HOST = import.meta.env.VITE_API_HOST;
 const SymbolsList = () => {
   const { changeSymbol } = useSymbol();
   const [tab, setTab] = React.useState(0);
-
-  const [supportedSymbols, setSupportedSymbols] = useState<Array<ISymbol>>([]);
-  const [watchlistItems, setWatchlistItems] = useState<Array<ISymbol>>([]);
-
   const moveTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
   };
-
-  const addWatchlistSymbols = async (symbols: Array<string>) => {
-    await axios.post(`${API_HOST}/watchlist/items`, symbols);
-
-    const watchListItemsResult = await axios.get(`${API_HOST}/watchlist/items`);
-    setWatchlistItems(watchListItemsResult.data);
-  };
-
-  useEffect(() => {
-    const getInitialLists = async () => {
-      const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
-        await axios.get(`${API_HOST}/analyze/supportedSymbols`);
-
-      setSupportedSymbols(
-        supportedSymbolsResult.data.map((symbolData) => ({
-          ...symbolData,
-          id: symbolData._id,
-        }))
-      );
-
-      const watchListItemsResult = await axios.get(
-        `${API_HOST}/watchlist/items`
-      );
-      setWatchlistItems(watchListItemsResult.data);
-    };
-    getInitialLists();
-  }, []);
-
-  const [openSymbolChooser, setOpenSymbolChooser] = useState<boolean>(false);
 
   return (
     <Box sx={{ height: "100%" }}>
@@ -114,8 +83,54 @@ const SymbolsList = () => {
         </Tabs>
       </Box>
       <TabPanel value={tab} index={0}>
-        <List dense disablePadding sx={{ height: "100%", overflowY: "auto" }}>
-          {supportedSymbols.map((item) => (
+        <RandomSymbols />
+      </TabPanel>
+      <TabPanel value={tab} index={1}>
+        <WatchlistSymbols />
+      </TabPanel>
+    </Box>
+  );
+};
+
+const RandomSymbols = () => {
+  const { changeSymbol } = useSymbol();
+  const [supportedSymbols, setSupportedSymbols] = useState<Array<ISymbol>>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const filteredSymbols = useMemo(
+    () =>
+      searchTerm
+        ? supportedSymbols.filter((supportedSymbol) =>
+            supportedSymbol.symbol.includes(searchTerm.toUpperCase())
+          )
+        : supportedSymbols,
+    [searchTerm, supportedSymbols]
+  );
+
+  const getRandomSymbols = async () => {
+    const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
+      await axios.get(`${API_HOST}/analyze/supportedSymbols`);
+    setSupportedSymbols(supportedSymbolsResult.data);
+  };
+
+  useEffect(() => {
+    getRandomSymbols();
+  }, []);
+  return useMemo(
+    () => (
+      <Box height={{ height: "100%" }}>
+        <TextField
+          label="Search symbol"
+          fullWidth
+          margin="dense"
+          size="small"
+          onChange={(event) => setSearchTerm(event.target.value)}
+          inputProps={{
+            style: { textTransform: "uppercase" },
+          }}
+        />
+        <List dense disablePadding sx={{ height: "86%", overflowY: "auto" }}>
+          {filteredSymbols.map((item) => (
             <ListItem
               key={item._id}
               dense
@@ -129,38 +144,64 @@ const SymbolsList = () => {
             </ListItem>
           ))}
         </List>
-        {/*<DataGrid*/}
-        {/*  sx={{ height: "100%" }}*/}
-        {/*  density="compact"*/}
-        {/*  columns={[*/}
-        {/*    {*/}
-        {/*      field: "symbol",*/}
-        {/*      headerName: "Symbol",*/}
-        {/*      description: "Symbol",*/}
-        {/*      type: "string",*/}
-        {/*    },*/}
-        {/*  ]}*/}
-        {/*  rows={supportedSymbols}*/}
-        {/*  initialState={{*/}
-        {/*    columns: {*/}
-        {/*      columnVisibilityModel: {*/}
-        {/*        fullExchangeName: false,*/}
-        {/*        longName: false,*/}
-        {/*        region: false,*/}
-        {/*        displayName: false,*/}
-        {/*      },*/}
-        {/*    },*/}
-        {/*  }}*/}
-        {/*  getRowId={(row) => row.symbol}*/}
-        {/*  hideFooter*/}
-        {/*  onRowClick={(params) => changeSymbol(params.row.symbol)}*/}
-        {/*  loading={!supportedSymbols}*/}
-        {/*/>*/}
-      </TabPanel>
-      <TabPanel value={tab} index={1}>
-        <IconButton onClick={() => setOpenSymbolChooser(true)}>
-          <AddCircleOutlineRoundedIcon fontSize="small" />
-        </IconButton>
+      </Box>
+    ),
+    [filteredSymbols]
+  );
+};
+
+const WatchlistSymbols = () => {
+  const { changeSymbol } = useSymbol();
+  const [watchlistItems, setWatchlistItems] = useState<Array<ISymbol>>([]);
+  const [openSymbolChooser, setOpenSymbolChooser] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const filteredSymbols = useMemo(
+    () =>
+      searchTerm
+        ? watchlistItems.filter((supportedSymbol) =>
+            supportedSymbol.symbol.includes(searchTerm.toUpperCase())
+          )
+        : watchlistItems,
+    [searchTerm, watchlistItems]
+  );
+
+  const getWatchlistSymbols = async () => {
+    const watchListItemsResult = await axios.get(`${API_HOST}/watchlist/items`);
+    setWatchlistItems(watchListItemsResult.data);
+  };
+
+  const addWatchlistSymbols = async (symbols: Array<string>) => {
+    await axios.post(`${API_HOST}/watchlist/items`, symbols);
+
+    const watchListItemsResult = await axios.get(`${API_HOST}/watchlist/items`);
+    setWatchlistItems(watchListItemsResult.data);
+  };
+
+  useEffect(() => {
+    getWatchlistSymbols();
+  }, []);
+
+  return useMemo(
+    () => (
+      <Box sx={{ height: "100%" }}>
+        <Grid container alignItems="center">
+          <Grid item>
+            <TextField
+              label="Search symbol"
+              margin="dense"
+              size="small"
+              onChange={(event) => setSearchTerm(event.target.value)}
+              inputProps={{
+                style: { textTransform: "uppercase" },
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <IconButton onClick={() => setOpenSymbolChooser(true)}>
+              <AddCircleOutlineRoundedIcon fontSize="small" />
+            </IconButton>
+          </Grid>
+        </Grid>
         <SymbolChooser
           open={openSymbolChooser}
           onClose={() => setOpenSymbolChooser(false)}
@@ -169,9 +210,8 @@ const SymbolsList = () => {
             addWatchlistSymbols(ids);
           }}
         />
-
-        <List dense disablePadding sx={{ height: "100%", overflowY: "auto" }}>
-          {watchlistItems.map((item) => (
+        <List dense disablePadding sx={{ height: "86%", overflowY: "auto" }}>
+          {filteredSymbols.map((item) => (
             <ListItem
               key={item._id}
               dense
@@ -185,8 +225,9 @@ const SymbolsList = () => {
             </ListItem>
           ))}
         </List>
-      </TabPanel>
-    </Box>
+      </Box>
+    ),
+    [filteredSymbols, openSymbolChooser]
   );
 };
 

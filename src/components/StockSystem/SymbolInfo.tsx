@@ -155,7 +155,7 @@ const SymbolInfo = () => {
         />
 
         {symbolData && (
-          <Card sx={{ overflowY: "scroll", height: "47vh" }}>
+          <Card>
             <CardHeader
               title="Indicator info"
               action={

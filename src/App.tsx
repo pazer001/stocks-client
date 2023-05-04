@@ -1,6 +1,6 @@
 import "./App.css";
 import React from "react";
-import { Alert, Box, Paper, Snackbar } from "@mui/material";
+import { Alert, Box, Divider, Paper, Snackbar } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
 import Chart from "./components/StockSystem/Chart";
@@ -40,13 +40,14 @@ function App() {
             </Grid>
             <Grid item xs={3} md={3}>
               <Grid container direction="column">
-                <Grid item xs md sx={{ height: "50vh" }}>
+                <Grid item xs md sx={{ height: "47vh" }}>
                   <Paper>
                     <SymbolsList />
                   </Paper>
                 </Grid>
-                <Grid item xs md sx={{ height: "44vh", paddingRight: "1px" }}>
-                  <Paper>
+                {/*<Divider />*/}
+                <Grid item xs md sx={{ height: "45vh", marginTop: "1vh" }}>
+                  <Paper sx={{ height: "100%", overflowY: "scroll" }}>
                     <SymbolInfo />
                   </Paper>
                 </Grid>
