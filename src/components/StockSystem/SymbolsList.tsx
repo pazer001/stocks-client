@@ -12,9 +12,10 @@ import {
 } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import axios, { AxiosResponse } from "axios";
-import { useSymbol } from "../../atoms/symbol";
+import { getByType, useSymbol } from "../../atoms/symbol";
 import SymbolChooser from "./SymbolChooser";
 import Grid from "@mui/material/Grid";
+import { useRecoilValue } from "recoil";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -42,33 +43,15 @@ function TabPanel(props: TabPanelProps) {
 
 export interface ISymbol {
   _id: string;
-  exchange: string;
   symbol: string;
-  currency: string;
-  esgPopulated: boolean;
-  exchangeTimezoneName: string;
-  exchangeTimezoneShortName: string;
-  financialCurrency: string;
-  firstTradeDateMilliseconds: number;
-  fullExchangeName: string;
-  gmtOffSetMilliseconds: number;
-  language: string;
-  longName: string;
-  market: string;
-  marketCap: number;
-  marketState: string;
-  quoteSourceName: string;
-  quoteType: string;
-  region: string;
-  shortName: string;
-  tradeable: boolean;
-  triggerable: boolean;
+  intervals: Array<string>;
+  mainScore: number;
+  updatedAt: string;
 }
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
 const SymbolsList = () => {
-  const { changeSymbol } = useSymbol();
   const [tab, setTab] = React.useState(0);
   const moveTab = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -78,7 +61,7 @@ const SymbolsList = () => {
     <Box sx={{ height: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={tab} onChange={moveTab}>
-          <Tab label="Random symbols" />
+          <Tab label="Suggested symbols" />
           <Tab label="My lists" />
         </Tabs>
       </Box>
@@ -94,23 +77,24 @@ const SymbolsList = () => {
 
 const RandomSymbols = () => {
   const { changeSymbol } = useSymbol();
-  const [supportedSymbols, setSupportedSymbols] = useState<Array<ISymbol>>([]);
+  const byType = useRecoilValue(getByType);
+  const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const filteredSymbols = useMemo(
     () =>
       searchTerm
-        ? supportedSymbols.filter((supportedSymbol) =>
+        ? suggestedSymbols.filter((supportedSymbol) =>
             supportedSymbol.symbol.includes(searchTerm.toUpperCase())
           )
-        : supportedSymbols,
-    [searchTerm, supportedSymbols]
+        : suggestedSymbols,
+    [searchTerm, suggestedSymbols]
   );
 
   const getRandomSymbols = async () => {
     const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
-      await axios.get(`${API_HOST}/analyze/supportedSymbols`);
-    setSupportedSymbols(supportedSymbolsResult.data);
+      await axios.get(`${API_HOST}/analyze/suggestedSymbols/${byType}`);
+    setSuggestedSymbols(supportedSymbolsResult.data);
   };
 
   useEffect(() => {
@@ -139,7 +123,10 @@ const RandomSymbols = () => {
               divider
             >
               <ListItemButton dense onClick={() => changeSymbol(item.symbol)}>
-                <ListItemText>{item.symbol}</ListItemText>
+                <ListItemText
+                  primary={item.symbol}
+                  secondary={`Suggest score: ${item.mainScore.toFixed(0)}`}
+                ></ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
