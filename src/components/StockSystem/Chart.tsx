@@ -90,7 +90,7 @@ const Chart = () => {
       if (chartRef.current && chartRef.current.chart) {
         chartRef.current.chart.reflow();
       }
-    }, 100);
+    }, 250);
   }, []);
 
   const analyzeSymbol = async (
@@ -166,10 +166,6 @@ const Chart = () => {
                 color: "green",
                 dashStyle: "shortdash",
                 width: 2,
-                label: {
-                  text: "Buy",
-                  color: "white",
-                },
               },
               {
                 value:
@@ -178,10 +174,6 @@ const Chart = () => {
                 color: "red",
                 dashStyle: "shortdash",
                 width: 2,
-                label: {
-                  text: "Sell",
-                  color: "white",
-                },
               },
             ],
           },
@@ -190,7 +182,7 @@ const Chart = () => {
         series: [
           {
             id: "prices",
-            upColor: `green`,
+            // upColor: `green`,
             // downColor: "red",
             type: "candlestick",
             name: symbol,
@@ -203,17 +195,12 @@ const Chart = () => {
             ]),
             yAxis: 0,
             allowPointSelect: true,
-            colors: symbolAnalyze.data.prices.map((data, index) => {
-              if (
-                symbolAnalyze.data.prices[index - 1] &&
-                symbolAnalyze.data.prices[index].point.close >
-                  symbolAnalyze.data.prices[index - 1].point.close
-              ) {
-                return `green`;
-              } else {
-                return `red`;
-              }
-            }),
+            // colors: symbolAnalyze.data.prices.map((data, index) =>
+            //   symbolAnalyze.data.prices[index].point.close >
+            //   symbolAnalyze.data.prices[index].point.open
+            //     ? "green"
+            //     : "red"
+            // ),
           },
           {
             type: "area",

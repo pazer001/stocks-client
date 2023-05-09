@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
+  Avatar,
   Box,
   IconButton,
   List,
@@ -16,6 +17,7 @@ import { getByType, useSymbol } from "../../atoms/symbol";
 import SymbolChooser from "./SymbolChooser";
 import Grid from "@mui/material/Grid";
 import { useRecoilValue } from "recoil";
+import { Intervals } from "./enums/Interval";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,7 +46,7 @@ function TabPanel(props: TabPanelProps) {
 export interface ISymbol {
   _id: string;
   symbol: string;
-  intervals: Array<string>;
+  intervals: Array<Intervals>;
   mainScore: number;
   updatedAt: string;
 }
@@ -122,10 +124,15 @@ const RandomSymbols = () => {
               disablePadding
               divider
             >
-              <ListItemButton dense onClick={() => changeSymbol(item.symbol)}>
+              <ListItemButton
+                dense
+                onClick={() => changeSymbol(item.symbol, item.intervals)}
+              >
                 <ListItemText
                   primary={item.symbol}
-                  secondary={`Suggest score: ${item.mainScore.toFixed(0)}`}
+                  secondary={`Suggest score: ${
+                    item.mainScore && item.mainScore.toFixed(0)
+                  }`}
                 ></ListItemText>
               </ListItemButton>
             </ListItem>
@@ -206,7 +213,10 @@ const WatchlistSymbols = () => {
               disablePadding
               divider
             >
-              <ListItemButton dense onClick={() => changeSymbol(item.symbol)}>
+              <ListItemButton
+                dense
+                onClick={() => changeSymbol(item.symbol, item.intervals)}
+              >
                 <ListItemText>{item.symbol}</ListItemText>
               </ListItemButton>
             </ListItem>
