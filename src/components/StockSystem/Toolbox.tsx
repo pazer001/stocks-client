@@ -79,7 +79,7 @@ const Toolbox = () => {
               >
                 {Boolean(intervals.length) &&
                   intervals.map((interval) => (
-                    <ToggleButton key={interval} value={interval}>
+                    <ToggleButton key={interval} value={interval} size="small">
                       {interval}
                     </ToggleButton>
                   ))}

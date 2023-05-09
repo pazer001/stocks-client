@@ -1,6 +1,5 @@
 import { atom, selector, useRecoilState } from "recoil";
-import { Interval } from "luxon";
-import { Intervals } from "../components/StockSystem/enums/Interval";
+import { Interval } from "../components/StockSystem/enums/Interval";
 
 interface Recommendation {
   buyCount: number;
@@ -99,8 +98,8 @@ interface ISymbolState {
   selectedSignal: number;
   settings: {
     byType: "byWinRate" | "byProfit";
-    interval: Intervals;
-    intervals: Array<Intervals>;
+    interval: Interval;
+    intervals: Array<Interval>;
     pricesMode: "normal" | "dividendsAdjusted";
   };
 }
@@ -180,15 +179,23 @@ export const useSymbol = () => {
   const [symbol, setSymbolState] = useRecoilState(symbolAtom);
   const { interval } = symbol.settings;
 
-  const changeSymbol = (symbol: string, intervals: Array<Intervals>) => {
+  const changeSymbol = (symbol: string, intervals: Array<Interval>) => {
     const newInterval = intervals.includes(interval) ? interval : intervals[0];
+    const newIntervals: Array<Interval> = [];
+    const systemIntervals = Object.values(Interval);
+
+    systemIntervals.forEach((systemInterval, index) => {
+      if (intervals.includes(systemInterval)) {
+        newIntervals.push(systemInterval);
+      }
+    });
 
     setSymbolState((prevSymbolState) => ({
       ...prevSymbolState,
       selectedSymbol: symbol,
       settings: {
         ...prevSymbolState.settings,
-        intervals: intervals,
+        intervals: newIntervals,
         interval: newInterval,
       },
     }));

@@ -195,12 +195,12 @@ const Chart = () => {
             ]),
             yAxis: 0,
             allowPointSelect: true,
-            // colors: symbolAnalyze.data.prices.map((data, index) =>
-            //   symbolAnalyze.data.prices[index].point.close >
-            //   symbolAnalyze.data.prices[index].point.open
-            //     ? "green"
-            //     : "red"
-            // ),
+            colors: symbolAnalyze.data.prices.map((data, index) =>
+              symbolAnalyze.data.prices[index].point.close >
+              symbolAnalyze.data.prices[index].point.open
+                ? "green"
+                : "red"
+            ),
           },
           {
             type: "area",

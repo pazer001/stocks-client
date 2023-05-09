@@ -13,11 +13,11 @@ import {
 } from "@mui/material";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import axios, { AxiosResponse } from "axios";
-import { getByType, useSymbol } from "../../atoms/symbol";
+import { getByType, getInterval, useSymbol } from "../../atoms/symbol";
 import SymbolChooser from "./SymbolChooser";
 import Grid from "@mui/material/Grid";
 import { useRecoilValue } from "recoil";
-import { Intervals } from "./enums/Interval";
+import { Interval } from "./enums/Interval";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -46,7 +46,7 @@ function TabPanel(props: TabPanelProps) {
 export interface ISymbol {
   _id: string;
   symbol: string;
-  intervals: Array<Intervals>;
+  intervals: Array<Interval>;
   mainScore: number;
   updatedAt: string;
 }
@@ -79,6 +79,7 @@ const SymbolsList = () => {
 
 const RandomSymbols = () => {
   const { changeSymbol } = useSymbol();
+  const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -95,13 +96,15 @@ const RandomSymbols = () => {
 
   const getRandomSymbols = async () => {
     const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
-      await axios.get(`${API_HOST}/analyze/suggestedSymbols/${byType}`);
+      await axios.get(
+        `${API_HOST}/analyze/suggestedSymbols/${interval}/${byType}`
+      );
     setSuggestedSymbols(supportedSymbolsResult.data);
   };
 
   useEffect(() => {
     getRandomSymbols();
-  }, []);
+  }, [interval, byType]);
   return useMemo(
     () => (
       <Box height={{ height: "100%" }}>
