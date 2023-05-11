@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Avatar,
   Box,
@@ -10,14 +10,14 @@ import {
   Tab,
   Tabs,
   TextField,
-} from "@mui/material";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import axios, { AxiosResponse } from "axios";
-import { getByType, getInterval, useSymbol } from "../../atoms/symbol";
-import SymbolChooser from "./SymbolChooser";
-import Grid from "@mui/material/Grid";
-import { useRecoilValue } from "recoil";
-import { Interval } from "./enums/Interval";
+} from '@mui/material';
+import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
+import axios, { AxiosResponse } from 'axios';
+import { getByType, getInterval, useSymbol } from '../../atoms/symbol';
+import SymbolChooser from './SymbolChooser';
+import Grid from '@mui/material/Grid';
+import { useRecoilValue } from 'recoil';
+import { Interval } from './enums/Interval';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -30,7 +30,7 @@ function TabPanel(props: TabPanelProps) {
 
   return (
     <div
-      role="tabpanel"
+      role='tabpanel'
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
@@ -60,11 +60,11 @@ const SymbolsList = () => {
   };
 
   return (
-    <Box sx={{ height: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+    <Box sx={{ height: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tab} onChange={moveTab}>
-          <Tab label="Suggested symbols" />
-          <Tab label="My lists" />
+          <Tab label='Suggested symbols' />
+          <Tab label='My lists' />
         </Tabs>
       </Box>
       <TabPanel value={tab} index={0}>
@@ -82,22 +82,22 @@ const RandomSymbols = () => {
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const filteredSymbols = useMemo(
     () =>
       searchTerm
         ? suggestedSymbols.filter((supportedSymbol) =>
-            supportedSymbol.symbol.includes(searchTerm.toUpperCase())
-          )
+          supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
+        )
         : suggestedSymbols,
-    [searchTerm, suggestedSymbols]
+    [searchTerm, suggestedSymbols],
   );
 
   const getRandomSymbols = async () => {
     const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
       await axios.get(
-        `${API_HOST}/analyze/suggestedSymbols/${interval}/${byType}`
+        `${API_HOST}/analyze/suggestedSymbols/${interval}/${byType}`,
       );
     setSuggestedSymbols(supportedSymbolsResult.data);
   };
@@ -107,18 +107,18 @@ const RandomSymbols = () => {
   }, [interval, byType]);
   return useMemo(
     () => (
-      <Box height={{ height: "100%" }}>
+      <Box height={{ height: '100%' }}>
         <TextField
-          label="Search symbol"
+          label='Search symbol'
           fullWidth
-          margin="dense"
-          size="small"
+          margin='dense'
+          size='small'
           onChange={(event) => setSearchTerm(event.target.value)}
           inputProps={{
-            style: { textTransform: "uppercase" },
+            style: { textTransform: 'uppercase' },
           }}
         />
-        <List dense disablePadding sx={{ height: "86%", overflowY: "auto" }}>
+        <List dense disablePadding sx={{ height: '86%', overflowY: 'auto' }}>
           {filteredSymbols.map((item) => (
             <ListItem
               key={item._id}
@@ -143,32 +143,34 @@ const RandomSymbols = () => {
         </List>
       </Box>
     ),
-    [filteredSymbols]
+    [filteredSymbols],
   );
 };
 
 const WatchlistSymbols = () => {
   const { changeSymbol } = useSymbol();
+  const interval = useRecoilValue(getInterval);
+  const byType = useRecoilValue(getByType);
   const [watchlistItems, setWatchlistItems] = useState<Array<ISymbol>>([]);
   const [openSymbolChooser, setOpenSymbolChooser] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const filteredSymbols = useMemo(
     () =>
       searchTerm
         ? watchlistItems.filter((supportedSymbol) =>
-            supportedSymbol.symbol.includes(searchTerm.toUpperCase())
-          )
+          supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
+        )
         : watchlistItems,
-    [searchTerm, watchlistItems]
+    [searchTerm, watchlistItems],
   );
 
   const getWatchlistSymbols = async () => {
-    const watchListItemsResult = await axios.get(`${API_HOST}/watchlist/items`);
+    const watchListItemsResult = await axios.get(`${API_HOST}/analyze/watchlist/${interval}/${byType}`);
     setWatchlistItems(watchListItemsResult.data);
   };
 
   const addWatchlistSymbols = async (symbols: Array<string>) => {
-    await axios.post(`${API_HOST}/watchlist/items`, symbols);
+    await axios.post(`${API_HOST}/analyze/watchlist/items`, symbols);
 
     const watchListItemsResult = await axios.get(`${API_HOST}/watchlist/items`);
     setWatchlistItems(watchListItemsResult.data);
@@ -180,22 +182,22 @@ const WatchlistSymbols = () => {
 
   return useMemo(
     () => (
-      <Box sx={{ height: "100%" }}>
-        <Grid container alignItems="center">
+      <Box sx={{ height: '100%' }}>
+        <Grid container alignItems='center'>
           <Grid item>
             <TextField
-              label="Search symbol"
-              margin="dense"
-              size="small"
+              label='Search symbol'
+              margin='dense'
+              size='small'
               onChange={(event) => setSearchTerm(event.target.value)}
               inputProps={{
-                style: { textTransform: "uppercase" },
+                style: { textTransform: 'uppercase' },
               }}
             />
           </Grid>
           <Grid item>
             <IconButton onClick={() => setOpenSymbolChooser(true)}>
-              <AddCircleOutlineRoundedIcon fontSize="small" />
+              <AddCircleOutlineRoundedIcon fontSize='small' />
             </IconButton>
           </Grid>
         </Grid>
@@ -207,7 +209,7 @@ const WatchlistSymbols = () => {
             addWatchlistSymbols(ids);
           }}
         />
-        <List dense disablePadding sx={{ height: "86%", overflowY: "auto" }}>
+        <List dense disablePadding sx={{ height: '86%', overflowY: 'auto' }}>
           {filteredSymbols.map((item) => (
             <ListItem
               key={item._id}
@@ -220,14 +222,16 @@ const WatchlistSymbols = () => {
                 dense
                 onClick={() => changeSymbol(item.symbol, item.intervals)}
               >
-                <ListItemText>{item.symbol}</ListItemText>
+                <ListItemText primary={item.symbol} secondary={`Suggest score: ${
+                  item.mainScore && item.mainScore.toFixed(0)
+                }`}></ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
         </List>
       </Box>
     ),
-    [filteredSymbols, openSymbolChooser]
+    [filteredSymbols, openSymbolChooser],
   );
 };
 
