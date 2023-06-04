@@ -25,6 +25,8 @@ import {
   getSymbolData,
 } from "../../atoms/symbol";
 import axios from "axios";
+// @ts-ignore
+import * as percentage from 'calculate-percentages';
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
@@ -71,15 +73,15 @@ const SymbolInfo = () => {
         symbolData.prices[symbolData.prices.length - 1].recommendation;
 
       if (currentRecommendation.score > minBuy) {
-        return `Strong buy`;
+        return `Buy`;
       } else if (currentRecommendation.score > 0) {
         return `Buy`;
       } else if (currentRecommendation.score < minSell) {
-        return `Strong sell`;
+        return `Sell`;
       } else if (currentRecommendation.score < 0) {
         return `Sell`;
       } else {
-        return `Hold`;
+        return `No decision`;
       }
     } else {
       return `Not enough data`;
@@ -98,6 +100,8 @@ const SymbolInfo = () => {
 
     return totalScannedPermutation.toLocaleString("en-US");
   };
+
+
 
   return useMemo(
     () => (
@@ -190,11 +194,19 @@ const SymbolInfo = () => {
                     {symbolData?.recommendationBacktest.totalTrades} trades
                   </Typography>
                   <Typography>
-                    <b>Total scaned permutations: </b>
-                    {getTotalScannedPermutations(
-                      symbolData.analyzedResult.results[priceMode][byType]
-                    )}
+                    <b>Stop loss: </b>
+                    {(symbolData.prices[symbolData.prices.length - 1].point.close - symbolData.prices[symbolData.prices.length - 1].recommendation.stopLoss).toFixed(2)}
                   </Typography>
+                  <Typography>
+                    <b>Stop loss percentage: </b>
+                    {percentage.differenceBetween(symbolData.prices[symbolData.prices.length - 1].recommendation.stopLoss.toFixed(2), symbolData.prices[symbolData.prices.length - 1].point.close).toFixed(2)}%
+                  </Typography>
+                  {/*<Typography>*/}
+                  {/*  <b>Total scaned permutations: </b>*/}
+                  {/*  {getTotalScannedPermutations(*/}
+                  {/*    symbolData.analyzedResult.results[priceMode][byType]*/}
+                  {/*  )}*/}
+                  {/*</Typography>*/}
                 </>
               }
               <br />

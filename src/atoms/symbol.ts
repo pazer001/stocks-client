@@ -8,6 +8,7 @@ interface Recommendation {
   sellReasons: Array<string>;
   buySellSum: number;
   score: number;
+  stopLoss: number
 }
 
 export interface SymbolData {

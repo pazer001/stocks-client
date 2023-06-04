@@ -57,7 +57,8 @@ const Chart = () => {
           events: {
             click: function () {
               // @ts-ignore
-              const index = this.index;
+              // console.log(this)
+              const index = this.dataGroup.start;
               setSymbol((prevSymbolState) => ({
                 ...prevSymbolState,
                 selectedSignal: index,
