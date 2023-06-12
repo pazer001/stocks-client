@@ -103,7 +103,7 @@ const Chart = () => {
     mainLoaderShow(true);
     try {
       const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-        `${API_HOST}/analyze/analyzedResult/${symbol}/${interval}/${byType}/${pricesMode}`
+        `${API_HOST}/analyze/combineAnalyzeAndRecommendations/${symbol}/${interval}/${byType}/${pricesMode}`
       );
       if (!symbolAnalyze.data.prices.length) {
         setSymbol((prevSymbolState) => ({
