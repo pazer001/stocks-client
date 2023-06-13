@@ -27,6 +27,7 @@ import {
 import axios from "axios";
 // @ts-ignore
 import * as percentage from 'calculate-percentages';
+import { green, red } from '@mui/material/colors';
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
@@ -73,13 +74,13 @@ const SymbolInfo = () => {
         symbolData.prices[symbolData.prices.length - 1].recommendation;
 
       if (currentRecommendation.score > minBuy) {
-        return `Strong buy`;
+        return <abbr style={{color: green[400]}}>Strong buy</abbr>;
       } else if (currentRecommendation.score > 0) {
-        return `Buy`;
+        return <abbr style={{color: green[800]}}>Buy</abbr>;
       } else if (currentRecommendation.score < minSell) {
-        return `Strong sell`;
+        return <abbr style={{color: red[400]}}>Strong sell</abbr>;
       } else if (currentRecommendation.score < 0) {
-        return `Sell`;
+        return <abbr style={{color: red[800]}}>Sell</abbr>;
       } else {
         return `No decision`;
       }
@@ -171,22 +172,26 @@ const SymbolInfo = () => {
             <CardContent>
               {
                 <>
-                  {symbolData?.recommendationBacktest && (
-                    <Typography>
-                      <b>Indicator Win Rate: </b>
-                      {symbolData?.recommendationBacktest.winRate.toFixed(2)}%
-                    </Typography>
-                  )}
-                  {symbolData?.recommendationBacktest && (
-                    <Typography>
-                      <b>Indicator Profit: </b>
-                      {symbolData?.recommendationBacktest.profit
-                        ? symbolData?.recommendationBacktest.profit.toFixed(2)
-                        : 0}
-                    </Typography>
-                  )}
+                  {/*{symbolData?.recommendationBacktest && (*/}
+                  {/*  <Typography>*/}
+                  {/*    <b>Indicator Win Rate: </b>*/}
+                  {/*    {symbolData?.recommendationBacktest.winRate.toFixed(2)}%*/}
+                  {/*  </Typography>*/}
+                  {/*)}*/}
+                  {/*{symbolData?.recommendationBacktest && (*/}
+                  {/*  <Typography>*/}
+                  {/*    <b>Indicator Profit: </b>*/}
+                  {/*    {symbolData?.recommendationBacktest.profit*/}
+                  {/*      ? symbolData?.recommendationBacktest.profit.toFixed(2)*/}
+                  {/*      : 0}*/}
+                  {/*  </Typography>*/}
+                  {/*)}*/}
+
+
+                  <Typography variant="h6">Recommendations:</Typography>
+
                   <Typography>
-                    <b>Indicator recommendations:</b> {getRecommendation()}
+                    <b>Action:</b> {getRecommendation()}
                   </Typography>
 
                   <Typography>
@@ -194,7 +199,7 @@ const SymbolInfo = () => {
                     {symbolData?.recommendationBacktest.totalTrades} trades
                   </Typography>
                   <Typography>
-                    <b>Stop loss: </b>
+                    <b>Stop loss pips: </b>
                     {(symbolData.prices[symbolData.prices.length - 1].point.close - symbolData.prices[symbolData.prices.length - 1].recommendation.stopLoss).toFixed(2)}
                   </Typography>
                   <Typography>
