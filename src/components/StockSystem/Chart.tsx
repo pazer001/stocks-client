@@ -216,6 +216,7 @@ const Chart = () => {
       }));
 
       mainLoaderShow(false);
+      chartRef?.current?.chart.reflow();
       return symbolAnalyze.data;
     } catch (e) {
       console.error(e);
@@ -231,6 +232,7 @@ const Chart = () => {
       );
       mainLoaderShow(false);
     }
+
   };
 
   useEffect(() => {
