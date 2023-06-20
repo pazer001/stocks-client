@@ -133,9 +133,9 @@ const RandomSymbols = () => {
               >
                 <ListItemText
                   primary={item.symbol}
-                  secondary={`Suggest score: ${
-                    item.mainScore && item.mainScore.toFixed(0)
-                  }`}
+                  // secondary={`Suggest score: ${
+                  //   item.mainScore && item.mainScore.toFixed(0)
+                  // }`}
                 ></ListItemText>
               </ListItemButton>
             </ListItem>
