@@ -70,6 +70,7 @@ export interface SymbolData {
       };
     };
   };
+  nextEarning: number,
   recommendationBacktest: {
     bestPermutation: {
       minBuy: number;
@@ -173,6 +174,13 @@ export const getPricesMode = selector({
   key: "getPricesMode",
   get: ({ get }) => {
     return get(symbolAtom).settings.pricesMode;
+  },
+});
+
+export const getNextEarning = selector({
+  key: "getNextEarning",
+  get: ({ get }) => {
+    return get(symbolAtom).symbolData?.nextEarning;
   },
 });
 

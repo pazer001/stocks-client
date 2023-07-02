@@ -19,15 +19,16 @@ import {
 import InfoIcon from "@mui/icons-material/Info";
 import { useRecoilValue } from "recoil";
 import {
-  getByType,
+  getByType, getNextEarning,
   getPricesMode,
   getSelectedSignal,
   getSymbolData,
-} from "../../atoms/symbol";
+} from '../../atoms/symbol';
 import axios from "axios";
 // @ts-ignore
 import * as percentage from 'calculate-percentages';
 import { green, red } from '@mui/material/colors';
+import { DateTime } from 'luxon';
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
@@ -36,6 +37,7 @@ const SymbolInfo = () => {
   const selectedSignal = useRecoilValue(getSelectedSignal);
   const byType = useRecoilValue(getByType);
   const priceMode = useRecoilValue(getPricesMode);
+  const nextEarning = useRecoilValue(getNextEarning);
   const [strategyName, setStrategyName] = useState<string>("");
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
   const [strategyDescription, setStrategyDescription] = useState<string>("");
@@ -206,6 +208,10 @@ const SymbolInfo = () => {
                     <b>Stop loss percentage: </b>
                     {percentage.differenceBetween(symbolData.prices[symbolData.prices.length - 1].recommendation.stopLoss.toFixed(2), symbolData.prices[symbolData.prices.length - 1].point.close).toFixed(2)}%
                   </Typography>
+                  {nextEarning && <Typography>
+                    <b>Next earning: </b>
+                    {DateTime.fromSeconds(nextEarning).toISODate()}
+                  </Typography>}
                   {/*<Typography>*/}
                   {/*  <b>Total scaned permutations: </b>*/}
                   {/*  {getTotalScannedPermutations(*/}
