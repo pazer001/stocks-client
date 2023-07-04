@@ -71,7 +71,7 @@ export interface SymbolData {
     };
   };
   nextEarning: number,
-  recommendationBacktest: {
+  recommendationsLinesModified: {
     bestPermutation: {
       minBuy: number;
       minSell: number;

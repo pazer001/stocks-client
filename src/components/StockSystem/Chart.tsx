@@ -162,7 +162,7 @@ const Chart = () => {
             plotLines: [
               {
                 value:
-                  symbolAnalyze.data.recommendationBacktest?.bestPermutation
+                  symbolAnalyze.data.recommendationsLinesModified?.bestPermutation
                     .minBuy,
                 color: "green",
                 dashStyle: "shortdash",
@@ -170,7 +170,7 @@ const Chart = () => {
               },
               {
                 value:
-                  symbolAnalyze.data.recommendationBacktest?.bestPermutation
+                  symbolAnalyze.data.recommendationsLinesModified?.bestPermutation
                     .minSell,
                 color: "red",
                 dashStyle: "shortdash",

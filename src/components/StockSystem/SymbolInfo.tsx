@@ -69,9 +69,9 @@ const SymbolInfo = () => {
     setStrategyModalOpen(() => true);
   };
   const getRecommendation = () => {
-    if (symbolData !== undefined && symbolData.recommendationBacktest) {
+    if (symbolData !== undefined && symbolData.recommendationsLinesModified) {
       const { minBuy, minSell } =
-        symbolData.recommendationBacktest.bestPermutation;
+        symbolData.recommendationsLinesModified.bestPermutation;
       const currentRecommendation =
         symbolData.prices[symbolData.prices.length - 1].recommendation;
 
@@ -198,7 +198,7 @@ const SymbolInfo = () => {
 
                   <Typography>
                     <b>Based on: </b>
-                    {symbolData?.recommendationBacktest.totalTrades} trades
+                    {symbolData?.recommendationsLinesModified.totalTrades} trades
                   </Typography>
                   <Typography>
                     <b>Stop loss pips: </b>
@@ -210,7 +210,7 @@ const SymbolInfo = () => {
                   </Typography>
                   {nextEarning && <Typography>
                     <b>Next earning: </b>
-                    {DateTime.fromSeconds(nextEarning).toISODate()}
+                    {DateTime.fromSeconds(nextEarning).toISODate()} ({DateTime.fromSeconds(nextEarning).diff(DateTime.now(), 'days').toObject().days?.toFixed(0)})
                   </Typography>}
                   {/*<Typography>*/}
                   {/*  <b>Total scaned permutations: </b>*/}
@@ -223,7 +223,7 @@ const SymbolInfo = () => {
               <br />
               {symbolData &&
                 selectedSignal === undefined &&
-                symbolData?.recommendationBacktest && (
+                symbolData?.recommendationsLinesModified && (
                   <Typography>
                     Click on a signal on the indicator to get full details ...
                   </Typography>
