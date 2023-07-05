@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import axios, { AxiosResponse } from 'axios';
-import { getByType, getInterval, useSymbol } from '../../atoms/symbol';
+import { getByType, getInterval, getSelectedSymbol, useSymbol } from '../../atoms/symbol';
 import SymbolChooser from './SymbolChooser';
 import Grid from '@mui/material/Grid';
 import { useRecoilValue } from 'recoil';
@@ -79,6 +79,7 @@ const SymbolsList = () => {
 
 const RandomSymbols = () => {
   const { changeSymbol } = useSymbol();
+  const selectedSymbol = useRecoilValue(getSelectedSymbol)
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
@@ -119,23 +120,21 @@ const RandomSymbols = () => {
           }}
         />
         <List dense disablePadding sx={{ height: '86%', overflowY: 'auto' }}>
-          {filteredSymbols.map((item) => (
+          {filteredSymbols.map((item, index) => (
             <ListItem
-              key={item._id}
+              key={item.symbol}
               dense
               disableGutters
               disablePadding
               divider
             >
               <ListItemButton
+                selected={item.symbol === selectedSymbol}
                 dense
                 onClick={() => changeSymbol(item.symbol, item.intervals)}
               >
                 <ListItemText
                   primary={item.symbol}
-                  // secondary={`Suggest score: ${
-                  //   item.mainScore && item.mainScore.toFixed(0)
-                  // }`}
                 ></ListItemText>
               </ListItemButton>
             </ListItem>
@@ -143,7 +142,7 @@ const RandomSymbols = () => {
         </List>
       </Box>
     ),
-    [filteredSymbols],
+    [filteredSymbols, selectedSymbol],
   );
 };
 

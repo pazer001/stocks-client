@@ -196,10 +196,10 @@ const SymbolInfo = () => {
                     <b>Action:</b> {getRecommendation()}
                   </Typography>
 
-                  <Typography>
-                    <b>Based on: </b>
-                    {symbolData?.recommendationsLinesModified.totalTrades} trades
-                  </Typography>
+                  {/*<Typography>*/}
+                  {/*  <b>Based on: </b>*/}
+                  {/*  {symbolData?.recommendationsLinesModified.totalTrades} trades*/}
+                  {/*</Typography>*/}
                   <Typography>
                     <b>Stop loss pips: </b>
                     {(symbolData.prices[symbolData.prices.length - 1].point.close - symbolData.prices[symbolData.prices.length - 1].recommendation.stopLoss).toFixed(2)}
@@ -210,14 +210,14 @@ const SymbolInfo = () => {
                   </Typography>
                   {nextEarning && <Typography>
                     <b>Next earning: </b>
-                    {DateTime.fromSeconds(nextEarning).toISODate()} ({DateTime.fromSeconds(nextEarning).diff(DateTime.now(), 'days').toObject().days?.toFixed(0)})
+                    {DateTime.fromSeconds(nextEarning).toISODate()} ({DateTime.fromSeconds(nextEarning).diff(DateTime.now(), 'days').toObject().days?.toFixed(0)} Days)
                   </Typography>}
-                  {/*<Typography>*/}
-                  {/*  <b>Total scaned permutations: </b>*/}
-                  {/*  {getTotalScannedPermutations(*/}
-                  {/*    symbolData.analyzedResult.results[priceMode][byType]*/}
-                  {/*  )}*/}
-                  {/*</Typography>*/}
+                  <Typography>
+                    <b>Total scanned permutations: </b>
+                    {getTotalScannedPermutations(
+                      symbolData.analyzedResult.results[priceMode][byType]
+                    )}
+                  </Typography>
                 </>
               }
               <br />
