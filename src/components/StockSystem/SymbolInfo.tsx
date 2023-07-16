@@ -44,6 +44,7 @@ const SymbolInfo = () => {
   const [indicatorInfoDialog, setIndicatorInfoDialog] =
     useState<boolean>(false);
 
+
   useEffect(() => {
     const getStrategyDescription = async () => {
       if (strategyName) {
@@ -148,8 +149,7 @@ const SymbolInfo = () => {
               </DialogContentText>
               {strategyDescription && (
                 <DialogContentText>
-                  <b>Description: </b>{" "}
-                  {strategiesDescriptionsComponents[strategyName]}
+                  <b>Description: </b>{" "}<span dangerouslySetInnerHTML={{__html: strategyDescription}} />
                 </DialogContentText>
               )}
             </DialogContent>
