@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { startCase } from "lodash";
 import {
-  Box,
   Card,
   CardContent,
   CardHeader,

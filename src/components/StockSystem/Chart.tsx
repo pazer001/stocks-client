@@ -17,13 +17,18 @@ import { useViewActions } from "../../atoms/view";
 import HSIndicators from "highcharts/indicators/indicators.js";
 import { Button } from "@mui/material";
 import styled from "@emotion/styled";
+import ReactECharts from 'echarts-for-react';
+import { DateTime } from 'luxon';
+import { green, red, blue } from '@mui/material/colors';
 
 AnnotationsModule(HighchartsStock);
 HighContrastDark(HighchartsStock);
 HSIndicators(HighchartsStock);
 const API_HOST = import.meta.env.VITE_API_HOST;
 
-const ChartContainer = styled.div``;
+const ChartContainer = styled.div`
+height: 100%
+`;
 
 const Chart = () => {
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
@@ -34,55 +39,6 @@ const Chart = () => {
   const { mainLoaderShow, setAlert } = useViewActions();
 
   const [stockChartOptions, setStockChartOptions] = useState({
-    chart: {
-      height: `58%`,
-
-      zooming: {
-        type: "xy",
-      },
-      panning: {
-        enabled: true,
-      },
-      panKey: "ctrl",
-    },
-    plotOptions: {
-      candlestick: {
-        lineWidth: 1,
-      },
-      series: {
-        allowPointSelect: true,
-        cursor: "pointer",
-        colorByPoint: true,
-        point: {
-          events: {
-            click: function () {
-              // @ts-ignore
-              // console.log(this)
-              const index = this.dataGroup.start;
-              setSymbol((prevSymbolState) => ({
-                ...prevSymbolState,
-                selectedSignal: index,
-              }));
-            },
-          },
-        },
-      },
-      column: {
-        colorByPoint: true,
-      },
-      area: {
-        marker: {
-          enabled: false,
-          symbol: "circle",
-          radius: 2,
-          states: {
-            hover: {
-              enabled: true,
-            },
-          },
-        },
-      },
-    },
   });
   const chartRef = useRef<HighchartsReact.RefObject>(null);
 
@@ -128,91 +84,194 @@ const Chart = () => {
       }));
 
       setStockChartOptions((prevStockChartOptions) => ({
-        ...prevStockChartOptions,
         title: {
-          text: `${symbol} Chart`,
+          text: symbol,
+          textAlign: 'center',
+          left: '50%'
         },
-        yAxis: [
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross'
+          }
+        },
+        grid: [
           {
-            labels: {
-              align: "right",
-              x: -3,
-            },
-            title: {
-              text: "Stock",
-            },
-            height: "60%",
-            lineWidth: 2,
-            resize: {
-              enabled: true,
-            },
+            left: '10%',
+            right: '8%',
+            height: '50%'
           },
           {
-            labels: {
-              align: "right",
-              x: -3,
-            },
-            title: {
-              text: "Win Rate Score",
-            },
-            top: "65%",
-            height: "40%",
-            offset: 0,
-            lineWidth: 2,
-            plotLines: [
-              {
-                value:
-                  symbolAnalyze.data.recommendationsLinesModified?.bestPermutation
-                    .minBuy,
-                color: "green",
-                dashStyle: "shortdash",
-                width: 2,
-              },
-              {
-                value:
-                  symbolAnalyze.data.recommendationsLinesModified?.bestPermutation
-                    .minSell,
-                color: "red",
-                dashStyle: "shortdash",
-                width: 2,
-              },
-            ],
+            left: '10%',
+            right: '8%',
+            top: '60%',
+            height: '10%'
+          },
+          {
+            left: '10%',
+            right: '8%',
+            top: '72%',
+            height: '25%'
+          }
+        ],
+        xAxis: [{
+          type: 'category',
+          data: symbolAnalyze.data.prices.map(price => interval === '1d' ? DateTime.fromMillis(price.point.timestamp).toISODate() : DateTime.fromMillis(price.point.timestamp).toISOTime() ),
+          boundaryGap: false,
+          axisLine: { onZero: false },
+          splitLine: { show: false },
+          min: 'dataMin',
+          max: 'dataMax',
+          axisPointer: {
+            z: 100
+          }
+        }, {
+          type: 'category',
+          gridIndex: 1,
+          name: 'Volume',
+          nameLocation: 'start',
+          data: symbolAnalyze.data.prices.map(data => data.point.volume),
+          boundaryGap: false,
+          axisLine: { onZero: false },
+          axisTick: { show: false },
+          splitLine: { show: false },
+          axisLabel: { show: false },
+          min: 'dataMin',
+          max: 'dataMax'
+        },
+          {
+            type: 'category',
+            gridIndex: 2,
+            name: 'Score',
+            nameLocation: 'start',
+            data: symbolAnalyze.data.prices.map(data => data.recommendation.score),
+            boundaryGap: false,
+            axisLine: { onZero: false },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            axisLabel: { show: false },
+            min: 'dataMin',
+            max: 'dataMax'
+          }],
+        yAxis: [{
+          scale: true,
+        }, {
+          scale: true,
+          gridIndex: 1,
+          splitNumber: 2,
+          axisLabel: { show: false },
+          axisLine: { show: false },
+          axisTick: { show: false },
+          splitLine: { show: false }
+        }, {
+          scale: true,
+          gridIndex: 2,
+          splitNumber: 2,
+          axisLabel: { show: false },
+          axisLine: { show: false },
+          axisTick: { show: false },
+          splitLine: { show: false }
+        }],
+        dataZoom: [
+          {
+            type: 'inside',
+            start: 0,
+            end: 100
           },
         ],
-
+        // visualMap: {
+        //   show: false,
+        //   pieces: [
+        //     {
+        //       gt: 0,
+        //       lte: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minBuy,
+        //       color: green[400]
+        //     },
+        //     {
+        //       gt: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minBuy,
+        //       lte: 100,
+        //       color: green[800]
+        //     },
+        //     {
+        //       gt: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minSell,
+        //       lte: 0,
+        //       color: red[400]
+        //     },
+        //     {
+        //       gt: -100,
+        //       lte:  symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minSell,
+        //       color: red[800]
+        //     },
+        //   ],
+        //   outOfRange: {
+        //     color: '#999'
+        //   }
+        // },
         series: [
           {
-            id: "prices",
-            // upColor: `green`,
-            // downColor: "red",
-            type: "candlestick",
             name: symbol,
+            type: 'candlestick',
             data: symbolAnalyze.data.prices.map((data) => [
-              data.point.timestamp,
-              Number(data.point.open.toFixed(3)),
-              Number(data.point.high.toFixed(3)),
-              Number(data.point.low.toFixed(3)),
               Number(data.point.close.toFixed(3)),
-            ]),
-            yAxis: 0,
-            allowPointSelect: true,
-            colors: symbolAnalyze.data.prices.map((data, index) =>
-              symbolAnalyze.data.prices[index].point.close >
-              symbolAnalyze.data.prices[index].point.open
-                ? "green"
-                : "red"
-            ),
+              Number(data.point.open.toFixed(3)),
+              Number(data.point.low.toFixed(3)),
+              Number(data.point.high.toFixed(3)),
+            ])
           },
           {
-            type: "area",
-            name: "Score",
-            data: symbolAnalyze.data.prices.map((data) => [
-              data.point.timestamp,
-              Number(data.recommendation.score),
-            ]),
-            yAxis: 1,
+            name: 'Volume',
+            type: 'bar',
+            // colorBy: "data",
+            seriesLayoutBy: "row",
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            data: symbolAnalyze.data.prices.map((data, index) => ({
+              value: data.point.volume,
+              itemStyle: {
+                color: symbolAnalyze.data.prices[index - 1] && data.point.volume > symbolAnalyze.data.prices[index - 1].point.volume ? green[400] : red[400]
+              }}))
           },
-        ],
+          {
+            name: 'Score',
+            type: 'line',
+            xAxisIndex: 2,
+            yAxisIndex: 2,
+            data: symbolAnalyze.data.prices.map(data => data.recommendation.score),
+            lineStyle: {
+              color: blue[400]
+            },
+
+            markLine: {
+              symbol: "circle",
+              data: [{
+                lineStyle : {
+                  color: green[400]
+                },
+                yAxis: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minBuy.toFixed(0),
+                // precision: 0
+              },
+                {
+                  label: {
+                    show: false
+                  },
+                  lineStyle : {
+                    color: 'white'
+                  },
+                  yAxis: 0,
+                  // precision: 0
+                },
+
+                {
+                  lineStyle : {
+                    color: red[400]
+                  },
+                  yAxis: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minSell.toFixed(0),
+                  // precision: 0
+                }]
+            }
+
+          }
+        ]
       }));
 
       mainLoaderShow(false);
@@ -245,11 +304,21 @@ const Chart = () => {
         <Button onClick={() => analyzeSymbol(selectedSymbol, byType)}>
           Refresh
         </Button>
-        <HighchartsReact
-          constructorType={"stockChart"}
-          highcharts={HighchartsStock}
-          options={stockChartOptions}
-          ref={chartRef}
+        {/*<HighchartsReact*/}
+        {/*  constructorType={"stockChart"}*/}
+        {/*  highcharts={HighchartsStock}*/}
+        {/*  options={stockChartOptions}*/}
+        {/*  ref={chartRef}*/}
+        {/*/>*/}
+        <ReactECharts
+          option={stockChartOptions}
+          notMerge={true}
+          lazyUpdate={true}
+          // theme={"dark"}
+          style={{ height: "90vh", left: "-5vw", top: 0, width: "85vw" }}
+          // onChartReady={this.onChartReadyCallback}
+          // onEvents={EventsDict}
+
         />
       </ChartContainer>
     ),
