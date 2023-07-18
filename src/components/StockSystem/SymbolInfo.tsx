@@ -192,7 +192,7 @@ const SymbolInfo = () => {
                   <Typography variant="h6">Recommendations:</Typography>
 
                   <Typography>
-                    <b>Action:</b> {getRecommendation()}
+                    <b>Action:</b> {getRecommendation()} ({symbolData.prices[symbolData.prices.length - 1].recommendation.score.toFixed(2)})
                   </Typography>
 
                   {/*<Typography>*/}

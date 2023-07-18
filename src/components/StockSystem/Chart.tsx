@@ -92,8 +92,12 @@ const Chart = () => {
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'cross'
+            type: 'cross',
+            link: { xAxisIndex: 'all' }
           }
+        },
+        axisPointer: {
+          link: { xAxisIndex: 'all' }
         },
         grid: [
           {
@@ -175,38 +179,13 @@ const Chart = () => {
         dataZoom: [
           {
             type: 'inside',
+            xAxisIndex: [0, 1, 2],
             start: 0,
-            end: 100
-          },
+            end: 100,
+          }
         ],
-        // visualMap: {
-        //   show: false,
-        //   pieces: [
-        //     {
-        //       gt: 0,
-        //       lte: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minBuy,
-        //       color: green[400]
-        //     },
-        //     {
-        //       gt: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minBuy,
-        //       lte: 100,
-        //       color: green[800]
-        //     },
-        //     {
-        //       gt: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minSell,
-        //       lte: 0,
-        //       color: red[400]
-        //     },
-        //     {
-        //       gt: -100,
-        //       lte:  symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minSell,
-        //       color: red[800]
-        //     },
-        //   ],
-        //   outOfRange: {
-        //     color: '#999'
-        //   }
-        // },
+
+
         series: [
           {
             name: symbol,
