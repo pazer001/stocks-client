@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-// import HighchartsReact from "highcharts-react-official";
-// import HighchartsStock from "highcharts/highstock";
 import {
   getByType,
   getInterval,
@@ -10,20 +8,14 @@ import {
   SymbolData,
 } from "../../atoms/symbol";
 import { useRecoilState, useRecoilValue } from "recoil";
-// import AnnotationsModule from "highcharts/modules/annotations";
-// import HighContrastDark from "highcharts/themes/high-contrast-dark";
 import axios, { AxiosResponse } from "axios";
 import { useViewActions } from "../../atoms/view";
-// import HSIndicators from "highcharts/indicators/indicators.js";
 import { Button } from "@mui/material";
 import styled from "@emotion/styled";
 import ReactECharts from 'echarts-for-react';
 import { DateTime } from 'luxon';
 import { green, red, blue } from '@mui/material/colors';
 
-// AnnotationsModule(HighchartsStock);
-// HighContrastDark(HighchartsStock);
-// HSIndicators(HighchartsStock);
 const API_HOST = import.meta.env.VITE_API_HOST;
 
 const ChartContainer = styled.div`
@@ -38,17 +30,7 @@ const Chart = () => {
   const pricesMode = useRecoilValue(getPricesMode);
   const { mainLoaderShow, setAlert } = useViewActions();
 
-  const [stockChartOptions, setStockChartOptions] = useState({
-  });
-  // const chartRef = useRef<HighchartsReact.RefObject>(null);
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     if (chartRef.current && chartRef.current.chart) {
-  //       chartRef.current.chart.reflow();
-  //     }
-  //   }, 250);
-  // }, []);
+  const [stockChartOptions, setStockChartOptions] = useState({});
 
   const analyzeSymbol = async (
     symbol: string,
@@ -227,7 +209,6 @@ const Chart = () => {
                   color: green[400]
                 },
                 yAxis: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minBuy.toFixed(0),
-                // precision: 0
               },
                 {
                   label: {
@@ -237,7 +218,6 @@ const Chart = () => {
                     color: 'white'
                   },
                   yAxis: 0,
-                  // precision: 0
                 },
 
                 {
@@ -245,7 +225,6 @@ const Chart = () => {
                     color: red[400]
                   },
                   yAxis: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minSell.toFixed(0),
-                  // precision: 0
                 }]
             }
 
@@ -254,7 +233,6 @@ const Chart = () => {
       }));
 
       mainLoaderShow(false);
-      // chartRef?.current?.chart.reflow();
       return symbolAnalyze.data;
     } catch (e) {
       console.error(e);
@@ -283,20 +261,11 @@ const Chart = () => {
         <Button onClick={() => analyzeSymbol(selectedSymbol, byType)}>
           Refresh
         </Button>
-        {/*<HighchartsReact*/}
-        {/*  constructorType={"stockChart"}*/}
-        {/*  highcharts={HighchartsStock}*/}
-        {/*  options={stockChartOptions}*/}
-        {/*  ref={chartRef}*/}
-        {/*/>*/}
         <ReactECharts
           option={stockChartOptions}
           notMerge={true}
           lazyUpdate={true}
-          // theme={"dark"}
           style={{ height: "90vh", left: "-5vw", top: 0, width: "85vw" }}
-          // onChartReady={this.onChartReadyCallback}
-          // onEvents={EventsDict}
 
         />
       </ChartContainer>
