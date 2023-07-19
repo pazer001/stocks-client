@@ -28,6 +28,7 @@ import axios from "axios";
 import * as percentage from 'calculate-percentages';
 import { green, red } from '@mui/material/colors';
 import { DateTime } from 'luxon';
+import ReactECharts from 'echarts-for-react';
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
@@ -76,13 +77,13 @@ const SymbolInfo = () => {
         symbolData.prices[symbolData.prices.length - 1].recommendation;
 
       if (currentRecommendation.score > minBuy) {
-        return <abbr style={{color: green[400]}}>Strong buy</abbr>;
+        return 'Strong buy'
       } else if (currentRecommendation.score > 0) {
-        return <abbr style={{color: green[800]}}>Buy</abbr>;
+        return 'Buy'
       } else if (currentRecommendation.score < minSell) {
-        return <abbr style={{color: red[400]}}>Strong sell</abbr>;
+        return 'Strong sell'
       } else if (currentRecommendation.score < 0) {
-        return <abbr style={{color: red[800]}}>Sell</abbr>;
+        return 'Sell'
       } else {
         return `No decision`;
       }
@@ -103,7 +104,6 @@ const SymbolInfo = () => {
 
     return totalScannedPermutation.toLocaleString("en-US");
   };
-
 
 
   return useMemo(
@@ -162,14 +162,14 @@ const SymbolInfo = () => {
 
         {symbolData && (
           <Card>
-            <CardHeader
-              title="Indicator info"
-              action={
-                <IconButton onClick={() => setIndicatorInfoDialog(true)}>
-                  <InfoIcon />
-                </IconButton>
-              }
-            />
+            {/*<CardHeader*/}
+            {/*  title="Indicator info"*/}
+            {/*  action={*/}
+            {/*    <IconButton onClick={() => setIndicatorInfoDialog(true)}>*/}
+            {/*      <InfoIcon />*/}
+            {/*    </IconButton>*/}
+            {/*  }*/}
+            {/*/>*/}
             <CardContent>
               {
                 <>
@@ -189,11 +189,101 @@ const SymbolInfo = () => {
                   {/*)}*/}
 
 
-                  <Typography variant="h6">Recommendations:</Typography>
+                  {/*<Typography variant="h6">Recommendations:</Typography>*/}
 
-                  <Typography>
-                    <b>Action:</b> {getRecommendation()} ({symbolData.prices[symbolData.prices.length - 1].recommendation.score.toFixed(2)})
-                  </Typography>
+                  {/*<Typography>*/}
+                  {/*  <b>Action:</b> {getRecommendation()} ({symbolData.prices[symbolData.prices.length - 1].recommendation.score.toFixed(2)})*/}
+                  {/*</Typography>*/}
+                  <ReactECharts
+                    option={{
+                      series: [
+                        {
+                          type: 'gauge',
+                          startAngle: 180,
+                          endAngle: 0,
+                          center: ['50%', '75%'],
+                          radius: '90%',
+                          min: -100,
+                          max: 100,
+                          // splitNumber: 8,
+                          axisLine: {
+                            lineStyle: {
+                              width: 6,
+                              color: [
+                                [(symbolData.recommendationsLinesModified.bestPermutation.minSell - -100) / (100 - -100), red[800]],
+                                [0.5, red[400]],
+                                [(symbolData.recommendationsLinesModified.bestPermutation.minBuy - -100) / (100 - -100), green[400]],
+                                [1, green[800]]
+                              ]
+                            }
+                          },
+                          pointer: {
+                            icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
+                            length: '12%',
+                            width: 20,
+                            offsetCenter: [0, '-60%'],
+                            itemStyle: {
+                              color: 'auto'
+                            }
+                          },
+                          axisTick: {
+                            length: 12,
+                            lineStyle: {
+                              color: 'auto',
+                              width: 2
+                            }
+                          },
+                          splitLine: {
+                            length: 20,
+                            lineStyle: {
+                              color: 'auto',
+                              width: 5
+                            }
+                          },
+                          // axisLabel: {
+                          //   color: '#464646',
+                          //   fontSize: 20,
+                          //   distance: -60,
+                          //   rotate: 'tangential',
+                          //   formatter: function (value: number) {
+                          //     if (value === symbolData.recommendationsLinesModified.bestPermutation.minBuy) {
+                          //       return 'Strong Buy';
+                          //     } else if (value === 0.625) {
+                          //       return 'Buy';
+                          //     } else if (value === 0.375) {
+                          //       return 'Sell';
+                          //     } else if (value === 0.125) {
+                          //       return 'Strong Sell';
+                          //     }
+                          //     return '';
+                          //   }
+                          // },
+                          title: {
+                            offsetCenter: [0, '-10%'],
+                            fontSize: 20
+                          },
+                          detail: {
+                            fontSize: 30,
+                            offsetCenter: [0, '-35%'],
+                            valueAnimation: true,
+                            formatter: function (value: number) {
+                              return Math.round(value);
+                            },
+                            color: 'inherit'
+                          },
+                          data: [
+                            {
+                              value: symbolData.prices[symbolData.prices.length - 1].recommendation.score,
+                              name: getRecommendation()
+                            }
+                          ]
+                        }
+                      ]}}
+                    notMerge={true}
+                    lazyUpdate={true}
+                    // style={{ height: "90vh", left: "-5vw", top: 0, width: "85vw" }}
+
+                  />
 
                   {/*<Typography>*/}
                   {/*  <b>Based on: </b>*/}
