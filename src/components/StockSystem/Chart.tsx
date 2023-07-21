@@ -172,9 +172,15 @@ const Chart = () => {
           {
             name: symbol,
             type: 'candlestick',
+            itemStyle: {
+              color: green[400],
+              color0: red[400],
+              borderColor: green[400],
+              borderColor0: red[400],
+            },
             data: symbolAnalyze.data.prices.map((data) => [
-              Number(data.point.close.toFixed(3)),
               Number(data.point.open.toFixed(3)),
+              Number(data.point.close.toFixed(3)),
               Number(data.point.low.toFixed(3)),
               Number(data.point.high.toFixed(3)),
             ])
@@ -182,10 +188,11 @@ const Chart = () => {
           {
             name: 'Volume',
             type: 'bar',
-            // colorBy: "data",
+            colorBy: "series",
             seriesLayoutBy: "row",
             xAxisIndex: 1,
             yAxisIndex: 1,
+
             data: symbolAnalyze.data.prices.map((data, index) => ({
               value: data.point.volume,
               itemStyle: {
