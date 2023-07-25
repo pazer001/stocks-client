@@ -32,7 +32,7 @@ import ReactECharts from "echarts-for-react";
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
-const SymbolInfo = ({height}) => {
+const SymbolInfo = () => {
   const symbolData = useRecoilValue(getSymbolData);
   const selectedSignal = useRecoilValue(getSelectedSignal);
   const byType = useRecoilValue(getByType);
@@ -164,7 +164,7 @@ const SymbolInfo = ({height}) => {
         {symbolData && (
           <Card
             className="Card-SymbolInfo"
-            sx={{ overflowY: "auto", maxHeight: `${height}vh` }}
+            sx={{ overflowY: "auto", maxHeight: `calc(100vh - 504px)` }}
           >
             {/*<CardHeader*/}
             {/*  title="Indicator info"*/}

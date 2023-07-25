@@ -15,15 +15,6 @@ function App() {
   const alertShow = useRecoilValue(getAlertShow);
   const alertMessage = useRecoilValue(getAlertMessage);
   const [symbolInfoHeight, setSymbolInfoHeight] = useState(39);
-
-  useEffect(() => {
-    const windowStyle = window.getComputedStyle(document.getElementById('root'));
-    const windowHeight = parseInt(windowStyle.getPropertyValue('height'), 10);
-    // TODO: get the height by ref and not hard coded numbers
-    const symbolInfoHeight = Math.floor((windowHeight - 504) / windowHeight * 100);
-
-    setSymbolInfoHeight(symbolInfoHeight);
-  }, []);
   
   return (
     <>
@@ -52,7 +43,7 @@ function App() {
             <Grid item xs={3} md={3} sx={{ height: "100%"}}>
               <Paper>
                 <SymbolsList />
-                <SymbolInfo height={symbolInfoHeight} />
+                <SymbolInfo />
               </Paper>
             </Grid>
           </Grid>
