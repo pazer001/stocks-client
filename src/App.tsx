@@ -50,7 +50,7 @@ function App() {
               </Paper>
             </Grid>
             <Grid item xs={3} md={3} sx={{ height: "100%"}}>
-              <Paper sx={{display: 'flex', flexDirection: 'column'}}>
+              <Paper>
                 <SymbolsList />
                 <SymbolInfo height={symbolInfoHeight} />
               </Paper>
