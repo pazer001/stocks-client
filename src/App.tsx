@@ -14,7 +14,6 @@ function App() {
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
   const alertMessage = useRecoilValue(getAlertMessage);
-  const [symbolInfoHeight, setSymbolInfoHeight] = useState(39);
   
   return (
     <>
