@@ -19,6 +19,7 @@ function App() {
   useEffect(() => {
     const windowStyle = window.getComputedStyle(document.getElementById('root'));
     const windowHeight = parseInt(windowStyle.getPropertyValue('height'), 10);
+    // TODO: get the height by ref and not hard coded numbers
     const symbolInfoHeight = Math.floor((windowHeight - 504) / windowHeight * 100);
 
     setSymbolInfoHeight(symbolInfoHeight);
