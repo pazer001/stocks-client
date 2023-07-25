@@ -43,6 +43,7 @@ function App() {
             <Grid item xs={3} md={3} sx={{ height: "100%"}}>
               <Paper>
                 <SymbolsList />
+                <Divider/>
                 <SymbolInfo />
               </Paper>
             </Grid>
