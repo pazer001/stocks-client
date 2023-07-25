@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Alert, Box, Divider, Paper, Snackbar } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -14,6 +14,16 @@ function App() {
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
   const alertMessage = useRecoilValue(getAlertMessage);
+  const [symbolInfoHeight, setSymbolInfoHeight] = useState(39);
+
+  useEffect(() => {
+    const windowStyle = window.getComputedStyle(document.getElementById('root'));
+    const windowHeight = parseInt(windowStyle.getPropertyValue('height'), 10);
+    const symbolInfoHeight = Math.floor((windowHeight - 504) / windowHeight * 100);
+
+    setSymbolInfoHeight(symbolInfoHeight);
+  }, []);
+  
   return (
     <>
       {mainLoaderShow && (
@@ -38,20 +48,11 @@ function App() {
                 <Chart />
               </Paper>
             </Grid>
-            <Grid item xs={3} md={3}>
-              <Grid container direction="column">
-                <Grid item xs md sx={{ height: "47vh" }}>
-                  <Paper>
-                    <SymbolsList />
-                  </Paper>
-                </Grid>
-                {/*<Divider />*/}
-                <Grid item xs md sx={{ height: "45vh", marginTop: "1vh" }}>
-                  <Paper sx={{ height: "100%", overflowY: "scroll" }}>
-                    <SymbolInfo />
-                  </Paper>
-                </Grid>
-              </Grid>
+            <Grid item xs={3} md={3} sx={{ height: "100%"}}>
+              <Paper sx={{display: 'flex', flexDirection: 'column'}}>
+                <SymbolsList />
+                <SymbolInfo height={symbolInfoHeight} />
+              </Paper>
             </Grid>
           </Grid>
         </Grid>

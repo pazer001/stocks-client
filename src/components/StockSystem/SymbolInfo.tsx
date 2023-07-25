@@ -17,21 +17,22 @@ import {
 import InfoIcon from "@mui/icons-material/Info";
 import { useRecoilValue } from "recoil";
 import {
-  getByType, getNextEarning,
+  getByType,
+  getNextEarning,
   getPricesMode,
   getSelectedSignal,
   getSymbolData,
-} from '../../atoms/symbol';
+} from "../../atoms/symbol";
 import axios from "axios";
 // @ts-ignore
-import * as percentage from 'calculate-percentages';
-import { green, red } from '@mui/material/colors';
-import { DateTime } from 'luxon';
-import ReactECharts from 'echarts-for-react';
+import * as percentage from "calculate-percentages";
+import { green, red } from "@mui/material/colors";
+import { DateTime } from "luxon";
+import ReactECharts from "echarts-for-react";
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
-const SymbolInfo = () => {
+const SymbolInfo = ({height}) => {
   const symbolData = useRecoilValue(getSymbolData);
   const selectedSignal = useRecoilValue(getSelectedSignal);
   const byType = useRecoilValue(getByType);
@@ -42,7 +43,6 @@ const SymbolInfo = () => {
   const [strategyDescription, setStrategyDescription] = useState<string>("");
   const [indicatorInfoDialog, setIndicatorInfoDialog] =
     useState<boolean>(false);
-
 
   useEffect(() => {
     const getStrategyDescription = async () => {
@@ -76,13 +76,13 @@ const SymbolInfo = () => {
         symbolData.prices[symbolData.prices.length - 1].recommendation;
 
       if (currentRecommendation.score > minBuy) {
-        return 'Strong buy'
+        return "Strong buy";
       } else if (currentRecommendation.score > 0) {
-        return 'Buy'
+        return "Buy";
       } else if (currentRecommendation.score < minSell) {
-        return 'Strong sell'
+        return "Strong sell";
       } else if (currentRecommendation.score < 0) {
-        return 'Sell'
+        return "Sell";
       } else {
         return `No decision`;
       }
@@ -104,10 +104,9 @@ const SymbolInfo = () => {
     return totalScannedPermutation.toLocaleString("en-US");
   };
 
-
   return useMemo(
     () => (
-      <>
+      <div className="SymbolInfo" style={{ overflowY: "auto", flex: "1" }}>
         {symbolData && strategyModalOpen && strategyName && (
           <Dialog open={strategyModalOpen} onClose={() => setStrategyName("")}>
             <DialogTitle>{startCase(strategyName)}</DialogTitle>
@@ -147,7 +146,10 @@ const SymbolInfo = () => {
               </DialogContentText>
               {strategyDescription && (
                 <DialogContentText>
-                  <b>Description: </b>{" "}<span dangerouslySetInnerHTML={{__html: strategyDescription}} />
+                  <b>Description: </b>{" "}
+                  <span
+                    dangerouslySetInnerHTML={{ __html: strategyDescription }}
+                  />
                 </DialogContentText>
               )}
             </DialogContent>
@@ -160,7 +162,10 @@ const SymbolInfo = () => {
         />
 
         {symbolData && (
-          <Card>
+          <Card
+            className="Card-SymbolInfo"
+            sx={{ overflowY: "auto", maxHeight: `${height}vh` }}
+          >
             {/*<CardHeader*/}
             {/*  title="Indicator info"*/}
             {/*  action={*/}
@@ -170,216 +175,254 @@ const SymbolInfo = () => {
             {/*  }*/}
             {/*/>*/}
             <CardContent>
-              {
-                <>
-                  {/*{symbolData?.recommendationBacktest && (*/}
-                  {/*  <Typography>*/}
-                  {/*    <b>Indicator Win Rate: </b>*/}
-                  {/*    {symbolData?.recommendationBacktest.winRate.toFixed(2)}%*/}
-                  {/*  </Typography>*/}
-                  {/*)}*/}
-                  {/*{symbolData?.recommendationBacktest && (*/}
-                  {/*  <Typography>*/}
-                  {/*    <b>Indicator Profit: </b>*/}
-                  {/*    {symbolData?.recommendationBacktest.profit*/}
-                  {/*      ? symbolData?.recommendationBacktest.profit.toFixed(2)*/}
-                  {/*      : 0}*/}
-                  {/*  </Typography>*/}
-                  {/*)}*/}
+              {/*{symbolData?.recommendationBacktest && (*/}
+              {/*  <Typography>*/}
+              {/*    <b>Indicator Win Rate: </b>*/}
+              {/*    {symbolData?.recommendationBacktest.winRate.toFixed(2)}%*/}
+              {/*  </Typography>*/}
+              {/*)}*/}
+              {/*{symbolData?.recommendationBacktest && (*/}
+              {/*  <Typography>*/}
+              {/*    <b>Indicator Profit: </b>*/}
+              {/*    {symbolData?.recommendationBacktest.profit*/}
+              {/*      ? symbolData?.recommendationBacktest.profit.toFixed(2)*/}
+              {/*      : 0}*/}
+              {/*  </Typography>*/}
+              {/*)}*/}
 
+              {/*<Typography variant="h6">Recommendations:</Typography>*/}
 
-                  {/*<Typography variant="h6">Recommendations:</Typography>*/}
-
-                  {/*<Typography>*/}
-                  {/*  <b>Action:</b> {getRecommendation()} ({symbolData.prices[symbolData.prices.length - 1].recommendation.score.toFixed(2)})*/}
-                  {/*</Typography>*/}
-                  <ReactECharts
-                    option={{
-                      series: [
+              {/*<Typography>*/}
+              {/*  <b>Action:</b> {getRecommendation()} ({symbolData.prices[symbolData.prices.length - 1].recommendation.score.toFixed(2)})*/}
+              {/*</Typography>*/}
+              <ReactECharts
+                option={{
+                  series: [
+                    {
+                      type: "gauge",
+                      startAngle: 180,
+                      endAngle: 0,
+                      center: ["50%", "50%"],
+                      radius: "90%",
+                      min: -100,
+                      max: 100,
+                      // splitNumber: 8,
+                      axisLine: {
+                        lineStyle: {
+                          width: 6,
+                          color: [
+                            [
+                              (symbolData.recommendationsLinesModified
+                                .bestPermutation.minSell -
+                                -100) /
+                                (100 - -100),
+                              red[800],
+                            ],
+                            [0.5, red[400]],
+                            [
+                              (symbolData.recommendationsLinesModified
+                                .bestPermutation.minBuy -
+                                -100) /
+                                (100 - -100),
+                              green[400],
+                            ],
+                            [1, green[800]],
+                          ],
+                        },
+                      },
+                      pointer: {
+                        icon: "path://M12.8,0.7l12,40.1H0.7L12.8,0.7z",
+                        length: "12%",
+                        width: 20,
+                        offsetCenter: [0, "-60%"],
+                        itemStyle: {
+                          color: "auto",
+                        },
+                      },
+                      axisTick: {
+                        length: 12,
+                        lineStyle: {
+                          color: "auto",
+                          width: 2,
+                        },
+                      },
+                      splitLine: {
+                        length: 20,
+                        lineStyle: {
+                          color: "auto",
+                          width: 5,
+                        },
+                      },
+                      // axisLabel: {
+                      //   color: '#464646',
+                      //   fontSize: 20,
+                      //   distance: -60,
+                      //   rotate: 'tangential',
+                      //   formatter: function (value: number) {
+                      //     if (value === symbolData.recommendationsLinesModified.bestPermutation.minBuy) {
+                      //       return 'Strong Buy';
+                      //     } else if (value === 0.625) {
+                      //       return 'Buy';
+                      //     } else if (value === 0.375) {
+                      //       return 'Sell';
+                      //     } else if (value === 0.125) {
+                      //       return 'Strong Sell';
+                      //     }
+                      //     return '';
+                      //   }
+                      // },
+                      title: {
+                        offsetCenter: [0, "-10%"],
+                        fontSize: 20,
+                      },
+                      detail: {
+                        fontSize: 30,
+                        offsetCenter: [0, "-35%"],
+                        valueAnimation: true,
+                        formatter: function (value: number) {
+                          return Math.round(value);
+                        },
+                        color: "inherit",
+                      },
+                      data: [
                         {
-                          type: 'gauge',
-                          startAngle: 180,
-                          endAngle: 0,
-                          center: ['50%', '75%'],
-                          radius: '90%',
-                          min: -100,
-                          max: 100,
-                          // splitNumber: 8,
-                          axisLine: {
-                            lineStyle: {
-                              width: 6,
-                              color: [
-                                [(symbolData.recommendationsLinesModified.bestPermutation.minSell - -100) / (100 - -100), red[800]],
-                                [0.5, red[400]],
-                                [(symbolData.recommendationsLinesModified.bestPermutation.minBuy - -100) / (100 - -100), green[400]],
-                                [1, green[800]]
-                              ]
-                            }
-                          },
-                          pointer: {
-                            icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
-                            length: '12%',
-                            width: 20,
-                            offsetCenter: [0, '-60%'],
-                            itemStyle: {
-                              color: 'auto'
-                            }
-                          },
-                          axisTick: {
-                            length: 12,
-                            lineStyle: {
-                              color: 'auto',
-                              width: 2
-                            }
-                          },
-                          splitLine: {
-                            length: 20,
-                            lineStyle: {
-                              color: 'auto',
-                              width: 5
-                            }
-                          },
-                          // axisLabel: {
-                          //   color: '#464646',
-                          //   fontSize: 20,
-                          //   distance: -60,
-                          //   rotate: 'tangential',
-                          //   formatter: function (value: number) {
-                          //     if (value === symbolData.recommendationsLinesModified.bestPermutation.minBuy) {
-                          //       return 'Strong Buy';
-                          //     } else if (value === 0.625) {
-                          //       return 'Buy';
-                          //     } else if (value === 0.375) {
-                          //       return 'Sell';
-                          //     } else if (value === 0.125) {
-                          //       return 'Strong Sell';
-                          //     }
-                          //     return '';
-                          //   }
-                          // },
-                          title: {
-                            offsetCenter: [0, '-10%'],
-                            fontSize: 20
-                          },
-                          detail: {
-                            fontSize: 30,
-                            offsetCenter: [0, '-35%'],
-                            valueAnimation: true,
-                            formatter: function (value: number) {
-                              return Math.round(value);
-                            },
-                            color: 'inherit'
-                          },
-                          data: [
-                            {
-                              value: symbolData.prices[symbolData.prices.length - 1].recommendation.score,
-                              name: getRecommendation()
-                            }
-                          ]
-                        }
-                      ]}}
-                    notMerge={true}
-                    lazyUpdate={true}
-                    // style={{ height: "90vh", left: "-5vw", top: 0, width: "85vw" }}
-
-                  />
-
-                  {/*<Typography>*/}
-                  {/*  <b>Based on: </b>*/}
-                  {/*  {symbolData?.recommendationsLinesModified.totalTrades} trades*/}
-                  {/*</Typography>*/}
+                          value:
+                            symbolData.prices[symbolData.prices.length - 1]
+                              .recommendation.score,
+                          name: getRecommendation(),
+                        },
+                      ],
+                    },
+                  ],
+                }}
+                notMerge={true}
+                lazyUpdate={true}
+                // style={{ height: "90vh", left: "-5vw", top: 0, width: "85vw" }}
+              />
+              <div
+                className="symbolInfo-reasons"
+                style={{ marginTop: "-120px" }}
+              >
+                {/*<Typography>*/}
+                {/*  <b>Based on: </b>*/}
+                {/*  {symbolData?.recommendationsLinesModified.totalTrades} trades*/}
+                {/*</Typography>*/}
+                <Typography>
+                  <b>Stop loss pips: </b>
+                  {(
+                    symbolData.prices[symbolData.prices.length - 1].point
+                      .close -
+                    symbolData.prices[symbolData.prices.length - 1]
+                      .recommendation.stopLoss
+                  ).toFixed(2)}
+                </Typography>
+                <Typography>
+                  <b>Stop loss percentage: </b>
+                  {percentage
+                    .differenceBetween(
+                      symbolData.prices[
+                        symbolData.prices.length - 1
+                      ].recommendation.stopLoss.toFixed(2),
+                      symbolData.prices[symbolData.prices.length - 1].point
+                        .close
+                    )
+                    .toFixed(2)}
+                  %
+                </Typography>
+                {nextEarning && (
                   <Typography>
-                    <b>Stop loss pips: </b>
-                    {(symbolData.prices[symbolData.prices.length - 1].point.close - symbolData.prices[symbolData.prices.length - 1].recommendation.stopLoss).toFixed(2)}
-                  </Typography>
-                  <Typography>
-                    <b>Stop loss percentage: </b>
-                    {percentage.differenceBetween(symbolData.prices[symbolData.prices.length - 1].recommendation.stopLoss.toFixed(2), symbolData.prices[symbolData.prices.length - 1].point.close).toFixed(2)}%
-                  </Typography>
-                  {nextEarning && <Typography>
                     <b>Next earning: </b>
-                    {DateTime.fromSeconds(nextEarning).toISODate()} ({DateTime.fromSeconds(nextEarning).diff(DateTime.now(), 'days').toObject().days?.toFixed(0)} Days)
-                  </Typography>}
-                  <Typography>
-                    <b>Total scanned permutations: </b>
-                    {getTotalScannedPermutations(
-                      symbolData.analyzedResult.results[priceMode][byType]
-                    )}
-                  </Typography>
-                </>
-              }
-              <br />
-              {symbolData &&
-                selectedSignal === undefined &&
-                symbolData?.recommendationsLinesModified && (
-                  <Typography>
-                    Click on a signal on the indicator to get full details ...
+                    {DateTime.fromSeconds(nextEarning).toISODate()} (
+                    {DateTime.fromSeconds(nextEarning)
+                      .diff(DateTime.now(), "days")
+                      .toObject()
+                      .days?.toFixed(0)}{" "}
+                    Days)
                   </Typography>
                 )}
-              {selectedSignal !== undefined && (
-                <>
-                  {Boolean(
-                    symbolData?.prices[selectedSignal].recommendation.buyReasons
-                      .length
-                  ) && (
-                    <>
-                      <b>Reasons to buy:</b>{" "}
-                      <List dense disablePadding>
-                        {symbolData?.prices[
-                          selectedSignal
-                        ].recommendation.buyReasons.map(
-                          (strategyName: string) => (
-                            <ListItem key={strategyName} dense disablePadding>
-                              <ListItemIcon
-                                onClick={() => showStrategyModal(strategyName)}
-                              >
-                                <IconButton>
-                                  <InfoIcon />
-                                </IconButton>
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={startCase(strategyName)}
-                              ></ListItemText>
-                            </ListItem>
-                          )
-                        )}
-                      </List>
-                    </>
+                <Typography>
+                  <b>Total scanned permutations: </b>
+                  {getTotalScannedPermutations(
+                    symbolData.analyzedResult.results[priceMode][byType]
                   )}
-                  {Boolean(
-                    symbolData?.prices[selectedSignal].recommendation
-                      .sellReasons.length
-                  ) && (
-                    <>
-                      <b>Reasons to sell:</b>{" "}
-                      <List dense disablePadding>
-                        {symbolData?.prices[
-                          selectedSignal
-                        ].recommendation.sellReasons.map(
-                          (strategyName: string) => (
-                            <ListItem key={strategyName} dense disablePadding>
-                              <ListItemIcon
-                                onClick={() => showStrategyModal(strategyName)}
-                              >
-                                <IconButton>
-                                  <InfoIcon />
-                                </IconButton>
-                              </ListItemIcon>
-                              <ListItemText
-                                primary={startCase(strategyName)}
-                              ></ListItemText>
-                            </ListItem>
-                          )
-                        )}
-                      </List>
-                    </>
+                </Typography>
+                <br />
+                {symbolData &&
+                  selectedSignal === undefined &&
+                  symbolData?.recommendationsLinesModified && (
+                    <Typography>
+                      Click on a signal on the indicator to get full details ...
+                    </Typography>
                   )}
-                </>
-              )}
+                {selectedSignal !== undefined && (
+                  <>
+                    {Boolean(
+                      symbolData?.prices[selectedSignal].recommendation
+                        .buyReasons.length
+                    ) && (
+                      <>
+                        <b>Reasons to buy:</b>{" "}
+                        <List dense disablePadding>
+                          {symbolData?.prices[
+                            selectedSignal
+                          ].recommendation.buyReasons.map(
+                            (strategyName: string) => (
+                              <ListItem key={strategyName} dense disablePadding>
+                                <ListItemIcon
+                                  onClick={() =>
+                                    showStrategyModal(strategyName)
+                                  }
+                                >
+                                  <IconButton>
+                                    <InfoIcon />
+                                  </IconButton>
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={startCase(strategyName)}
+                                ></ListItemText>
+                              </ListItem>
+                            )
+                          )}
+                        </List>
+                      </>
+                    )}
+                    {Boolean(
+                      symbolData?.prices[selectedSignal].recommendation
+                        .sellReasons.length
+                    ) && (
+                      <>
+                        <b>Reasons to sell:</b>{" "}
+                        <List dense disablePadding>
+                          {symbolData?.prices[
+                            selectedSignal
+                          ].recommendation.sellReasons.map(
+                            (strategyName: string) => (
+                              <ListItem key={strategyName} dense disablePadding>
+                                <ListItemIcon
+                                  onClick={() =>
+                                    showStrategyModal(strategyName)
+                                  }
+                                >
+                                  <IconButton>
+                                    <InfoIcon />
+                                  </IconButton>
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={startCase(strategyName)}
+                                ></ListItemText>
+                              </ListItem>
+                            )
+                          )}
+                        </List>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
             </CardContent>
           </Card>
         )}
-      </>
+      </div>
     ),
     [
       symbolData,
