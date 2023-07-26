@@ -1,6 +1,6 @@
 import "./App.css";
-import React, {useEffect, useState} from "react";
-import { Alert, Box, Divider, Paper, Snackbar } from "@mui/material";
+import React from "react";
+import { Alert, Divider, Paper, Snackbar } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
 import Chart from "./components/StockSystem/Chart";
