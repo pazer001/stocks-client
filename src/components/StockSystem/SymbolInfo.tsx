@@ -253,24 +253,6 @@ const SymbolInfo = () => {
                           width: 5,
                         },
                       },
-                      // axisLabel: {
-                      //   color: '#464646',
-                      //   fontSize: 20,
-                      //   distance: -60,
-                      //   rotate: 'tangential',
-                      //   formatter: function (value: number) {
-                      //     if (value === symbolData.recommendationsLinesModified.bestPermutation.minBuy) {
-                      //       return 'Strong Buy';
-                      //     } else if (value === 0.625) {
-                      //       return 'Buy';
-                      //     } else if (value === 0.375) {
-                      //       return 'Sell';
-                      //     } else if (value === 0.125) {
-                      //       return 'Strong Sell';
-                      //     }
-                      //     return '';
-                      //   }
-                      // },
                       title: {
                         offsetCenter: [0, "-10%"],
                         fontSize: 20,
@@ -303,10 +285,6 @@ const SymbolInfo = () => {
                 className="symbolInfo-reasons"
                 style={{ marginTop: "-120px" }}
               >
-                {/*<Typography>*/}
-                {/*  <b>Based on: </b>*/}
-                {/*  {symbolData?.recommendationsLinesModified.totalTrades} trades*/}
-                {/*</Typography>*/}
                 <Typography>
                   <b>Stop loss pips: </b>
                   {(
@@ -472,4 +450,3 @@ const IndicatorInfoDialog = (props: IIndicatorInfoDialogProps) => {
 
 export default SymbolInfo;
 
-co
