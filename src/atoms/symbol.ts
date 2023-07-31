@@ -113,7 +113,7 @@ export const symbolAtom = atom({
     symbolData: undefined,
     selectedSignal: 0,
     settings: {
-      byType: "byProfit",
+      byType: "byWinRate",
       interval: "1d",
       intervals: [],
       pricesMode: "normal",
