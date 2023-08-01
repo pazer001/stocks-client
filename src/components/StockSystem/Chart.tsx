@@ -217,15 +217,15 @@ const Chart = () => {
                 },
                 yAxis: symbolAnalyze.data.recommendationsLinesModified.bestPermutation.minBuy.toFixed(0),
               },
-                {
-                  label: {
-                    show: false
-                  },
-                  lineStyle : {
-                    color: 'white'
-                  },
-                  yAxis: 0,
-                },
+                // {
+                //   label: {
+                //     show: false
+                //   },
+                //   lineStyle : {
+                //     color: 'white'
+                //   },
+                //   yAxis: 0,
+                // },
 
                 {
                   lineStyle : {
