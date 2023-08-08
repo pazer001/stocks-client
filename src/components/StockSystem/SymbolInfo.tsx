@@ -20,9 +20,9 @@ import {
   getByType,
   getNextEarning,
   getPricesMode,
-  getSelectedSignal,
+  getSelectedSignal, getSelectedSymbol,
   getSymbolData,
-} from "../../atoms/symbol";
+} from '../../atoms/symbol';
 import axios from "axios";
 // @ts-ignore
 import * as percentage from "calculate-percentages";
@@ -90,6 +90,24 @@ const SymbolInfo = () => {
       return `Not enough data`;
     }
   };
+
+  const getRecommendationColor  = () => {
+    const recommendation  = getRecommendation()
+    switch (recommendation) {
+      case 'Buy':
+        return green[400]
+      case 'Sell':
+        return red[400]
+      case 'Strong buy':
+        return green[800]
+      case 'Strong sell':
+        return red[800]
+      default:
+        return "inherit"
+    }
+  }
+
+
 
   const getTotalScannedPermutations = (strategies: any) => {
     if (!strategies) return 0;
@@ -199,14 +217,14 @@ const SymbolInfo = () => {
                 option={{
                   series: [
                     {
-                      type: "gauge",
+                      type: 'gauge',
                       startAngle: 180,
                       endAngle: 0,
-                      center: ["50%", "50%"],
-                      radius: "90%",
+                      center: ['50%', '50%'],
+                      radius: '90%',
                       min: -100,
                       max: 100,
-                      // splitNumber: 8,
+                      splitNumber: 8,
                       axisLine: {
                         lineStyle: {
                           width: 6,
@@ -231,31 +249,35 @@ const SymbolInfo = () => {
                         },
                       },
                       pointer: {
-                        icon: "path://M12.8,0.7l12,40.1H0.7L12.8,0.7z",
-                        length: "12%",
+                        icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
+                        length: '12%',
                         width: 20,
-                        offsetCenter: [0, "-60%"],
+                        offsetCenter: [0, '-50%'],
                         itemStyle: {
-                          color: "auto",
-                        },
+                          color: getRecommendationColor()
+                        }
                       },
                       axisTick: {
                         length: 12,
                         lineStyle: {
-                          color: "auto",
-                          width: 2,
-                        },
+                          color: 'auto',
+                          width: 2
+                        }
                       },
                       splitLine: {
                         length: 20,
                         lineStyle: {
-                          color: "auto",
-                          width: 5,
-                        },
+                          color: 'auto',
+                          width: 5
+                        }
+                      },
+                      axisLabel: {
+                        fontSize: 0,
                       },
                       title: {
                         offsetCenter: [0, "-10%"],
-                        fontSize: 20,
+                        fontSize: 16,
+                        color: getRecommendationColor()
                       },
                       detail: {
                         fontSize: 30,
@@ -264,7 +286,7 @@ const SymbolInfo = () => {
                         formatter: function (value: number) {
                           return Math.round(value);
                         },
-                        color: "inherit",
+                        color: getRecommendationColor(),
                       },
                       data: [
                         {
@@ -279,34 +301,34 @@ const SymbolInfo = () => {
                 }}
                 notMerge={true}
                 lazyUpdate={true}
-                // style={{ height: "90vh", left: "-5vw", top: 0, width: "85vw" }}
+                style={{ height: "200px" }}
               />
               <div
                 className="symbolInfo-reasons"
-                style={{ marginTop: "-120px" }}
+                style={{ marginTop: "-80px" }}
               >
-                <Typography>
-                  <b>Stop loss pips: </b>
-                  {(
-                    symbolData.prices[symbolData.prices.length - 1].point
-                      .close -
-                    symbolData.prices[symbolData.prices.length - 1]
-                      .recommendation.stopLoss
-                  ).toFixed(2)}
-                </Typography>
-                <Typography>
-                  <b>Stop loss percentage: </b>
-                  {percentage
-                    .differenceBetween(
-                      symbolData.prices[
-                        symbolData.prices.length - 1
-                      ].recommendation.stopLoss.toFixed(2),
-                      symbolData.prices[symbolData.prices.length - 1].point
-                        .close
-                    )
-                    .toFixed(2)}
-                  %
-                </Typography>
+                {/*<Typography>*/}
+                {/*  <b>Stop loss pips: </b>*/}
+                {/*  {(*/}
+                {/*    symbolData.prices[symbolData.prices.length - 1].point*/}
+                {/*      .close -*/}
+                {/*    symbolData.prices[symbolData.prices.length - 1]*/}
+                {/*      .recommendation.stopLoss*/}
+                {/*  ).toFixed(2)}*/}
+                {/*</Typography>*/}
+                {/*<Typography>*/}
+                {/*  <b>Stop loss percentage: </b>*/}
+                {/*  {percentage*/}
+                {/*    .differenceBetween(*/}
+                {/*      symbolData.prices[*/}
+                {/*        symbolData.prices.length - 1*/}
+                {/*      ].recommendation.stopLoss.toFixed(2),*/}
+                {/*      symbolData.prices[symbolData.prices.length - 1].point*/}
+                {/*        .close*/}
+                {/*    )*/}
+                {/*    .toFixed(2)}*/}
+                {/*  %*/}
+                {/*</Typography>*/}
                 {nextEarning && (
                   <Typography>
                     <b>Next earning: </b>
@@ -318,12 +340,12 @@ const SymbolInfo = () => {
                     Days)
                   </Typography>
                 )}
-                <Typography>
-                  <b>Total scanned permutations: </b>
-                  {getTotalScannedPermutations(
-                    symbolData.analyzedResult.results[priceMode][byType]
-                  )}
-                </Typography>
+                {/*<Typography>*/}
+                {/*  <b>Total scanned permutations: </b>*/}
+                {/*  {getTotalScannedPermutations(*/}
+                {/*    symbolData.analyzedResult.results[priceMode][byType]*/}
+                {/*  )}*/}
+                {/*</Typography>*/}
                 <br />
                 {symbolData &&
                   selectedSignal === undefined &&

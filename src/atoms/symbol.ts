@@ -1,5 +1,8 @@
 import { atom, selector, useRecoilState } from "recoil";
 import { Interval } from "../components/StockSystem/enums/Interval";
+import axios, { AxiosResponse } from 'axios';
+import { useViewActions } from './view';
+import { useEffect } from 'react';
 
 interface Recommendation {
   buyCount: number;
@@ -184,30 +187,51 @@ export const getNextEarning = selector({
   },
 });
 
+const API_HOST = import.meta.env.VITE_API_HOST;
+
 export const useSymbol = () => {
-  const [symbol, setSymbolState] = useRecoilState(symbolAtom);
-  const { interval } = symbol.settings;
+  const [symbolState, setSymbolState] = useRecoilState(symbolAtom);
+  const { mainLoaderShow, setAlert } = useViewActions();
+  const { interval } = symbolState.settings;
 
-  const changeSymbol = (symbol: string, intervals: Array<Interval>) => {
-    const newInterval = intervals.includes(interval) ? interval : intervals[0];
-    const newIntervals: Array<Interval> = [];
-    const systemIntervals = Object.values(Interval);
+  useEffect(() => {
+    if(symbolState.selectedSymbol) {
+      changeSymbol(symbolState.selectedSymbol)
+    }
+  }, [symbolState.selectedSymbol, symbolState.settings.byType, symbolState.settings.interval])
 
-    systemIntervals.forEach((systemInterval, index) => {
-      if (intervals.includes(systemInterval)) {
-        newIntervals.push(systemInterval);
-      }
-    });
+  const changeSymbol = async (symbol: string) => {
+
+
+    mainLoaderShow(true);
+    setAlert(false);
+    const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
+      `${API_HOST}/analyze/combineAnalyzeAndRecommendations/${symbol}/${interval}/${symbolState.settings.byType}/${symbolState.settings.pricesMode}`
+    );
+
+
+    if(!symbolAnalyze.data.prices.length) {
+      setSymbolState((prevSymbolState) => ({
+        ...prevSymbolState,
+        symbolData: undefined,
+        selectedSignal: 0,
+      }));
+      setAlert(
+        true,
+        "Error occured while trying to load data for this stock"
+      );
+      return;
+    }
 
     setSymbolState((prevSymbolState) => ({
       ...prevSymbolState,
+      symbolData: symbolAnalyze.data,
       selectedSymbol: symbol,
       settings: {
         ...prevSymbolState.settings,
-        intervals: newIntervals,
-        interval: newInterval,
       },
     }));
+    mainLoaderShow(false);
   };
 
   return { changeSymbol };

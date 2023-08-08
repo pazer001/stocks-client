@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Avatar,
   Box,
   IconButton,
   List,
@@ -13,10 +12,10 @@ import {
 } from '@mui/material';
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import axios, { AxiosResponse } from 'axios';
-import { getByType, getInterval, getSelectedSymbol, useSymbol } from '../../atoms/symbol';
+import { getByType, getInterval, getSelectedSymbol, symbolAtom, useSymbol } from '../../atoms/symbol';
 import SymbolChooser from './SymbolChooser';
 import Grid from '@mui/material/Grid';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Interval } from './enums/Interval';
 
 interface TabPanelProps {
@@ -62,23 +61,24 @@ const SymbolsList = () => {
   return (
     <Box sx={{ height: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tab} onChange={moveTab}>
+        <Tabs value={tab} onChange={moveTab} variant="fullWidth">
           <Tab label='Suggested symbols' />
-          <Tab label='My lists' />
+          {/*<Tab label='My lists' />*/}
         </Tabs>
       </Box>
       <TabPanel value={tab} index={0}>
         <RandomSymbols />
       </TabPanel>
-      <TabPanel value={tab} index={1}>
-        <WatchlistSymbols />
-      </TabPanel>
+      {/*<TabPanel value={tab} index={1}>*/}
+      {/*  <WatchlistSymbols />*/}
+      {/*</TabPanel>*/}
     </Box>
   );
 };
 
 const RandomSymbols = () => {
-  const { changeSymbol } = useSymbol();
+  useSymbol()
+  const [_, setSymbolState] = useRecoilState(symbolAtom)
   const selectedSymbol = useRecoilValue(getSelectedSymbol)
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
@@ -95,7 +95,7 @@ const RandomSymbols = () => {
     [searchTerm, suggestedSymbols],
   );
 
-  const getRandomSymbols = async () => {
+  const getSuggestedSymbols = async () => {
     const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
       await axios.get(
         `${API_HOST}/analyze/suggestedSymbols/${interval}/${byType}`,
@@ -104,8 +104,9 @@ const RandomSymbols = () => {
   };
 
   useEffect(() => {
-    getRandomSymbols();
-  }, [interval, byType]);
+    getSuggestedSymbols();
+  }, []);
+
   return useMemo(
     () => (
       <Box height={{ height: '100%' }}>
@@ -131,7 +132,27 @@ const RandomSymbols = () => {
               <ListItemButton
                 selected={item.symbol === selectedSymbol}
                 dense
-                onClick={() => changeSymbol(item.symbol, item.intervals)}
+                onClick={() => {
+                  const newInterval = item.intervals.includes(interval) ? interval : item.intervals[0];
+                  const newIntervals: Array<Interval> = [];
+                  const systemIntervals = Object.values(Interval);
+
+                  systemIntervals.forEach((systemInterval) => {
+                    if (item.intervals.includes(systemInterval)) {
+                      newIntervals.push(systemInterval);
+                    }
+                  });
+
+                  setSymbolState((prevSymbolState) => ({
+                    ...prevSymbolState,
+                    selectedSymbol: item.symbol,
+                    settings: {
+                      ...prevSymbolState.settings,
+                      intervals: newIntervals,
+                      interval: newInterval,
+                    },
+                  }));
+                }}
               >
                 <ListItemText
                   primary={item.symbol}
@@ -147,7 +168,8 @@ const RandomSymbols = () => {
 };
 
 const WatchlistSymbols = () => {
-  const { changeSymbol } = useSymbol();
+  useSymbol()
+  const [_, setSymbolState] = useRecoilState(symbolAtom)
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
   const [watchlistItems, setWatchlistItems] = useState<Array<ISymbol>>([]);
@@ -219,7 +241,27 @@ const WatchlistSymbols = () => {
             >
               <ListItemButton
                 dense
-                onClick={() => changeSymbol(item.symbol, item.intervals)}
+                onClick={() => {
+                  const newInterval = item.intervals.includes(interval) ? interval : item.intervals[0];
+                  const newIntervals: Array<Interval> = [];
+                  const systemIntervals = Object.values(Interval);
+
+                  systemIntervals.forEach((systemInterval) => {
+                    if (item.intervals.includes(systemInterval)) {
+                      newIntervals.push(systemInterval);
+                    }
+                  });
+
+                  setSymbolState((prevSymbolState) => ({
+                    ...prevSymbolState,
+                    selectedSymbol: item.symbol,
+                    settings: {
+                      ...prevSymbolState.settings,
+                      intervals: newIntervals,
+                      interval: newInterval,
+                    },
+                  }));
+                }}
               >
                 <ListItemText primary={item.symbol} secondary={`Suggest score: ${
                   item.mainScore && item.mainScore.toFixed(0)

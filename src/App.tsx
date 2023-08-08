@@ -1,6 +1,6 @@
 import "./App.css";
 import React from "react";
-import { Alert, Divider, Paper, Snackbar } from "@mui/material";
+import { Alert, Divider, Hidden, Paper, Snackbar } from '@mui/material';
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
 import Chart from "./components/StockSystem/Chart";
@@ -26,20 +26,22 @@ function App() {
       </Snackbar>
       <Grid
         container
-        sx={{ height: "100vh", width: "100%" }}
+        // sx={{ height: "100vh", width: "100%" }}
         direction="column"
       >
         <Grid item sx={{ minHeight: "6vh" }}>
           <Toolbox />
         </Grid>
-        <Grid item sx={{ height: "94vh" }}>
-          <Grid container spacing={1} sx={{ height: "100%" }}>
-            <Grid item xs={9} md={9}>
-              <Paper sx={{ height: "100%", width: "100%" }}>
-                <Chart />
-              </Paper>
-            </Grid>
-            <Grid item xs={3} md={3} sx={{ height: "100%"}}>
+        <Grid item sx={{ height: "94vh", width: "100vw" }}>
+          <Grid  container spacing={1} sx={{ height: "100%" }}>
+            <Hidden xsDown smDown mdDown>
+              <Grid item xs={9} md={9}>
+                <Paper sx={{ height: "100%", width: "100%" }}>
+                  <Chart />
+                </Paper>
+              </Grid>
+            </Hidden>
+            <Grid item xs={12} sm={12} md={3}   sx={{ height: "100%", width:"100%"}}>
               <Paper>
                 <SymbolsList />
                 <Divider/>
