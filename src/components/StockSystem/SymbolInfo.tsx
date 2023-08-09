@@ -1,5 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { startCase } from "lodash";
+import { useRecoilValue } from "recoil";
+import {
+  getByType,
+  getNextEarning,
+  getPricesMode,
+  getSelectedSignal,
+  getSymbolData,
+} from "../../atoms/symbol";
+import axios from "axios";
+// @ts-ignore
+import * as percentage from "calculate-percentages";
+import { green, red } from "@mui/material/colors";
 import {
   Card,
   CardContent,
@@ -14,23 +25,15 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
-import { useRecoilValue } from "recoil";
-import {
-  getByType,
-  getNextEarning,
-  getPricesMode,
-  getSelectedSignal, getSelectedSymbol,
-  getSymbolData,
-} from '../../atoms/symbol';
-import axios from "axios";
-// @ts-ignore
-import * as percentage from "calculate-percentages";
-import { green, red } from "@mui/material/colors";
-import { DateTime } from "luxon";
+import { startCase } from "lodash";
 import ReactECharts from "echarts-for-react";
+import { DateTime } from "luxon";
 
 const API_HOST = import.meta.env.VITE_API_HOST;
+
+function InfoIcon() {
+  return null;
+}
 
 const SymbolInfo = () => {
   const symbolData = useRecoilValue(getSymbolData);
@@ -49,7 +52,7 @@ const SymbolInfo = () => {
       if (strategyName) {
         try {
           const strategyDescriptionResult = await axios.get(
-            `${API_HOST}/strategies/strategyDescription/${strategyName}`
+            `${API_HOST}/strategies/strategyDescription/${strategyName}`,
           );
           const strategyDescription =
             strategyDescriptionResult.data.description;
@@ -91,36 +94,34 @@ const SymbolInfo = () => {
     }
   };
 
-  const getRecommendationColor  = () => {
-    const recommendation  = getRecommendation()
+  const getRecommendationColor = () => {
+    const recommendation = getRecommendation();
     switch (recommendation) {
-      case 'Buy':
-        return green[400]
-      case 'Sell':
-        return red[400]
-      case 'Strong buy':
-        return green[800]
-      case 'Strong sell':
-        return red[800]
+      case "Buy":
+        return green[400];
+      case "Sell":
+        return red[400];
+      case "Strong buy":
+        return green[800];
+      case "Strong sell":
+        return red[800];
       default:
-        return "inherit"
+        return "inherit";
     }
-  }
-
-
-
-  const getTotalScannedPermutations = (strategies: any) => {
-    if (!strategies) return 0;
-    let totalScannedPermutation = 0;
-
-    for (let strategyName in strategies) {
-      const strategyData = strategies[strategyName];
-
-      totalScannedPermutation += strategyData.scannedPermutations;
-    }
-
-    return totalScannedPermutation.toLocaleString("en-US");
   };
+
+  // const getTotalScannedPermutations = (strategies: any) => {
+  //   if (!strategies) return 0;
+  //   let totalScannedPermutation = 0;
+  //
+  //   for (let strategyName in strategies) {
+  //     const strategyData = strategies[strategyName];
+  //
+  //     totalScannedPermutation += strategyData.scannedPermutations;
+  //   }
+  //
+  //   return totalScannedPermutation.toLocaleString("en-US");
+  // };
 
   return useMemo(
     () => (
@@ -134,7 +135,7 @@ const SymbolInfo = () => {
                 {Object.keys(
                   symbolData.analyzedResult.results[priceMode][byType][
                     strategyName
-                  ].bestPermutation
+                  ].bestPermutation,
                 )
                   .map(
                     (param) =>
@@ -142,7 +143,7 @@ const SymbolInfo = () => {
                         symbolData.analyzedResult.results[priceMode][byType][
                           strategyName
                         ].bestPermutation[param]
-                      }`
+                      }`,
                   )
                   .join(", ")}
                 ]
@@ -152,7 +153,7 @@ const SymbolInfo = () => {
                 {new Intl.NumberFormat().format(
                   symbolData.analyzedResult.results[priceMode][byType][
                     strategyName
-                  ].scannedPermutations
+                  ].scannedPermutations,
                 )}
               </DialogContentText>
               <DialogContentText>
@@ -217,11 +218,11 @@ const SymbolInfo = () => {
                 option={{
                   series: [
                     {
-                      type: 'gauge',
+                      type: "gauge",
                       startAngle: 180,
                       endAngle: 0,
-                      center: ['50%', '50%'],
-                      radius: '90%',
+                      center: ["50%", "50%"],
+                      radius: "90%",
                       min: -100,
                       max: 100,
                       splitNumber: 8,
@@ -249,27 +250,27 @@ const SymbolInfo = () => {
                         },
                       },
                       pointer: {
-                        icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
-                        length: '12%',
+                        icon: "path://M12.8,0.7l12,40.1H0.7L12.8,0.7z",
+                        length: "12%",
                         width: 20,
-                        offsetCenter: [0, '-50%'],
+                        offsetCenter: [0, "-50%"],
                         itemStyle: {
-                          color: getRecommendationColor()
-                        }
+                          color: getRecommendationColor(),
+                        },
                       },
                       axisTick: {
                         length: 12,
                         lineStyle: {
-                          color: 'auto',
-                          width: 2
-                        }
+                          color: "auto",
+                          width: 2,
+                        },
                       },
                       splitLine: {
                         length: 20,
                         lineStyle: {
-                          color: 'auto',
-                          width: 5
-                        }
+                          color: "auto",
+                          width: 5,
+                        },
                       },
                       axisLabel: {
                         fontSize: 0,
@@ -277,7 +278,7 @@ const SymbolInfo = () => {
                       title: {
                         offsetCenter: [0, "-10%"],
                         fontSize: 16,
-                        color: getRecommendationColor()
+                        color: getRecommendationColor(),
                       },
                       detail: {
                         fontSize: 30,
@@ -358,7 +359,7 @@ const SymbolInfo = () => {
                   <>
                     {Boolean(
                       symbolData?.prices[selectedSignal].recommendation
-                        .buyReasons.length
+                        .buyReasons.length,
                     ) && (
                       <>
                         <b>Reasons to buy:</b>{" "}
@@ -381,14 +382,14 @@ const SymbolInfo = () => {
                                   primary={startCase(strategyName)}
                                 ></ListItemText>
                               </ListItem>
-                            )
+                            ),
                           )}
                         </List>
                       </>
                     )}
                     {Boolean(
                       symbolData?.prices[selectedSignal].recommendation
-                        .sellReasons.length
+                        .sellReasons.length,
                     ) && (
                       <>
                         <b>Reasons to sell:</b>{" "}
@@ -411,7 +412,7 @@ const SymbolInfo = () => {
                                   primary={startCase(strategyName)}
                                 ></ListItemText>
                               </ListItem>
-                            )
+                            ),
                           )}
                         </List>
                       </>
@@ -433,7 +434,7 @@ const SymbolInfo = () => {
       strategyName,
       indicatorInfoDialog,
       strategyDescription,
-    ]
+    ],
   );
 };
 
@@ -464,11 +465,8 @@ const IndicatorInfoDialog = (props: IIndicatorInfoDialogProps) => {
         </DialogContent>
       </Dialog>
     ),
-    [open, onClose]
+    [open, onClose],
   );
 };
 
-
-
 export default SymbolInfo;
-

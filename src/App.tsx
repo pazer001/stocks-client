@@ -1,6 +1,6 @@
 import "./App.css";
 import React from "react";
-import { Alert, Divider, Hidden, Paper, Snackbar } from '@mui/material';
+import { Alert, Divider, Hidden, Paper, Snackbar } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
 import Chart from "./components/StockSystem/Chart";
@@ -14,7 +14,7 @@ function App() {
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
   const alertMessage = useRecoilValue(getAlertMessage);
-  
+
   return (
     <>
       {mainLoaderShow && (
@@ -33,7 +33,7 @@ function App() {
           <Toolbox />
         </Grid>
         <Grid item sx={{ height: "94vh", width: "100vw" }}>
-          <Grid  container spacing={1} sx={{ height: "100%" }}>
+          <Grid container spacing={1} sx={{ height: "100%" }}>
             <Hidden xsDown smDown mdDown>
               <Grid item xs={9} md={9}>
                 <Paper sx={{ height: "100%", width: "100%" }}>
@@ -41,10 +41,16 @@ function App() {
                 </Paper>
               </Grid>
             </Hidden>
-            <Grid item xs={12} sm={12} md={3}   sx={{ height: "100%", width:"100%"}}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={3}
+              sx={{ height: "100%", width: "100%" }}
+            >
               <Paper>
                 <SymbolsList />
-                <Divider/>
+                <Divider />
                 <SymbolInfo />
               </Paper>
             </Grid>

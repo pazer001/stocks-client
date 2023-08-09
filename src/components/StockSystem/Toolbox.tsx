@@ -5,13 +5,14 @@ import {
   Dialog,
   DialogContent,
   DialogContentText,
-  Divider, Hidden,
+  Divider,
+  Hidden,
   IconButton,
   ToggleButton,
   ToggleButtonGroup,
   Toolbar,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 import HelpCenterRoundedIcon from "@mui/icons-material/HelpCenterRounded";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -22,40 +23,46 @@ import {
   symbolAtom,
 } from "../../atoms/symbol";
 import Logo from "../../assets/symbata-high-resolution-logo-color-on-transparent-background.svg";
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
-import Grid from '@mui/material/Grid';
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 
 const Toolbox = () => {
-  const [symbol, setSymbol] = useRecoilState(symbolAtom);
+  const [, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
   const pricesMode = useRecoilValue(getPricesMode);
   const intervals = useRecoilValue(getIntervals);
   const [typeDialogOpen, setTypeDialogOpen] = useState<boolean>(false);
-  const [showSettings, setShowSettings] = useState<boolean>(false)
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   return (
     <>
       <AppBar position="static">
         {/*<Grid container>*/}
-          <Toolbar
-            variant="dense"
-            disableGutters
-            sx={{ justifyContent: "space-around" }}
-          >
-            {/*<Hidden smDown>*/}
-            {/*<Grid container justifyContent="space-around"*/}
-            {/*      alignItems="center">*/}
-            {/*  <Grid item xs>*/}
-                {/*<div>*/}
-                  <img src={Logo}  alt="Symdata" style={{maxWidth: "120px"}} />
-                {/*</div>*/}
-              {/*</Grid>*/}
-              <Hidden mdUp>
-              {/*<Grid item xs={2}>*/}
-                  <SettingsRoundedIcon onClick={() => setShowSettings(true)} fontSize="large"/>
-                  <Dialog open={showSettings} onClose={() => setShowSettings(false)}  fullWidth>
-                <DialogContent>
+        <Toolbar
+          variant="dense"
+          disableGutters
+          sx={{ justifyContent: "space-around" }}
+        >
+          {/*<Hidden smDown>*/}
+          {/*<Grid container justifyContent="space-around"*/}
+          {/*      alignItems="center">*/}
+          {/*  <Grid item xs>*/}
+          {/*<div>*/}
+          <img src={Logo} alt="Symdata" style={{ maxWidth: "120px" }} />
+          {/*</div>*/}
+          {/*</Grid>*/}
+          <Hidden mdUp>
+            {/*<Grid item xs={2}>*/}
+            <SettingsRoundedIcon
+              onClick={() => setShowSettings(true)}
+              fontSize="large"
+            />
+            <Dialog
+              open={showSettings}
+              onClose={() => setShowSettings(false)}
+              fullWidth
+            >
+              <DialogContent>
                 <ToggleButtonGroup
                   onChange={(event, value) =>
                     setSymbol((prevSymbol) => ({
@@ -71,7 +78,7 @@ const Toolbox = () => {
                   <ToggleButton value="byWinRate">Win Rate</ToggleButton>
                   <ToggleButton value="byProfit">Profit</ToggleButton>
                 </ToggleButtonGroup>
-                  <hr />
+                <hr />
                 <ToggleButtonGroup
                   onChange={(event, value) =>
                     setSymbol((prevSymbol) => ({
@@ -86,12 +93,16 @@ const Toolbox = () => {
                 >
                   {Boolean(intervals.length) &&
                     intervals.map((interval) => (
-                      <ToggleButton key={interval} value={interval} size="small">
+                      <ToggleButton
+                        key={interval}
+                        value={interval}
+                        size="small"
+                      >
                         {interval}
                       </ToggleButton>
                     ))}
                 </ToggleButtonGroup>
-                  <hr />
+                <hr />
                 <ToggleButtonGroup
                   onChange={(event, value) =>
                     setSymbol((prevSymbol) => ({
@@ -109,14 +120,14 @@ const Toolbox = () => {
                     Adjust for Dividends
                   </ToggleButton>
                 </ToggleButtonGroup>
-                </DialogContent>
-              </Dialog>
-              {/*</Grid>*/}
-              </Hidden>
+              </DialogContent>
+            </Dialog>
             {/*</Grid>*/}
-            {/*</Hidden>*/}
-            {/*<Divider orientation="vertical" flexItem variant="middle" />*/}
-            <Hidden mdDown>
+          </Hidden>
+          {/*</Grid>*/}
+          {/*</Hidden>*/}
+          {/*<Divider orientation="vertical" flexItem variant="middle" />*/}
+          <Hidden mdDown>
             <Box>
               <ToggleButtonGroup
                 onChange={(event, value) =>
@@ -134,9 +145,9 @@ const Toolbox = () => {
                 <ToggleButton value="byProfit">Profit</ToggleButton>
               </ToggleButtonGroup>
               <Hidden smDown>
-              <IconButton onClick={() => setTypeDialogOpen(true)}>
-                <HelpCenterRoundedIcon />
-              </IconButton>
+                <IconButton onClick={() => setTypeDialogOpen(true)}>
+                  <HelpCenterRoundedIcon />
+                </IconButton>
               </Hidden>
             </Box>
             <Divider orientation="vertical" flexItem variant="middle" />
@@ -181,8 +192,8 @@ const Toolbox = () => {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Box>
-            </Hidden>
-          </Toolbar>
+          </Hidden>
+        </Toolbar>
         {/*</Grid>*/}
       </AppBar>
 

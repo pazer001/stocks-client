@@ -1,8 +1,8 @@
 import { atom, selector, useRecoilState } from "recoil";
 import { Interval } from "../components/StockSystem/enums/Interval";
-import axios, { AxiosResponse } from 'axios';
-import { useViewActions } from './view';
-import { useEffect } from 'react';
+import axios, { AxiosResponse } from "axios";
+import { useViewActions } from "./view";
+import { useEffect } from "react";
 
 interface Recommendation {
   buyCount: number;
@@ -11,7 +11,7 @@ interface Recommendation {
   sellReasons: Array<string>;
   buySellSum: number;
   score: number;
-  stopLoss: number
+  stopLoss: number;
 }
 
 export interface SymbolData {
@@ -73,7 +73,7 @@ export interface SymbolData {
       };
     };
   };
-  nextEarning: number,
+  nextEarning: number;
   recommendationsLinesModified: {
     bestPermutation: {
       minBuy: number;
@@ -195,31 +195,29 @@ export const useSymbol = () => {
   const { interval } = symbolState.settings;
 
   useEffect(() => {
-    if(symbolState.selectedSymbol) {
-      changeSymbol(symbolState.selectedSymbol)
+    if (symbolState.selectedSymbol) {
+      changeSymbol(symbolState.selectedSymbol);
     }
-  }, [symbolState.selectedSymbol, symbolState.settings.byType, symbolState.settings.interval])
+  }, [
+    symbolState.selectedSymbol,
+    symbolState.settings.byType,
+    symbolState.settings.interval,
+  ]);
 
   const changeSymbol = async (symbol: string) => {
-
-
     mainLoaderShow(true);
     setAlert(false);
     const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-      `${API_HOST}/analyze/combineAnalyzeAndRecommendations/${symbol}/${interval}/${symbolState.settings.byType}/${symbolState.settings.pricesMode}`
+      `${API_HOST}/analyze/combineAnalyzeAndRecommendations/${symbol}/${interval}/${symbolState.settings.byType}/${symbolState.settings.pricesMode}`,
     );
 
-
-    if(!symbolAnalyze.data.prices.length) {
+    if (!symbolAnalyze.data.prices.length) {
       setSymbolState((prevSymbolState) => ({
         ...prevSymbolState,
         symbolData: undefined,
         selectedSignal: 0,
       }));
-      setAlert(
-        true,
-        "Error occured while trying to load data for this stock"
-      );
+      setAlert(true, "Error occured while trying to load data for this stock");
       return;
     }
 

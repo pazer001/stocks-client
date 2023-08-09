@@ -1,218 +1,233 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  getByType,
-  getInterval,
-  getPricesMode,
-  getSelectedSymbol,
-  symbolAtom,
-  SymbolData,
-} from "../../atoms/symbol";
+import React, { useEffect, useMemo, useState } from "react";
+import { getInterval, symbolAtom } from "../../atoms/symbol";
 import { useRecoilState, useRecoilValue } from "recoil";
-import axios, { AxiosResponse } from "axios";
-import { useViewActions } from "../../atoms/view";
 import { Button } from "@mui/material";
 import styled from "@emotion/styled";
-import ReactECharts from 'echarts-for-react';
-import { DateTime } from 'luxon';
-import { green, red, blue } from '@mui/material/colors';
-
-const API_HOST = import.meta.env.VITE_API_HOST;
+import ReactECharts from "echarts-for-react";
+import { DateTime } from "luxon";
+import { blue, green, red } from "@mui/material/colors";
 
 const ChartContainer = styled.div`
-height: 100%
+  height: 100%;
 `;
 
 const Chart = () => {
-  const selectedSymbol = useRecoilValue(getSelectedSymbol);
-  const [symbolState, setSymbol] = useRecoilState(symbolAtom);
-  const byType = useRecoilValue(getByType);
+  // const selectedSymbol = useRecoilValue(getSelectedSymbol);
+  const [symbolState] = useRecoilState(symbolAtom);
+  // const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
-  const pricesMode = useRecoilValue(getPricesMode);
-  const { mainLoaderShow, setAlert } = useViewActions();
+  // const pricesMode = useRecoilValue(getPricesMode);
+  // const { mainLoaderShow, setAlert } = useViewActions();
 
   const [stockChartOptions, setStockChartOptions] = useState({});
 
-  const setChart = async (
-  ) => {
-      if(symbolState.symbolData) {
-        setStockChartOptions((prevStockChartOptions) => ({
-          title: {
-            text: symbolState.selectedSymbol,
-            textAlign: 'center',
-            left: '50%'
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross',
-              link: { xAxisIndex: 'all' }
-            }
-          },
+  const setChart = async () => {
+    if (symbolState.symbolData) {
+      setStockChartOptions(() => ({
+        title: {
+          text: symbolState.selectedSymbol,
+          textAlign: "center",
+          left: "50%",
+        },
+        tooltip: {
+          trigger: "axis",
           axisPointer: {
-            link: { xAxisIndex: 'all' }
+            type: "cross",
+            link: { xAxisIndex: "all" },
           },
-          grid: [
-            {
-              left: '10%',
-              right: '8%',
-              height: '50%'
-            },
-            {
-              left: '10%',
-              right: '8%',
-              top: '60%',
-              height: '10%'
-            },
-            {
-              left: '10%',
-              right: '8%',
-              top: '72%',
-              height: '25%'
-            }
-          ],
-          xAxis: [{
-            type: 'category',
-            data: symbolState.symbolData?.prices.map(price => interval === '1d' ? DateTime.fromMillis(price.point.timestamp).toISODate() : DateTime.fromMillis(price.point.timestamp).toISOTime()),
+        },
+        axisPointer: {
+          link: { xAxisIndex: "all" },
+        },
+        grid: [
+          {
+            left: "10%",
+            right: "8%",
+            height: "50%",
+          },
+          {
+            left: "10%",
+            right: "8%",
+            top: "60%",
+            height: "10%",
+          },
+          {
+            left: "10%",
+            right: "8%",
+            top: "72%",
+            height: "25%",
+          },
+        ],
+        xAxis: [
+          {
+            type: "category",
+            data: symbolState.symbolData?.prices.map((price) =>
+              interval === "1d"
+                ? DateTime.fromMillis(price.point.timestamp).toISODate()
+                : DateTime.fromMillis(price.point.timestamp).toISOTime(),
+            ),
             boundaryGap: false,
             axisLine: { onZero: false },
             splitLine: { show: false },
-            min: 'dataMin',
-            max: 'dataMax',
+            min: "dataMin",
+            max: "dataMax",
             axisPointer: {
-              z: 100
-            }
-          }, {
-            type: 'category',
+              z: 100,
+            },
+          },
+          {
+            type: "category",
             gridIndex: 1,
-            name: 'Volume',
-            nameLocation: 'start',
-            data: symbolState.symbolData?.prices.map(data => data.point.volume),
+            name: "Volume",
+            nameLocation: "start",
+            data: symbolState.symbolData?.prices.map(
+              (data) => data.point.volume,
+            ),
             boundaryGap: false,
             axisLine: { onZero: false },
             axisTick: { show: false },
             splitLine: { show: false },
             axisLabel: { show: false },
-            min: 'dataMin',
-            max: 'dataMax'
+            min: "dataMin",
+            max: "dataMax",
           },
-            {
-              type: 'category',
-              gridIndex: 2,
-              name: 'Score',
-              nameLocation: 'start',
-              data: symbolState.symbolData?.prices.map(data => data.recommendation.score),
-              boundaryGap: false,
-              axisLine: { onZero: false },
-              axisTick: { show: false },
-              splitLine: { show: false },
-              axisLabel: { show: false },
-              min: 'dataMin',
-              max: 'dataMax'
-            }],
-          yAxis: [{
+          {
+            type: "category",
+            gridIndex: 2,
+            name: "Score",
+            nameLocation: "start",
+            data: symbolState.symbolData?.prices.map(
+              (data) => data.recommendation.score,
+            ),
+            boundaryGap: false,
+            axisLine: { onZero: false },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            axisLabel: { show: false },
+            min: "dataMin",
+            max: "dataMax",
+          },
+        ],
+        yAxis: [
+          {
             scale: true,
-          }, {
+          },
+          {
             scale: true,
             gridIndex: 1,
             splitNumber: 2,
             axisLabel: { show: false },
             axisLine: { show: false },
             axisTick: { show: false },
-            splitLine: { show: false }
-          }, {
+            splitLine: { show: false },
+          },
+          {
             scale: true,
             gridIndex: 2,
             splitNumber: 2,
             axisLabel: { show: false },
             axisLine: { show: false },
             axisTick: { show: false },
-            splitLine: { show: false }
-          }],
-          dataZoom: [
-            {
-              type: 'inside',
-              xAxisIndex: [0, 1, 2],
-              start: 0,
-              end: 100,
-            }
-          ],
+            splitLine: { show: false },
+          },
+        ],
+        dataZoom: [
+          {
+            type: "inside",
+            xAxisIndex: [0, 1, 2],
+            start: 0,
+            end: 100,
+          },
+        ],
 
+        series: [
+          {
+            name: symbolState.selectedSymbol,
+            type: "candlestick",
+            itemStyle: {
+              color: green[400],
+              color0: red[400],
+              borderColor: green[400],
+              borderColor0: red[400],
+            },
+            data: symbolState.symbolData?.prices.map((data) => [
+              Number(data.point.open.toFixed(3)),
+              Number(data.point.close.toFixed(3)),
+              Number(data.point.low.toFixed(3)),
+              Number(data.point.high.toFixed(3)),
+            ]),
+          },
+          {
+            name: "Volume",
+            type: "bar",
+            colorBy: "series",
+            seriesLayoutBy: "row",
+            xAxisIndex: 1,
+            yAxisIndex: 1,
 
-          series: [
-            {
-              name: symbolState.selectedSymbol,
-              type: 'candlestick',
+            data: symbolState.symbolData?.prices.map((data, index) => ({
+              value: data.point.volume,
               itemStyle: {
-                color: green[400],
-                color0: red[400],
-                borderColor: green[400],
-                borderColor0: red[400],
+                color:
+                  symbolState.symbolData?.prices[index - 1] &&
+                  data.point.volume >
+                    symbolState.symbolData?.prices[index - 1].point.volume
+                    ? green[400]
+                    : red[400],
               },
-              data: symbolState.symbolData?.prices.map((data) => [
-                Number(data.point.open.toFixed(3)),
-                Number(data.point.close.toFixed(3)),
-                Number(data.point.low.toFixed(3)),
-                Number(data.point.high.toFixed(3)),
-              ])
+            })),
+          },
+          {
+            name: "Score",
+            type: "line",
+            xAxisIndex: 2,
+            yAxisIndex: 2,
+            data: symbolState.symbolData?.prices.map(
+              (data) => data.recommendation.score,
+            ),
+            lineStyle: {
+              color: blue[400],
             },
-            {
-              name: 'Volume',
-              type: 'bar',
-              colorBy: "series",
-              seriesLayoutBy: "row",
-              xAxisIndex: 1,
-              yAxisIndex: 1,
 
-              data: symbolState.symbolData?.prices.map((data, index) => ({
-                value: data.point.volume,
-                itemStyle: {
-                  color: symbolState.symbolData?.prices[index - 1] && data.point.volume > symbolState.symbolData?.prices[index - 1].point.volume ? green[400] : red[400]
-                }
-              }))
-            },
-            {
-              name: 'Score',
-              type: 'line',
-              xAxisIndex: 2,
-              yAxisIndex: 2,
-              data: symbolState.symbolData?.prices.map(data => data.recommendation.score),
-              lineStyle: {
-                color: blue[400]
-              },
-
-              markLine: {
-                symbol: "circle",
-                data: [{
+            markLine: {
+              symbol: "circle",
+              data: [
+                {
                   lineStyle: {
-                    color: green[400]
+                    color: green[400],
                   },
-                  yAxis: symbolState.symbolData?.recommendationsLinesModified.bestPermutation.minBuy.toFixed(0),
+                  yAxis:
+                    symbolState.symbolData?.recommendationsLinesModified.bestPermutation.minBuy.toFixed(
+                      0,
+                    ),
                 },
-                  // {
-                  //   label: {
-                  //     show: false
-                  //   },
-                  //   lineStyle : {
-                  //     color: 'white'
-                  //   },
-                  //   yAxis: 0,
-                  // },
+                // {
+                //   label: {
+                //     show: false
+                //   },
+                //   lineStyle : {
+                //     color: 'white'
+                //   },
+                //   yAxis: 0,
+                // },
 
-                  {
-                    lineStyle: {
-                      color: red[400]
-                    },
-                    yAxis: symbolState.symbolData?.recommendationsLinesModified.bestPermutation.minSell.toFixed(0),
-                  }]
-              }
+                {
+                  lineStyle: {
+                    color: red[400],
+                  },
+                  yAxis:
+                    symbolState.symbolData?.recommendationsLinesModified.bestPermutation.minSell.toFixed(
+                      0,
+                    ),
+                },
+              ],
+            },
+          },
+        ],
+      }));
+    }
 
-            }
-          ]
-        }));
-      }
-
-      return symbolState.symbolData;
-
+    return symbolState.symbolData;
   };
 
   useEffect(() => {
@@ -222,19 +237,16 @@ const Chart = () => {
   return useMemo(
     () => (
       <ChartContainer>
-        <Button onClick={() => setChart()}>
-          Refresh
-        </Button>
+        <Button onClick={() => setChart()}>Refresh</Button>
         <ReactECharts
           option={stockChartOptions}
           notMerge={true}
           lazyUpdate={true}
           style={{ height: "90vh", left: "-5vw", top: 0, width: "85vw" }}
-
         />
       </ChartContainer>
     ),
-    [stockChartOptions]
+    [stockChartOptions],
   );
 };
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import { ISymbol } from "./SymbolsList";
 import {
-  Autocomplete,
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -9,11 +9,9 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import { DataGrid, GridRowId } from "@mui/x-data-grid";
-import axios, { AxiosResponse } from "axios";
 import { debounce } from "lodash";
-import { ISymbol } from "./SymbolsList";
 import { columnDefinition } from "./common";
+import { DataGrid } from "@mui/x-data-grid";
 
 interface ISymbolChooserProps {
   open: boolean;
@@ -30,7 +28,7 @@ const SymbolChooser = (props: ISymbolChooserProps) => {
 
   const searchSymbols = async (symbol: string) => {
     const searchSymbolsResult: AxiosResponse<Array<ISymbol>> = await axios.get(
-      `${API_HOST}/symbols/searchByTerm/${symbol}`
+      `${API_HOST}/symbols/searchByTerm/${symbol}`,
     );
     setSymbols((_) => searchSymbolsResult.data);
   };

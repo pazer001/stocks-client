@@ -33,6 +33,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/react-window": "^1.8.5",
     "@vitejs/plugin-react-swc": "^3.3.2",
+    "prettier": "^3.0.1",
     "typescript": "^4.9.5",
     "vite": "^4.4.7"
   }
