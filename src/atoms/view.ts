@@ -37,7 +37,7 @@ export const getAlertMessage = selector({
 });
 
 export const useViewActions = () => {
-  const [view, setView] = useRecoilState(viewAtom);
+  const [, setView] = useRecoilState(viewAtom);
   const mainLoaderShow = (value: boolean) => {
     setView((prevView) => ({
       ...prevView,
