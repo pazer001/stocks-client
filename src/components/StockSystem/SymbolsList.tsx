@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -10,7 +9,6 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
-import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import axios, { AxiosResponse } from "axios";
 import {
   getByType,
@@ -19,8 +17,6 @@ import {
   symbolAtom,
   useSymbol,
 } from "../../atoms/symbol";
-import SymbolChooser from "./SymbolChooser";
-import Grid from "@mui/material/Grid";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Interval } from "./enums/Interval";
 
