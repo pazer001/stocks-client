@@ -8,8 +8,7 @@ import {
   getSymbolData,
 } from "../../atoms/symbol";
 import axios from "axios";
-// @ts-ignore
-import * as percentage from "calculate-percentages";
+
 import { green, red } from "@mui/material/colors";
 import {
   Card,

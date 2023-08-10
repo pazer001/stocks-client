@@ -30,7 +30,7 @@ const SymbolChooser = (props: ISymbolChooserProps) => {
     const searchSymbolsResult: AxiosResponse<Array<ISymbol>> = await axios.get(
       `${API_HOST}/symbols/searchByTerm/${symbol}`,
     );
-    setSymbols((_) => searchSymbolsResult.data);
+    setSymbols(() => searchSymbolsResult.data);
   };
 
   const handleSelectedSymbols = (ids: Array<string>) => {

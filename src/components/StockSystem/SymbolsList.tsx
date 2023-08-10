@@ -80,7 +80,7 @@ const SymbolsList = () => {
 
 const RandomSymbols = () => {
   useSymbol();
-  const [_, setSymbolState] = useRecoilState(symbolAtom);
+  const [, setSymbolState] = useRecoilState(symbolAtom);
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
