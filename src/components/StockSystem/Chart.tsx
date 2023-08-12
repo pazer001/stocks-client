@@ -21,7 +21,7 @@ const Chart = () => {
 
   const [stockChartOptions, setStockChartOptions] = useState({});
 
-  const setChart = async () => {
+  const setChart = () => {
     if (symbolState.symbolData) {
       setStockChartOptions(() => ({
         title: {
@@ -232,7 +232,7 @@ const Chart = () => {
 
   useEffect(() => {
     setChart();
-  }, [symbolState]);
+  }, [symbolState.symbolData]);
 
   return useMemo(
     () => (
