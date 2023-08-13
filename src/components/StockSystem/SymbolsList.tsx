@@ -37,9 +37,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3, height: 400, padding: 0 }}>{children}</Box>
-      )}
+      {value === index && <Box sx={{ p: 3, padding: 0 }}>{children}</Box>}
     </div>
   );
 }
@@ -111,7 +109,7 @@ const RandomSymbols = () => {
 
   return useMemo(
     () => (
-      <Box height={{ height: "100%" }}>
+      <Box>
         <TextField
           label="Search symbol"
           fullWidth
@@ -122,7 +120,7 @@ const RandomSymbols = () => {
             style: { textTransform: "uppercase" },
           }}
         />
-        <List dense disablePadding sx={{ height: "86%", overflowY: "auto" }}>
+        <List dense disablePadding sx={{ overflowY: "auto", height: "38vh" }}>
           {filteredSymbols.map((item) => (
             <ListItem
               key={item.symbol}

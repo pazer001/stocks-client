@@ -11,6 +11,7 @@ import axios from "axios";
 
 import { green, red } from "@mui/material/colors";
 import {
+  Box,
   Card,
   CardContent,
   Dialog,
@@ -65,7 +66,6 @@ const SymbolInfo = () => {
     getStrategyDescription();
   }, [strategyName]);
 
-  // if (!symbolData) return null;
   const showStrategyModal = (strategyName: string) => {
     setStrategyName(() => strategyName);
     setStrategyModalOpen(() => true);
@@ -109,22 +109,9 @@ const SymbolInfo = () => {
     }
   };
 
-  // const getTotalScannedPermutations = (strategies: any) => {
-  //   if (!strategies) return 0;
-  //   let totalScannedPermutation = 0;
-  //
-  //   for (let strategyName in strategies) {
-  //     const strategyData = strategies[strategyName];
-  //
-  //     totalScannedPermutation += strategyData.scannedPermutations;
-  //   }
-  //
-  //   return totalScannedPermutation.toLocaleString("en-US");
-  // };
-
   return useMemo(
     () => (
-      <div className="SymbolInfo" style={{ overflowY: "auto", flex: "1" }}>
+      <Box sx={{ height: "100%" }}>
         {symbolData && strategyModalOpen && strategyName && (
           <Dialog open={strategyModalOpen} onClose={() => setStrategyName("")}>
             <DialogTitle>{startCase(strategyName)}</DialogTitle>
@@ -180,39 +167,8 @@ const SymbolInfo = () => {
         />
 
         {symbolData && (
-          <Card
-            className="Card-SymbolInfo"
-            sx={{ overflowY: "auto", maxHeight: `calc(100vh - 504px)` }}
-          >
-            {/*<CardHeader*/}
-            {/*  title="Indicator info"*/}
-            {/*  action={*/}
-            {/*    <IconButton onClick={() => setIndicatorInfoDialog(true)}>*/}
-            {/*      <InfoIcon />*/}
-            {/*    </IconButton>*/}
-            {/*  }*/}
-            {/*/>*/}
+          <Card sx={{ height: "100%" }}>
             <CardContent>
-              {/*{symbolData?.recommendationBacktest && (*/}
-              {/*  <Typography>*/}
-              {/*    <b>Indicator Win Rate: </b>*/}
-              {/*    {symbolData?.recommendationBacktest.winRate.toFixed(2)}%*/}
-              {/*  </Typography>*/}
-              {/*)}*/}
-              {/*{symbolData?.recommendationBacktest && (*/}
-              {/*  <Typography>*/}
-              {/*    <b>Indicator Profit: </b>*/}
-              {/*    {symbolData?.recommendationBacktest.profit*/}
-              {/*      ? symbolData?.recommendationBacktest.profit.toFixed(2)*/}
-              {/*      : 0}*/}
-              {/*  </Typography>*/}
-              {/*)}*/}
-
-              {/*<Typography variant="h6">Recommendations:</Typography>*/}
-
-              {/*<Typography>*/}
-              {/*  <b>Action:</b> {getRecommendation()} ({symbolData.prices[symbolData.prices.length - 1].recommendation.score.toFixed(2)})*/}
-              {/*</Typography>*/}
               <ReactECharts
                 option={{
                   series: [
@@ -307,28 +263,6 @@ const SymbolInfo = () => {
                 className="symbolInfo-reasons"
                 style={{ marginTop: "-80px" }}
               >
-                {/*<Typography>*/}
-                {/*  <b>Stop loss pips: </b>*/}
-                {/*  {(*/}
-                {/*    symbolData.prices[symbolData.prices.length - 1].point*/}
-                {/*      .close -*/}
-                {/*    symbolData.prices[symbolData.prices.length - 1]*/}
-                {/*      .recommendation.stopLoss*/}
-                {/*  ).toFixed(2)}*/}
-                {/*</Typography>*/}
-                {/*<Typography>*/}
-                {/*  <b>Stop loss percentage: </b>*/}
-                {/*  {percentage*/}
-                {/*    .differenceBetween(*/}
-                {/*      symbolData.prices[*/}
-                {/*        symbolData.prices.length - 1*/}
-                {/*      ].recommendation.stopLoss.toFixed(2),*/}
-                {/*      symbolData.prices[symbolData.prices.length - 1].point*/}
-                {/*        .close*/}
-                {/*    )*/}
-                {/*    .toFixed(2)}*/}
-                {/*  %*/}
-                {/*</Typography>*/}
                 {nextEarning && (
                   <Typography>
                     <b>Next earning: </b>
@@ -340,13 +274,6 @@ const SymbolInfo = () => {
                     Days)
                   </Typography>
                 )}
-                {/*<Typography>*/}
-                {/*  <b>Total scanned permutations: </b>*/}
-                {/*  {getTotalScannedPermutations(*/}
-                {/*    symbolData.analyzedResult.results[priceMode][byType]*/}
-                {/*  )}*/}
-                {/*</Typography>*/}
-                <br />
                 {symbolData &&
                   selectedSignal === undefined &&
                   symbolData?.recommendationsLinesModified && (
@@ -422,7 +349,7 @@ const SymbolInfo = () => {
             </CardContent>
           </Card>
         )}
-      </div>
+      </Box>
     ),
     [
       symbolData,

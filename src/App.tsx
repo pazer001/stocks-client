@@ -1,6 +1,6 @@
 import "./App.css";
 import React from "react";
-import { Alert, Divider, Hidden, Paper, Snackbar } from "@mui/material";
+import { Alert, Box, Divider, Hidden, Paper, Snackbar } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import LinearProgress from "@mui/material/LinearProgress";
 import Chart from "./components/StockSystem/Chart";
@@ -49,9 +49,13 @@ function App() {
               sx={{ height: "100%", width: "100%" }}
             >
               <Paper>
-                <SymbolsList />
+                <Box sx={{ height: "50%" }}>
+                  <SymbolsList />
+                </Box>
                 <Divider />
-                <SymbolInfo />
+                <Box sx={{ height: "43vh" }}>
+                  <SymbolInfo />
+                </Box>
               </Paper>
             </Grid>
           </Grid>
