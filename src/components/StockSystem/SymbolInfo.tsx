@@ -109,6 +109,12 @@ const SymbolInfo = () => {
     }
   };
 
+  const mapNumber = (value: number) => {
+    const min = -100;
+    const max = 100;
+    return (value - min) / (max - min);
+  };
+
   return useMemo(
     () => (
       <Box sx={{ height: "100%" }}>
@@ -186,18 +192,29 @@ const SymbolInfo = () => {
                           width: 6,
                           color: [
                             [
-                              (symbolData.recommendationsLinesModified
-                                .bestPermutation.minSell -
-                                -100) /
-                                (100 - -100),
+                              mapNumber(
+                                symbolData.recommendationsLinesModified
+                                  .bestPermutation.minSell,
+                              ),
                               red[800],
                             ],
-                            [0.5, red[400]],
                             [
-                              (symbolData.recommendationsLinesModified
-                                .bestPermutation.minBuy -
-                                -100) /
-                                (100 - -100),
+                              (mapNumber(
+                                symbolData.recommendationsLinesModified
+                                  .bestPermutation.minSell,
+                              ) +
+                                mapNumber(
+                                  symbolData.recommendationsLinesModified
+                                    .bestPermutation.minBuy,
+                                )) /
+                                2,
+                              red[400],
+                            ],
+                            [
+                              mapNumber(
+                                symbolData.recommendationsLinesModified
+                                  .bestPermutation.minBuy,
+                              ),
                               green[400],
                             ],
                             [1, green[800]],
