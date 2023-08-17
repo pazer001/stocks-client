@@ -85,6 +85,10 @@ export interface SymbolData {
     goodTrades: number;
     badTrades: number;
   };
+  stopLossPrice: number;
+  stopLossPercent: number;
+  marketMomentumScore: number;
+  marketMomentumThreshold: number;
 }
 
 enum ByType {

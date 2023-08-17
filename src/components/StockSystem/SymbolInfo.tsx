@@ -71,7 +71,13 @@ const SymbolInfo = () => {
     setStrategyModalOpen(() => true);
   };
   const getRecommendation = () => {
-    if (symbolData !== undefined && symbolData.recommendationsLinesModified) {
+    if (!symbolData) return null;
+    if (symbolData.marketMomentumScore && symbolData.marketMomentumThreshold) {
+      if (symbolData.marketMomentumScore < symbolData.marketMomentumThreshold) {
+        return "Strong sell";
+      }
+    }
+    if (symbolData.recommendationsLinesModified) {
       const { minBuy, minSell } =
         symbolData.recommendationsLinesModified.bestPermutation;
       const currentRecommendation =
@@ -264,8 +270,11 @@ const SymbolInfo = () => {
                       data: [
                         {
                           value:
-                            symbolData.prices[symbolData.prices.length - 1]
-                              .recommendation.score,
+                            symbolData.marketMomentumScore <
+                            symbolData.marketMomentumThreshold
+                              ? -100
+                              : symbolData.prices[symbolData.prices.length - 1]
+                                  .recommendation.score,
                           name: getRecommendation(),
                         },
                       ],
