@@ -94,6 +94,7 @@ export interface SymbolData {
 enum ByType {
   byWinRate = "byWinRate",
   byProfit = "byProfit",
+  byMixed = "byMixed",
 }
 
 enum PriceMode {
