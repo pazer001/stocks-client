@@ -72,11 +72,6 @@ const SymbolInfo = () => {
   };
   const getRecommendation = () => {
     if (!symbolData) return null;
-    // if (symbolData.marketMomentumScore && symbolData.marketMomentumThreshold) {
-    //   if (symbolData.marketMomentumScore < symbolData.marketMomentumThreshold) {
-    //     return "Strong sell";
-    //   }
-    // }
     if (symbolData.recommendationsLinesModified) {
       const { minBuy, minSell } =
         symbolData.recommendationsLinesModified.bestPermutation;

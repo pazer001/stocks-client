@@ -3,6 +3,7 @@ import { Interval } from "../components/StockSystem/enums/Interval";
 import axios, { AxiosResponse } from "axios";
 import { useViewActions } from "./view";
 import { useEffect } from "react";
+import { ISymbol } from "../components/StockSystem/SymbolsList";
 
 interface Recommendation {
   buyCount: number;
@@ -197,7 +198,7 @@ const API_HOST = import.meta.env.VITE_API_HOST;
 export const useSymbol = () => {
   const [symbolState, setSymbolState] = useRecoilState(symbolAtom);
   const { mainLoaderShow, setAlert } = useViewActions();
-  const { interval } = symbolState.settings;
+  const { interval, byType } = symbolState.settings;
 
   useEffect(() => {
     if (symbolState.selectedSymbol) {
@@ -208,6 +209,16 @@ export const useSymbol = () => {
     symbolState.settings.byType,
     symbolState.settings.interval,
   ]);
+
+  const getSuggestedSymbols = async (): Promise<Array<ISymbol>> => {
+    mainLoaderShow(true);
+    const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
+      await axios.get(
+        `${API_HOST}/analyze/suggestedSymbols/${interval}/${byType}`,
+      );
+    mainLoaderShow(false);
+    return supportedSymbolsResult.data;
+  };
 
   const changeSymbol = async (symbol: string) => {
     mainLoaderShow(true);
@@ -237,5 +248,5 @@ export const useSymbol = () => {
     mainLoaderShow(false);
   };
 
-  return { changeSymbol };
+  return { changeSymbol, getSuggestedSymbols };
 };

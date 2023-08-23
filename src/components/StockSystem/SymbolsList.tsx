@@ -9,7 +9,6 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
-import axios, { AxiosResponse } from "axios";
 import {
   getByType,
   getInterval,
@@ -50,8 +49,6 @@ export interface ISymbol {
   updatedAt: string;
 }
 
-const API_HOST = import.meta.env.VITE_API_HOST;
-
 const SymbolsList = () => {
   const [tab, setTab] = React.useState(0);
   const moveTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -77,13 +74,13 @@ const SymbolsList = () => {
 };
 
 const RandomSymbols = () => {
-  useSymbol();
   const [, setSymbolState] = useRecoilState(symbolAtom);
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const { getSuggestedSymbols } = useSymbol();
 
   const filteredSymbols = useMemo(
     () =>
@@ -95,17 +92,13 @@ const RandomSymbols = () => {
     [searchTerm, suggestedSymbols],
   );
 
-  const getSuggestedSymbols = async () => {
-    const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
-      await axios.get(
-        `${API_HOST}/analyze/suggestedSymbols/${interval}/${byType}`,
-      );
-    setSuggestedSymbols(supportedSymbolsResult.data);
-  };
-
   useEffect(() => {
-    getSuggestedSymbols();
-  }, []);
+    const changeSuggestedSymbols = async () => {
+      const suggestedSymbols = await getSuggestedSymbols();
+      setSuggestedSymbols(suggestedSymbols);
+    };
+    changeSuggestedSymbols();
+  }, [byType]);
 
   return useMemo(
     () => (
