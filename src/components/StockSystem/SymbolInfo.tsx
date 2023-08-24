@@ -174,7 +174,7 @@ const SymbolInfo = () => {
         />
 
         {symbolData && (
-          <Card sx={{ height: "100%" }}>
+          <Card sx={{ height: "100%", overflowY: "auto" }}>
             <CardContent>
               <ReactECharts
                 option={{
@@ -302,14 +302,14 @@ const SymbolInfo = () => {
                 {selectedSignal !== undefined && (
                   <>
                     {Boolean(
-                      symbolData?.prices[selectedSignal].recommendation
-                        .buyReasons.length,
+                      symbolData?.prices[symbolData.prices.length - 1]
+                        .recommendation.buyReasons.length,
                     ) && (
                       <>
                         <b>Reasons to buy:</b>{" "}
                         <List dense disablePadding>
                           {symbolData?.prices[
-                            selectedSignal
+                            symbolData.prices.length - 1
                           ].recommendation.buyReasons.map(
                             (strategyName: string) => (
                               <ListItem key={strategyName} dense disablePadding>
@@ -332,14 +332,14 @@ const SymbolInfo = () => {
                       </>
                     )}
                     {Boolean(
-                      symbolData?.prices[selectedSignal].recommendation
-                        .sellReasons.length,
+                      symbolData?.prices[symbolData.prices.length - 1]
+                        .recommendation.sellReasons.length,
                     ) && (
                       <>
                         <b>Reasons to sell:</b>{" "}
                         <List dense disablePadding>
                           {symbolData?.prices[
-                            selectedSignal
+                            symbolData.prices.length - 1
                           ].recommendation.sellReasons.map(
                             (strategyName: string) => (
                               <ListItem key={strategyName} dense disablePadding>
