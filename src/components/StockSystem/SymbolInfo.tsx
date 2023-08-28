@@ -9,7 +9,7 @@ import {
 } from "../../atoms/symbol";
 import axios from "axios";
 
-import { green, red } from "@mui/material/colors";
+import { green, red, grey } from "@mui/material/colors";
 import {
   Box,
   Card,
@@ -78,13 +78,14 @@ const SymbolInfo = () => {
       const currentRecommendation =
         symbolData.prices[symbolData.prices.length - 1].recommendation;
 
-      if (currentRecommendation.score > minBuy) {
-        return "Strong buy";
-      } else if (currentRecommendation.score > 0) {
+      if (currentRecommendation.score >= minBuy) {
         return "Buy";
-      } else if (currentRecommendation.score < minSell) {
-        return "Strong sell";
-      } else if (currentRecommendation.score < 0) {
+      } else if (
+        currentRecommendation.score > minSell &&
+        currentRecommendation.score < minBuy
+      ) {
+        return "Hold";
+      } else if (currentRecommendation.score <= minSell) {
         return "Sell";
       } else {
         return `No decision`;
@@ -101,10 +102,6 @@ const SymbolInfo = () => {
         return green[400];
       case "Sell":
         return red[400];
-      case "Strong buy":
-        return green[800];
-      case "Strong sell":
-        return red[800];
       default:
         return "inherit";
     }
@@ -200,23 +197,11 @@ const SymbolInfo = () => {
                               red[800],
                             ],
                             [
-                              (mapNumber(
-                                symbolData.recommendationsLinesModified
-                                  .bestPermutation.minSell,
-                              ) +
-                                mapNumber(
-                                  symbolData.recommendationsLinesModified
-                                    .bestPermutation.minBuy,
-                                )) /
-                                2,
-                              red[400],
-                            ],
-                            [
                               mapNumber(
                                 symbolData.recommendationsLinesModified
                                   .bestPermutation.minBuy,
                               ),
-                              green[400],
+                              grey[400],
                             ],
                             [1, green[800]],
                           ],
@@ -283,7 +268,7 @@ const SymbolInfo = () => {
               >
                 {nextEarning && (
                   <Typography>
-                    <b>Next earning: </b>
+                    <b>Next earnings report: </b>
                     {DateTime.fromSeconds(nextEarning).toISODate()} (
                     {DateTime.fromSeconds(nextEarning)
                       .diff(DateTime.now(), "days")

@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Box,
+  IconButton,
+  InputAdornment,
   List,
   ListItem,
   ListItemButton,
@@ -8,7 +10,15 @@ import {
   Tab,
   Tabs,
   TextField,
+  Tooltip,
 } from "@mui/material";
+import { green, red, grey } from "@mui/material/colors";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import QueryStatsRoundedIcon from "@mui/icons-material/QueryStatsRounded";
+import CircularProgress from "@mui/material/CircularProgress";
+import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
+import TrendingDownRoundedIcon from "@mui/icons-material/TrendingDownRounded";
+import TrendingFlatRoundedIcon from "@mui/icons-material/TrendingFlatRounded";
 import {
   getByType,
   getInterval,
@@ -45,7 +55,8 @@ export interface ISymbol {
   _id: string;
   symbol: string;
   intervals: Array<Interval>;
-  mainScore: number;
+  score: number;
+  recommendation: "Buy" | "Sell" | "Hold";
   updatedAt: string;
 }
 
@@ -60,15 +71,15 @@ const SymbolsList = () => {
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={tab} onChange={moveTab} variant="fullWidth">
           <Tab label="Suggested symbols" />
-          {/*<Tab label='My lists' />*/}
+          <Tab label="Watchlists" disabled />
         </Tabs>
       </Box>
       <TabPanel value={tab} index={0}>
         <RandomSymbols />
       </TabPanel>
-      {/*<TabPanel value={tab} index={1}>*/}
-      {/*  <WatchlistSymbols />*/}
-      {/*</TabPanel>*/}
+      <TabPanel value={tab} index={1}>
+        <WatchlistSymbols />
+      </TabPanel>
     </Box>
   );
 };
@@ -80,7 +91,8 @@ const RandomSymbols = () => {
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const { getSuggestedSymbols } = useSymbol();
+  const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
+  const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
 
   const filteredSymbols = useMemo(
     () =>
@@ -91,6 +103,53 @@ const RandomSymbols = () => {
         : suggestedSymbols,
     [searchTerm, suggestedSymbols],
   );
+
+  const checkSymbols = async () => {
+    setCheckSymbolsLoader(true);
+    let count = 0;
+    for (const i in suggestedSymbols) {
+      if (count < 20 && !suggestedSymbols[i].recommendation) {
+        const symbol = suggestedSymbols[i].symbol;
+        const analyzedSymbol = await analyzeSymbol(symbol);
+        const { minBuy, minSell } =
+          analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
+        suggestedSymbols[i].score =
+          analyzedSymbol.data.prices[
+            analyzedSymbol.data.prices.length - 1
+          ].recommendation.score;
+
+        if (suggestedSymbols[i].score >= minBuy) {
+          suggestedSymbols[i].recommendation = "Buy";
+        } else if (suggestedSymbols[i].score <= minSell) {
+          suggestedSymbols[i].recommendation = "Sell";
+        } else {
+          suggestedSymbols[i].recommendation = "Hold";
+        }
+
+        setSuggestedSymbols(() => [...suggestedSymbols]);
+        count++;
+      }
+    }
+    setCheckSymbolsLoader(false);
+  };
+
+  const getRecommendationSymbol = (index: number) => {
+    if (index == undefined) return null;
+    switch (suggestedSymbols[index].recommendation) {
+      case "Buy": {
+        return <TrendingUpRoundedIcon sx={{ color: green[400] }} />;
+      }
+      case "Sell": {
+        return <TrendingDownRoundedIcon sx={{ color: red[400] }} />;
+      }
+      case "Hold": {
+        return <TrendingFlatRoundedIcon sx={{ color: grey[400] }} />;
+      }
+      default: {
+        return null;
+      }
+    }
+  };
 
   useEffect(() => {
     const changeSuggestedSymbols = async () => {
@@ -103,6 +162,17 @@ const RandomSymbols = () => {
   return useMemo(
     () => (
       <Box>
+        <Tooltip title="Check next 10 symbols">
+          {checkSymbolsLoader ? (
+            <IconButton>
+              <CircularProgress size={20} />
+            </IconButton>
+          ) : (
+            <IconButton size="small" onClick={checkSymbols}>
+              <QueryStatsRoundedIcon />
+            </IconButton>
+          )}
+        </Tooltip>
         <TextField
           label="Search symbol"
           fullWidth
@@ -112,15 +182,23 @@ const RandomSymbols = () => {
           inputProps={{
             style: { textTransform: "uppercase" },
           }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="start">
+                <SearchRoundedIcon />
+              </InputAdornment>
+            ),
+          }}
         />
         <List dense disablePadding sx={{ overflowY: "auto", height: "38vh" }}>
-          {filteredSymbols.map((item) => (
+          {filteredSymbols.map((item, index) => (
             <ListItem
               key={item.symbol}
               dense
               disableGutters
               disablePadding
               divider
+              secondaryAction={getRecommendationSymbol(index)}
             >
               <ListItemButton
                 selected={item.symbol === selectedSymbol}
@@ -156,9 +234,11 @@ const RandomSymbols = () => {
         </List>
       </Box>
     ),
-    [filteredSymbols, selectedSymbol],
+    [filteredSymbols, selectedSymbol, checkSymbolsLoader],
   );
 };
+
+const WatchlistSymbols = () => <div></div>;
 
 // const WatchlistSymbols = () => {
 //   useSymbol();

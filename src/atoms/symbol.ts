@@ -223,23 +223,23 @@ export const useSymbol = () => {
   const changeSymbol = async (symbol: string) => {
     mainLoaderShow(true);
     setAlert(false);
-    const symbolAnalyze: AxiosResponse<SymbolData> = await axios.get(
-      `${API_HOST}/analyze/combineAnalyzeAndRecommendations/${symbol}/${interval}/${symbolState.settings.byType}/${symbolState.settings.pricesMode}`,
+    const analyzedSymbol: AxiosResponse<SymbolData> = await analyzeSymbol(
+      symbol,
     );
 
-    if (!symbolAnalyze.data.prices.length) {
+    if (!analyzedSymbol.data.prices.length) {
       setSymbolState((prevSymbolState) => ({
         ...prevSymbolState,
         symbolData: undefined,
         selectedSignal: 0,
       }));
-      setAlert(true, "Error occured while trying to load data for this stock");
+      setAlert(true, "Error occurred while trying to load data for this stock");
       return;
     }
 
     setSymbolState((prevSymbolState) => ({
       ...prevSymbolState,
-      symbolData: symbolAnalyze.data,
+      symbolData: analyzedSymbol.data,
       selectedSymbol: symbol,
       settings: {
         ...prevSymbolState.settings,
@@ -248,5 +248,13 @@ export const useSymbol = () => {
     mainLoaderShow(false);
   };
 
-  return { changeSymbol, getSuggestedSymbols };
+  const analyzeSymbol = async (
+    symbol: string,
+  ): Promise<AxiosResponse<SymbolData>> => {
+    return axios.get(
+      `${API_HOST}/analyze/combineAnalyzeAndRecommendations/${symbol}/${interval}/${symbolState.settings.byType}/${symbolState.settings.pricesMode}`,
+    );
+  };
+
+  return { changeSymbol, getSuggestedSymbols, analyzeSymbol };
 };
