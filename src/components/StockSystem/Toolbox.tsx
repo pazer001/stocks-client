@@ -77,6 +77,7 @@ const Toolbox = () => {
                 >
                   <ToggleButton value="byWinRate">Win Rate</ToggleButton>
                   <ToggleButton value="byProfit">Profit</ToggleButton>
+                  <ToggleButton value="byMixed">Mixed</ToggleButton>
                 </ToggleButtonGroup>
                 <hr />
                 <ToggleButtonGroup
