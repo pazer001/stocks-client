@@ -210,6 +210,20 @@ export const useSymbol = () => {
     symbolState.settings.interval,
   ]);
 
+  const getWatchlistSymbols = (): Promise<AxiosResponse<Array<ISymbol>>> => {
+    const symbols =
+      JSON.parse(localStorage.getItem("watchlist") as string) || [];
+    return axios.post(`${API_HOST}/analyze/watchlist`, symbols);
+  };
+
+  const addWatchlistSymbols = async (symbols: Array<string>) => {
+    let watchlist: Array<string> =
+      JSON.parse(localStorage.getItem("watchlist") as string) || [];
+    watchlist = watchlist.concat(...symbols);
+    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+    return axios.post(`${API_HOST}/analyze/watchlist/items`, symbols);
+  };
+
   const getSuggestedSymbols = async (): Promise<Array<ISymbol>> => {
     mainLoaderShow(true);
     const supportedSymbolsResult: AxiosResponse<Array<ISymbol>> =
@@ -223,29 +237,40 @@ export const useSymbol = () => {
   const changeSymbol = async (symbol: string) => {
     mainLoaderShow(true);
     setAlert(false);
-    const analyzedSymbol: AxiosResponse<SymbolData> = await analyzeSymbol(
-      symbol,
-    );
+    try {
+      const analyzedSymbol: AxiosResponse<SymbolData> = await analyzeSymbol(
+        symbol,
+      );
 
-    if (!analyzedSymbol.data.prices.length) {
+      if (!analyzedSymbol.data.prices.length) {
+        setSymbolState((prevSymbolState) => ({
+          ...prevSymbolState,
+          symbolData: undefined,
+          selectedSignal: 0,
+        }));
+        setAlert(
+          true,
+          "Error occurred while trying to load data for this symbol. This can happen if there is no analysis for this symbol.",
+        );
+        return;
+      }
+
       setSymbolState((prevSymbolState) => ({
         ...prevSymbolState,
-        symbolData: undefined,
-        selectedSignal: 0,
+        symbolData: analyzedSymbol.data,
+        selectedSymbol: symbol,
+        settings: {
+          ...prevSymbolState.settings,
+        },
       }));
-      setAlert(true, "Error occurred while trying to load data for this stock");
-      return;
+      mainLoaderShow(false);
+    } catch (e) {
+      mainLoaderShow(false);
+      setAlert(
+        true,
+        "Error occurred while trying to load data for this symbol. This can happen if there is no analysis for this symbol.",
+      );
     }
-
-    setSymbolState((prevSymbolState) => ({
-      ...prevSymbolState,
-      symbolData: analyzedSymbol.data,
-      selectedSymbol: symbol,
-      settings: {
-        ...prevSymbolState.settings,
-      },
-    }));
-    mainLoaderShow(false);
   };
 
   const analyzeSymbol = async (
@@ -256,5 +281,11 @@ export const useSymbol = () => {
     );
   };
 
-  return { changeSymbol, getSuggestedSymbols, analyzeSymbol };
+  return {
+    changeSymbol,
+    getSuggestedSymbols,
+    analyzeSymbol,
+    getWatchlistSymbols,
+    addWatchlistSymbols,
+  };
 };

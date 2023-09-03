@@ -53,7 +53,7 @@ const SymbolChooser = (props: ISymbolChooserProps) => {
           fullWidth
           label="Symbol search"
           margin="dense"
-          onChange={debounce((e) => searchSymbols(e.target.value))}
+          onChange={debounce((e) => searchSymbols(e.target.value), 500)}
           inputProps={{
             style: { textTransform: "uppercase" },
           }}

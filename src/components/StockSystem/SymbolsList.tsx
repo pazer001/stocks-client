@@ -19,6 +19,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
 import TrendingDownRoundedIcon from "@mui/icons-material/TrendingDownRounded";
 import TrendingFlatRoundedIcon from "@mui/icons-material/TrendingFlatRounded";
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import {
   getByType,
   getInterval,
@@ -28,6 +29,8 @@ import {
 } from "../../atoms/symbol";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Interval } from "./enums/Interval";
+import Grid from "@mui/material/Grid";
+import SymbolChooser from "./SymbolChooser";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -71,7 +74,7 @@ const SymbolsList = () => {
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={tab} onChange={moveTab} variant="fullWidth">
           <Tab label="Suggested symbols" />
-          <Tab label="Watchlists" disabled />
+          <Tab label="Watchlists" />
         </Tabs>
       </Box>
       <TabPanel value={tab} index={0}>
@@ -238,122 +241,112 @@ const RandomSymbols = () => {
   );
 };
 
-const WatchlistSymbols = () => <div></div>;
+// const WatchlistSymbols = () => <div></div>;
 
-// const WatchlistSymbols = () => {
-//   useSymbol();
-//   const [_, setSymbolState] = useRecoilState(symbolAtom);
-//   const interval = useRecoilValue(getInterval);
-//   const byType = useRecoilValue(getByType);
-//   const [watchlistItems, setWatchlistItems] = useState<Array<ISymbol>>([]);
-//   const [openSymbolChooser, setOpenSymbolChooser] = useState<boolean>(false);
-//   const [searchTerm, setSearchTerm] = useState<string>("");
-//   const filteredSymbols = useMemo(
-//     () =>
-//       searchTerm
-//         ? watchlistItems.filter((supportedSymbol) =>
-//             supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
-//           )
-//         : watchlistItems,
-//     [searchTerm, watchlistItems],
-//   );
-//
-//   const getWatchlistSymbols = async () => {
-//     const watchListItemsResult = await axios.get(
-//       `${API_HOST}/analyze/watchlist/${interval}/${byType}`,
-//     );
-//     setWatchlistItems(watchListItemsResult.data);
-//   };
-//
-//   const addWatchlistSymbols = async (symbols: Array<string>) => {
-//     await axios.post(`${API_HOST}/analyze/watchlist/items`, symbols);
-//
-//     const watchListItemsResult = await axios.get(`${API_HOST}/watchlist/items`);
-//     setWatchlistItems(watchListItemsResult.data);
-//   };
-//
-//   useEffect(() => {
-//     getWatchlistSymbols();
-//   }, []);
-//
-//   return useMemo(
-//     () => (
-//       <Box sx={{ height: "100%" }}>
-//         <Grid container alignItems="center">
-//           <Grid item>
-//             <TextField
-//               label="Search symbol"
-//               margin="dense"
-//               size="small"
-//               onChange={(event) => setSearchTerm(event.target.value)}
-//               inputProps={{
-//                 style: { textTransform: "uppercase" },
-//               }}
-//             />
-//           </Grid>
-//           <Grid item>
-//             <IconButton onClick={() => setOpenSymbolChooser(true)}>
-//               <AddCircleOutlineRoundedIcon fontSize="small" />
-//             </IconButton>
-//           </Grid>
-//         </Grid>
-//         <SymbolChooser
-//           open={openSymbolChooser}
-//           onClose={() => setOpenSymbolChooser(false)}
-//           onConfirm={(ids: string[]) => {
-//             setOpenSymbolChooser(() => false);
-//             addWatchlistSymbols(ids);
-//           }}
-//         />
-//         <List dense disablePadding sx={{ height: "86%", overflowY: "auto" }}>
-//           {filteredSymbols.map((item) => (
-//             <ListItem
-//               key={item._id}
-//               dense
-//               disableGutters
-//               disablePadding
-//               divider
-//             >
-//               <ListItemButton
-//                 dense
-//                 onClick={() => {
-//                   const newInterval = item.intervals.includes(interval)
-//                     ? interval
-//                     : item.intervals[0];
-//                   const newIntervals: Array<Interval> = [];
-//                   const systemIntervals = Object.values(Interval);
-//
-//                   systemIntervals.forEach((systemInterval) => {
-//                     if (item.intervals.includes(systemInterval)) {
-//                       newIntervals.push(systemInterval);
-//                     }
-//                   });
-//
-//                   setSymbolState((prevSymbolState) => ({
-//                     ...prevSymbolState,
-//                     selectedSymbol: item.symbol,
-//                     settings: {
-//                       ...prevSymbolState.settings,
-//                       intervals: newIntervals,
-//                       interval: newInterval,
-//                     },
-//                   }));
-//                 }}
-//               >
-//                 <ListItemText
-//                   primary={item.symbol}
-//                   secondary={`Suggest score: ${
-//                     item.mainScore && item.mainScore.toFixed(0)
-//                   }`}
-//                 ></ListItemText>
-//               </ListItemButton>
-//             </ListItem>
-//           ))}
-//         </List>
-//       </Box>
-//     ),
-//     [filteredSymbols, openSymbolChooser],
-//   );
-// };
+const WatchlistSymbols = () => {
+  const { getWatchlistSymbols, addWatchlistSymbols } = useSymbol();
+  const [, setSymbolState] = useRecoilState(symbolAtom);
+  const interval = useRecoilValue(getInterval);
+  const [watchlistItems, setWatchlistItems] = useState<Array<ISymbol>>([]);
+  const [openSymbolChooser, setOpenSymbolChooser] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const filteredSymbols = useMemo(
+    () =>
+      searchTerm
+        ? watchlistItems.filter((supportedSymbol) =>
+            supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
+          )
+        : watchlistItems,
+    [searchTerm, watchlistItems],
+  );
+
+  const getWatchlist = async () => {
+    const watchListItemsResult = await getWatchlistSymbols();
+    setWatchlistItems(watchListItemsResult.data);
+  };
+
+  const addToWatchlist = async (symbols: Array<string>) => {
+    addWatchlistSymbols(symbols);
+    getWatchlist();
+  };
+
+  useEffect(() => {
+    getWatchlist();
+  }, []);
+
+  return useMemo(
+    () => (
+      <Box sx={{ height: "100%" }}>
+        <Grid container alignItems="center">
+          <Grid item>
+            <TextField
+              label="Search symbol"
+              margin="dense"
+              size="small"
+              onChange={(event) => setSearchTerm(event.target.value)}
+              inputProps={{
+                style: { textTransform: "uppercase" },
+              }}
+            />
+          </Grid>
+          <Grid item>
+            <IconButton onClick={() => setOpenSymbolChooser(true)}>
+              <AddCircleOutlineRoundedIcon fontSize="small" />
+            </IconButton>
+          </Grid>
+        </Grid>
+        <SymbolChooser
+          open={openSymbolChooser}
+          onClose={() => setOpenSymbolChooser(false)}
+          onConfirm={(symbols: string[]) => {
+            setOpenSymbolChooser(() => false);
+            addToWatchlist(symbols);
+          }}
+        />
+        <List dense disablePadding sx={{ height: "86%", overflowY: "auto" }}>
+          {filteredSymbols.map((item) => (
+            <ListItem
+              key={item.symbol}
+              dense
+              disableGutters
+              disablePadding
+              divider
+            >
+              <ListItemButton
+                dense
+                onClick={() => {
+                  const newInterval = item.intervals.includes(interval)
+                    ? interval
+                    : item.intervals[0];
+                  const newIntervals: Array<Interval> = [];
+                  const systemIntervals = Object.values(Interval);
+
+                  systemIntervals.forEach((systemInterval) => {
+                    if (item.intervals.includes(systemInterval)) {
+                      newIntervals.push(systemInterval);
+                    }
+                  });
+
+                  setSymbolState((prevSymbolState) => ({
+                    ...prevSymbolState,
+                    selectedSymbol: item.symbol,
+                    settings: {
+                      ...prevSymbolState.settings,
+                      intervals: newIntervals,
+                      interval: newInterval,
+                    },
+                  }));
+                }}
+              >
+                <ListItemText primary={item.symbol}></ListItemText>
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    ),
+    [filteredSymbols, openSymbolChooser],
+  );
+};
 
 export default React.memo(SymbolsList);

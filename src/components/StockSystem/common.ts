@@ -1,7 +1,6 @@
 import { Currency } from "./interfaces";
 import { GridColDef, GridValueFormatterParams } from "@mui/x-data-grid";
-import { DateTime } from "luxon";
-import { startCase } from "lodash";
+import { get } from "lodash";
 
 export const currencies: Currency = {
   usd: "$",
@@ -55,7 +54,7 @@ export const columnDefinition: Array<GridColDef> = [
     headerName: "Symbol",
     description: "Symbol",
     type: "string",
-    flex: 2,
+    flex: 1,
   },
   {
     field: "exchange",
@@ -65,10 +64,10 @@ export const columnDefinition: Array<GridColDef> = [
     flex: 1,
   },
   {
-    field: "marketCap",
+    field: "marketCapitalization",
     headerName: "Market Cap",
     description: "Market Capitalization",
-    flex: 2,
+    flex: 1,
     pinnable: true,
     type: "number",
     valueFormatter: (params: GridValueFormatterParams<number>) => {
@@ -80,16 +79,6 @@ export const columnDefinition: Array<GridColDef> = [
         .toFixed(0)
         .toLocaleString();
       return `${valueFormatted} bn.`;
-    },
-  },
-  {
-    field: "updatedAt",
-    headerName: "Updated at",
-    description: "Updated at",
-    type: "string",
-    flex: 1,
-    valueFormatter: (params: GridValueFormatterParams<string>) => {
-      return DateTime.fromISO(params.value).toISODate();
     },
   },
   {
@@ -108,35 +97,18 @@ export const columnDefinition: Array<GridColDef> = [
     },
   },
   {
-    field: "fullExchangeName",
-    headerName: "Full Exchange Name",
-    description: "Full Exchange Name",
+    field: "exchange",
+    headerName: "Exchange",
+    description: "Exchange",
     type: "string",
     flex: 2,
   },
   {
-    field: "displayName",
+    field: "name",
     headerName: "Company Name",
     description: "Company Name",
     type: "string",
     flex: 2,
-  },
-  {
-    field: "longName",
-    headerName: "Long Name",
-    description: "Long Name",
-    type: "string",
-    flex: 2,
-  },
-  {
-    field: "market",
-    headerName: "Market",
-    description: "Market",
-    type: "string",
-    flex: 1,
-    valueFormatter: (params: GridValueFormatterParams<number>) => {
-      return startCase(String(params.value)).split(" ")[0].toUpperCase();
-    },
   },
   {
     field: "quoteType",
@@ -144,12 +116,8 @@ export const columnDefinition: Array<GridColDef> = [
     description: "Quote Type",
     type: "string",
     flex: 1,
-  },
-  {
-    field: "region",
-    headerName: "Region",
-    description: "Full Exchange Name",
-    type: "string",
-    flex: 1,
+    valueGetter: (params) => {
+      return get(params.row, "quoteType.quoteType");
+    },
   },
 ];
