@@ -136,7 +136,7 @@ function App() {
               sx={{ height: "100%", width: "100%" }}
             >
               <Paper>
-                <Box sx={{ height: "50%" }}>
+                <Box sx={{ height: "50vh" }}>
                   <SymbolsList />
                 </Box>
                 <Divider />
