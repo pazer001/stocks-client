@@ -295,7 +295,7 @@ const SymbolInfo = () => {
                         <List dense disablePadding>
                           {symbolData?.prices[
                             symbolData.prices.length - 1
-                          ].recommendation.minimumThresholdsReasons.map(
+                          ].recommendation.buyThresholdsReasons.map(
                             (reason: string) => (
                               <ListItem key={reason} dense disablePadding>
                                 <ListItemIcon
