@@ -13,6 +13,7 @@ interface Recommendation {
   buySellSum: number;
   score: number;
   stopLoss: number;
+  minimumThresholdsReasons: Array<string>;
 }
 
 export interface SymbolData {

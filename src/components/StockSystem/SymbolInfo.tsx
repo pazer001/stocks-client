@@ -288,6 +288,35 @@ const SymbolInfo = () => {
                   <>
                     {Boolean(
                       symbolData?.prices[symbolData.prices.length - 1]
+                        .recommendation.minimumThresholdsReasons.length,
+                    ) && (
+                      <>
+                        <b>Minimum Thresholds:</b>{" "}
+                        <List dense disablePadding>
+                          {symbolData?.prices[
+                            symbolData.prices.length - 1
+                          ].recommendation.minimumThresholdsReasons.map(
+                            (reason: string) => (
+                              <ListItem key={reason} dense disablePadding>
+                                <ListItemIcon
+                                  onClick={() => showStrategyModal(reason)}
+                                >
+                                  <IconButton>
+                                    <InfoIcon />
+                                  </IconButton>
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={startCase(reason)}
+                                ></ListItemText>
+                              </ListItem>
+                            ),
+                          )}
+                        </List>
+                      </>
+                    )}
+
+                    {Boolean(
+                      symbolData?.prices[symbolData.prices.length - 1]
                         .recommendation.buyReasons.length,
                     ) && (
                       <>
