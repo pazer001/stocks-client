@@ -288,7 +288,7 @@ const SymbolInfo = () => {
                   <>
                     {Boolean(
                       symbolData?.prices[symbolData.prices.length - 1]
-                        .recommendation.minimumThresholdsReasons.length,
+                        .recommendation.buyThresholdsReasons.length,
                     ) && (
                       <>
                         <b>Minimum Thresholds:</b>{" "}
