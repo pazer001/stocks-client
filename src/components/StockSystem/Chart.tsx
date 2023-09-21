@@ -5,7 +5,14 @@ import { Button } from "@mui/material";
 import styled from "@emotion/styled";
 import ReactECharts from "echarts-for-react";
 import { DateTime } from "luxon";
-import { blue, green, red } from "@mui/material/colors";
+import {
+  blue,
+  green,
+  red,
+  deepOrange,
+  lightBlue,
+  lime,
+} from "@mui/material/colors";
 
 const ChartContainer = styled.div`
   height: 100%;
@@ -157,6 +164,117 @@ const Chart = () => {
               Number(data.point.high.toFixed(3)),
             ]),
           },
+          symbolState.symbolData?.buyThresholdData.closeAboveSMA100
+            ? {
+                name: "Simple Moving Average (100)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData.closeAboveSMA100,
+                smooth: true,
+                lineStyle: {
+                  color: deepOrange.A200,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
+          symbolState.symbolData?.buyThresholdData.closeAboveSMA150
+            ? {
+                name: "Simple Moving Average (150)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData.closeAboveSMA150,
+                smooth: true,
+                lineStyle: {
+                  color: deepOrange.A400,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
+          symbolState.symbolData?.buyThresholdData.closeAboveSMA200
+            ? {
+                name: "Simple Moving Average (200)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData.closeAboveSMA200,
+                smooth: true,
+                lineStyle: {
+                  color: deepOrange.A700,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
+          symbolState.symbolData?.buyThresholdData.closeAboveEMA100
+            ? {
+                name: "Exponential Moving Average (100)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData.closeAboveEMA100,
+                smooth: true,
+                lineStyle: {
+                  color: lightBlue.A200,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
+          symbolState.symbolData?.buyThresholdData.closeAboveEMA150
+            ? {
+                name: "Exponential Moving Average (150)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData.closeAboveEMA150,
+                smooth: true,
+                lineStyle: {
+                  color: lightBlue.A400,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
+          symbolState.symbolData?.buyThresholdData.closeAboveEMA200
+            ? {
+                name: "Exponential Moving Average (200)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData.closeAboveEMA200,
+                smooth: true,
+                lineStyle: {
+                  color: lightBlue.A700,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
+          symbolState.symbolData?.buyThresholdData.closeAboveDEMA100
+            ? {
+                name: "Double Exponential Moving Average (100)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData
+                  .closeAboveDEMA100,
+                smooth: true,
+                lineStyle: {
+                  color: lime.A200,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
+          symbolState.symbolData?.buyThresholdData.closeAboveDEMA150
+            ? {
+                name: "Double Exponential Moving Average (150)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData
+                  .closeAboveDEMA150,
+                smooth: true,
+                lineStyle: {
+                  color: lime.A400,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
+          symbolState.symbolData?.buyThresholdData.closeAboveDEMA200
+            ? {
+                name: "Double Exponential Moving Average (200)",
+                type: "line",
+                data: symbolState.symbolData?.buyThresholdData
+                  .closeAboveDEMA200,
+                smooth: true,
+                lineStyle: {
+                  color: lime.A700,
+                  opacity: 0.5,
+                },
+              }
+            : undefined,
           {
             name: "Volume",
             type: "bar",

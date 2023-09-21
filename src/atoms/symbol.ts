@@ -89,8 +89,7 @@ export interface SymbolData {
   };
   stopLossPrice: number;
   stopLossPercent: number;
-  marketMomentumScore: number;
-  marketMomentumThreshold: number;
+  buyThresholdData: Record<string, Array<number>>;
 }
 
 enum ByType {
