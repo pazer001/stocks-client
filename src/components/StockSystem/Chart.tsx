@@ -12,6 +12,7 @@ import {
   deepOrange,
   lightBlue,
   lime,
+  grey,
 } from "@mui/material/colors";
 
 const ChartContainer = styled.div`
@@ -34,8 +35,8 @@ const Chart = () => {
         legend: {
           show: true,
           top: 20,
-          lineStyle: {
-            color: "#fff",
+          textStyle: {
+            color: grey.A100,
           },
           // left: 250,
           // orient: "vertical",
@@ -44,6 +45,9 @@ const Chart = () => {
           text: symbolState.selectedSymbol,
           textAlign: "center",
           left: "50%",
+          textStyle: {
+            color: grey.A100,
+          },
         },
         tooltip: {
           trigger: "axis",
