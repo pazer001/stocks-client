@@ -275,6 +275,19 @@ const Chart = () => {
                 },
               }
             : undefined,
+          // symbolState.symbolData?.buyThresholdData.supertrend40
+          //   ? {
+          //     name: "Supertrend (40)",
+          //     type: "line",
+          //     data: symbolState.symbolData?.buyThresholdData
+          //       .supertrend40,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: lime.A700,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
           {
             name: "Volume",
             type: "bar",
