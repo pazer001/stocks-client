@@ -31,6 +31,15 @@ const Chart = () => {
   const setChart = () => {
     if (symbolState.symbolData) {
       setStockChartOptions(() => ({
+        legend: {
+          show: true,
+          top: 20,
+          lineStyle: {
+            color: "#fff",
+          },
+          // left: 250,
+          // orient: "vertical",
+        },
         title: {
           text: symbolState.selectedSymbol,
           textAlign: "center",
