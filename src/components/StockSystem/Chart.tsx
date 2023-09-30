@@ -290,16 +290,29 @@ const Chart = () => {
             : undefined,
           // symbolState.symbolData?.buyThresholdData.supertrend40
           //   ? {
-          //     name: "Supertrend (40)",
-          //     type: "line",
-          //     data: symbolState.symbolData?.buyThresholdData
-          //       .supertrend40,
-          //     smooth: true,
-          //     lineStyle: {
-          //       color: lime.A700,
-          //       opacity: 0.5,
-          //     },
-          //   }
+          //       name: "Supertrend (40)",
+          //       type: "line",
+          //       data: symbolState.symbolData?.buyThresholdData.supertrend40,
+          //       smooth: true,
+          //       lineStyle: {
+          //         opacity: 0,
+          //       },
+          //       itemStyle: {
+          //         borderType: [5, 10],
+          //         color: function (params: {
+          //           dataIndex: number;
+          //           data: number;
+          //         }) {
+          //           const index = params.dataIndex;
+          //           return params.data >
+          //             symbolState.symbolData?.prices[index].point.close
+          //             ? "red"
+          //             : "green";
+          //         },
+          //
+          //         opacity: 0.5,
+          //       },
+          //     }
           //   : undefined,
           {
             name: "Volume",
