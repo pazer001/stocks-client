@@ -113,24 +113,29 @@ const RandomSymbols = () => {
     for (const i in suggestedSymbols) {
       if (count < 20 && !suggestedSymbols[i].recommendation) {
         const symbol = suggestedSymbols[i].symbol;
-        const analyzedSymbol = await analyzeSymbol(symbol);
-        const { minBuy, minSell } =
-          analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
-        suggestedSymbols[i].score =
-          analyzedSymbol.data.prices[
-            analyzedSymbol.data.prices.length - 1
-          ].recommendation.score;
+        try {
+          const analyzedSymbol = await analyzeSymbol(symbol);
 
-        if (suggestedSymbols[i].score >= minBuy) {
-          suggestedSymbols[i].recommendation = "Buy";
-        } else if (suggestedSymbols[i].score <= minSell) {
-          suggestedSymbols[i].recommendation = "Sell";
-        } else {
-          suggestedSymbols[i].recommendation = "Hold";
+          const { minBuy, minSell } =
+            analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
+          suggestedSymbols[i].score =
+            analyzedSymbol.data.prices[
+              analyzedSymbol.data.prices.length - 1
+            ].recommendation.score;
+
+          if (suggestedSymbols[i].score >= minBuy) {
+            suggestedSymbols[i].recommendation = "Buy";
+          } else if (suggestedSymbols[i].score <= minSell) {
+            suggestedSymbols[i].recommendation = "Sell";
+          } else {
+            suggestedSymbols[i].recommendation = "Hold";
+          }
+
+          setSuggestedSymbols(() => [...suggestedSymbols]);
+          count++;
+        } catch (error) {
+          console.log(error);
         }
-
-        setSuggestedSymbols(() => [...suggestedSymbols]);
-        count++;
       }
     }
     setCheckSymbolsLoader(false);
@@ -165,7 +170,7 @@ const RandomSymbols = () => {
   return useMemo(
     () => (
       <Box>
-        <Tooltip title="Check next 10 symbols">
+        <Tooltip title="Check next 20 symbols">
           {checkSymbolsLoader ? (
             <IconButton>
               <CircularProgress size={20} />
