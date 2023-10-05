@@ -170,7 +170,7 @@ const RandomSymbols = () => {
   return useMemo(
     () => (
       <Box>
-        <Tooltip title="Check next 20 symbols">
+        <Tooltip title="Check next 25 symbols">
           {checkSymbolsLoader ? (
             <IconButton>
               <CircularProgress size={20} />
