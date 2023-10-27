@@ -111,7 +111,7 @@ const RandomSymbols = () => {
     setCheckSymbolsLoader(true);
     let count = 0;
     for (const i in suggestedSymbols) {
-      if (count < 25 && !suggestedSymbols[i].recommendation) {
+      if (count < 100 && !suggestedSymbols[i].recommendation) {
         const symbol = suggestedSymbols[i].symbol;
         try {
           const analyzedSymbol = await analyzeSymbol(symbol);
