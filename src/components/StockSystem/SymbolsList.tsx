@@ -141,9 +141,8 @@ const RandomSymbols = () => {
     setCheckSymbolsLoader(false);
   };
 
-  const getRecommendationSymbol = (index: number) => {
-    if (index == undefined) return null;
-    switch (suggestedSymbols[index].recommendation) {
+  const getRecommendationSymbol = (recommendation: string) => {
+    switch (recommendation) {
       case "Buy": {
         return <TrendingUpRoundedIcon sx={{ color: green[400] }} />;
       }
@@ -206,7 +205,7 @@ const RandomSymbols = () => {
               disableGutters
               disablePadding
               divider
-              secondaryAction={getRecommendationSymbol(index)}
+              secondaryAction={getRecommendationSymbol(item.recommendation)}
             >
               <ListItemButton
                 selected={item.symbol === selectedSymbol}

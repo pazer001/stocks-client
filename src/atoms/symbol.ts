@@ -108,7 +108,7 @@ interface ISymbolState {
   symbolData: SymbolData | undefined;
   selectedSignal: number;
   settings: {
-    byType: "byWinRate" | "byProfit";
+    byType: "byWinRate" | "byProfit" | "byMixed";
     interval: Interval;
     intervals: Array<Interval>;
     pricesMode: "normal" | "dividendsAdjusted";
@@ -122,7 +122,7 @@ export const symbolAtom = atom({
     symbolData: undefined,
     selectedSignal: 0,
     settings: {
-      byType: "byWinRate",
+      byType: "byProfit",
       interval: "1d",
       intervals: [],
       pricesMode: "normal",
