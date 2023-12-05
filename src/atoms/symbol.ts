@@ -108,7 +108,7 @@ interface ISymbolState {
   symbolData: SymbolData | undefined;
   selectedSignal: number;
   settings: {
-    byType: "byWinRate" | "byProfit" | "byMixed";
+    byType: "byWinRate" | "byProfit";
     interval: Interval;
     intervals: Array<Interval>;
     pricesMode: "normal" | "dividendsAdjusted";
