@@ -198,7 +198,7 @@ const RandomSymbols = () => {
           }}
         />
         <List dense disablePadding sx={{ overflowY: "auto", height: "38vh" }}>
-          {filteredSymbols.map((item) => (
+          {filteredSymbols.map((item, index) => (
             <ListItem
               key={item.symbol}
               dense
@@ -234,7 +234,9 @@ const RandomSymbols = () => {
                   }));
                 }}
               >
-                <ListItemText primary={item.symbol}></ListItemText>
+                <ListItemText
+                  primary={`${index + 1}${item.symbol}`}
+                ></ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
