@@ -11,6 +11,7 @@ import {
   Tabs,
   TextField,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import { green, red, grey } from "@mui/material/colors";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
@@ -101,10 +102,10 @@ const RandomSymbols = () => {
     () =>
       searchTerm
         ? suggestedSymbols.filter((supportedSymbol) =>
-            supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
+            supportedSymbol.symbol.includes(searchTerm.toUpperCase())
           )
         : suggestedSymbols,
-    [searchTerm, suggestedSymbols],
+    [searchTerm, suggestedSymbols]
   );
 
   const checkSymbols = async () => {
@@ -235,10 +236,8 @@ const RandomSymbols = () => {
                 }}
               >
                 <ListItemText>
-                  <p style={{display: 'flex', gap: 12}}>
-                    <span>{index + 1}) </span>
-                    <span>{item.symbol}</span>
-                  </p>
+                  <Typography component="span" sx={{marginInlineEnd: "12px"}}>{index + 1}) </Typography>
+                  <Typography component="span">{item.symbol}</Typography>
                 </ListItemText>
               </ListItemButton>
             </ListItem>
@@ -246,7 +245,7 @@ const RandomSymbols = () => {
         </List>
       </Box>
     ),
-    [filteredSymbols, selectedSymbol, checkSymbolsLoader],
+    [filteredSymbols, selectedSymbol, checkSymbolsLoader]
   );
 };
 
@@ -263,10 +262,10 @@ const WatchlistSymbols = () => {
     () =>
       searchTerm
         ? watchlistItems.filter((supportedSymbol) =>
-            supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
+            supportedSymbol.symbol.includes(searchTerm.toUpperCase())
           )
         : watchlistItems,
-    [searchTerm, watchlistItems],
+    [searchTerm, watchlistItems]
   );
 
   const getWatchlist = async () => {
@@ -354,7 +353,7 @@ const WatchlistSymbols = () => {
         </List>
       </Box>
     ),
-    [filteredSymbols, openSymbolChooser],
+    [filteredSymbols, openSymbolChooser]
   );
 };
 
