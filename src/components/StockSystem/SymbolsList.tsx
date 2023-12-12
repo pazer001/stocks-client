@@ -235,10 +235,12 @@ const RandomSymbols = () => {
                   }));
                 }}
               >
-                <ListItemText>
-                  <Typography component="span" sx={{marginInlineEnd: "12px"}}>{index + 1}) </Typography>
-                  <Typography component="span">{item.symbol}</Typography>
-                </ListItemText>
+                <ListItemText primary={
+                  <>
+                    <Typography component="span" sx={{marginInlineEnd: "12px"}}>{index + 1}) </Typography>
+                    <Typography component="span">{item.symbol}</Typography>
+                  </>
+                  }/>
               </ListItemButton>
             </ListItem>
           ))}
