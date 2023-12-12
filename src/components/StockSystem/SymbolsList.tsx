@@ -234,9 +234,12 @@ const RandomSymbols = () => {
                   }));
                 }}
               >
-                <ListItemText
-                  primary={`${index + 1}${item.symbol}`}
-                ></ListItemText>
+                <ListItemText>
+                  <p style={{display: 'flex', gap: 12}}>
+                    <span>{index + 1}) </span>
+                    <span>{item.symbol}</span>
+                  </p>
+                </ListItemText>
               </ListItemButton>
             </ListItem>
           ))}
