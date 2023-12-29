@@ -56,6 +56,7 @@ function TabPanel(props: TabPanelProps) {
 
 export interface ISymbol {
   _id: string;
+  symbolNumber: number;
   symbol: string;
   intervals: Array<Interval>;
   score: number;
@@ -160,7 +161,11 @@ const RandomSymbols = () => {
 
   useEffect(() => {
     const changeSuggestedSymbols = async () => {
-      const suggestedSymbols = await getSuggestedSymbols();
+      let suggestedSymbols = await getSuggestedSymbols();
+      suggestedSymbols = suggestedSymbols.map((symbol, index) => ({
+        ...symbol,
+        symbolNumber: index + 1,
+      }));
       setSuggestedSymbols(suggestedSymbols);
     };
     changeSuggestedSymbols();
@@ -235,8 +240,8 @@ const RandomSymbols = () => {
                 }}
               >
                 <ListItemText>
-                  <p style={{display: 'flex', gap: 12}}>
-                    <span>{index + 1}) </span>
+                  <p style={{ display: "flex", gap: 12 }}>
+                    <span>{item.symbolNumber}) </span>
                     <span>{item.symbol}</span>
                   </p>
                 </ListItemText>
