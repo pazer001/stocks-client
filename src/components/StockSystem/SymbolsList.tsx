@@ -112,7 +112,7 @@ const RandomSymbols = () => {
     setCheckSymbolsLoader(true);
     let count = 0;
     for (const i in suggestedSymbols) {
-      if (count < 100 && !suggestedSymbols[i].recommendation) {
+      if (count < 200 && !suggestedSymbols[i].recommendation) {
         const symbol = suggestedSymbols[i].symbol;
         try {
           const analyzedSymbol = await analyzeSymbol(symbol);
@@ -174,7 +174,7 @@ const RandomSymbols = () => {
   return useMemo(
     () => (
       <Box>
-        <Tooltip title="Check next 25 symbols">
+        <Tooltip title="Check next 200 symbols">
           {checkSymbolsLoader ? (
             <IconButton>
               <CircularProgress size={20} />
