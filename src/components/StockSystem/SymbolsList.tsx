@@ -253,7 +253,8 @@ const SuggestedSymbols = () => {
             autoFocus
             placeholder="Search symbol"
             variant="standard"
-            margin="dense"
+            // margin="normal"
+            sx={{ marginBottom: '1em' }}
             size="small"
             InputLabelProps={{
               shrink: true,
