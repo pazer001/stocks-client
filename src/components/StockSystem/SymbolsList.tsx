@@ -213,6 +213,7 @@ const SuggestedSymbols = () => {
     changeSuggestedSymbols();
   }, [byType]);
 
+
   return useMemo(
     () => (
       <Box>
@@ -237,7 +238,8 @@ const SuggestedSymbols = () => {
 
           <FormControlLabel sx={{ marginInlineStart: 'auto' }}
                             control={<Switch onChange={(e) => setShowOnlyChecked(e.target.checked)}
-                                             checked={showOnlyChecked} />}
+                                             checked={Boolean(showOnlyChecked && checkedSymbols.length)} />}
+                            disabled={!checkedSymbols.length}
                             label={`Filter selected (${checkedSymbols.length})`} />
 
         </Container>
@@ -263,10 +265,8 @@ const SuggestedSymbols = () => {
             <ListItem
               key={item.symbol}
               dense
-              // disableGutters
               disablePadding
               divider
-              // secondaryAction={getRecommendationSymbol(item.recommendation)}
               secondaryAction={<Checkbox
                 edge="start"
                 checked={checkedSymbols.includes(item.symbol)}
