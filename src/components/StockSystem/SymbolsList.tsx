@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Box, Checkbox, Container, FormControlLabel,
+  Box, Checkbox, FormControlLabel,
   IconButton,
   InputAdornment,
   List,
@@ -19,7 +19,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded';
 import TrendingFlatRoundedIcon from '@mui/icons-material/TrendingFlatRounded';
-import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
+// import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
+import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
+import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
 // import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import {
   getByType,
@@ -196,7 +198,7 @@ const SuggestedSymbols = () => {
         return <TrendingFlatRoundedIcon sx={{ color: grey[400] }} />;
       }
       default: {
-        return null;
+        return <ShowChartRoundedIcon />;
       }
     }
   };
@@ -217,49 +219,58 @@ const SuggestedSymbols = () => {
   return useMemo(
     () => (
       <Box>
-        <Container sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title="Check next 200 symbols">
-            {checkSymbolsLoader ? (
-              <IconButton>
-                <CircularProgress size={20} />
+        <Box sx={{ paddingLeft: '0.5em', paddingRight: '0.5em' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Tooltip title="Check next 200 symbols">
+              {checkSymbolsLoader ? (
+                <IconButton>
+                  <CircularProgress size={20} />
+                </IconButton>
+              ) : (
+                <IconButton size="small" onClick={checkSymbols}>
+                  <QueryStatsRoundedIcon />
+                </IconButton>
+              )}
+            </Tooltip>
+            <Tooltip title="Clear recommendations">
+              <IconButton onClick={clearSuggestions} disabled={checkSymbolsLoader}>
+                <ReplayRoundedIcon />
               </IconButton>
-            ) : (
-              <IconButton size="small" onClick={checkSymbols}>
-                <QueryStatsRoundedIcon />
-              </IconButton>
-            )}
-          </Tooltip>
-          <Tooltip title="Clear recommendations">
-            <IconButton onClick={clearSuggestions} disabled={checkSymbolsLoader}>
-              <HighlightOffRoundedIcon />
-            </IconButton>
-          </Tooltip>
+            </Tooltip>
 
 
-          <FormControlLabel sx={{ marginInlineStart: 'auto' }}
-                            control={<Switch onChange={(e) => setShowOnlyChecked(e.target.checked)}
-                                             checked={Boolean(showOnlyChecked && checkedSymbols.length)} />}
-                            disabled={!checkedSymbols.length}
-                            label={`Filter selected (${checkedSymbols.length})`} />
+            <FormControlLabel sx={{ marginInlineStart: 'auto' }}
+                              control={<Switch onChange={(e) => setShowOnlyChecked(e.target.checked)}
+                                               checked={Boolean(showOnlyChecked && checkedSymbols.length)} />}
+                              disabled={!checkedSymbols.length}
+                              label={`Filter selected (${checkedSymbols.length})`} />
 
-        </Container>
+          </Box>
 
-        <TextField
-          label="Search symbol"
-          fullWidth
-          size="small"
-          onChange={(event) => setSearchTerm(event.target.value)}
-          inputProps={{
-            style: { textTransform: 'uppercase' },
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="start">
-                <SearchRoundedIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
+          <TextField
+            // label="Search symbol"
+            fullWidth
+            autoFocus
+            placeholder="Search symbol"
+            variant="standard"
+            margin="dense"
+            size="small"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            inputProps={{
+              style: { textTransform: 'uppercase' },
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <SearchRoundedIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
         <List dense disablePadding sx={{ overflowY: 'auto', height: '38vh' }}>
           {filteredSymbols.map((item) => (
             <ListItem
@@ -297,7 +308,6 @@ const SuggestedSymbols = () => {
                 }));
               }}>
                 <ListItemIcon>
-
                   {getRecommendationSymbol(item.recommendation)}
                 </ListItemIcon>
                 <ListItemText>
@@ -306,8 +316,6 @@ const SuggestedSymbols = () => {
                     <span>{item.symbol}</span>
                   </p>
                 </ListItemText>
-
-
               </ListItemButton>
 
             </ListItem>
