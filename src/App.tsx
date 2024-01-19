@@ -1,5 +1,5 @@
-import "./App.css";
-import React, { useState } from "react";
+import './App.css';
+import React, { useState } from 'react';
 import {
   Alert,
   Box,
@@ -9,27 +9,27 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
   Hidden,
   List,
   ListItem,
   ListItemText,
   Paper,
   Snackbar,
-} from "@mui/material";
-import Grid from "@mui/material/Grid";
-import LinearProgress from "@mui/material/LinearProgress";
-import Chart from "./components/StockSystem/Chart";
-import SymbolsList from "./components/StockSystem/SymbolsList";
-import SymbolInfo from "./components/StockSystem/SymbolInfo";
-import Toolbox from "./components/StockSystem/Toolbox";
-import { getAlertMessage, getAlertShow, getMainLoaderShow } from "./atoms/view";
-import { useRecoilValue } from "recoil";
+} from '@mui/material';
+import Grid from '@mui/material/Grid';
+import LinearProgress from '@mui/material/LinearProgress';
+import Chart from './components/StockSystem/Chart';
+import SymbolsList from './components/StockSystem/SymbolsList';
+import SymbolInfo from './components/StockSystem/SymbolInfo';
+import Toolbox from './components/StockSystem/Toolbox';
+import { getAlertMessage, getAlertShow, getMainLoaderShow } from './atoms/view';
+import { useRecoilValue } from 'recoil';
 
 interface IConsentProps {
   open: boolean;
   handleClose: () => void;
 }
+
 const Consent = (props: IConsentProps) => {
   return (
     <Dialog
@@ -92,13 +92,13 @@ function App() {
   const alertShow = useRecoilValue(getAlertShow);
   const alertMessage = useRecoilValue(getAlertMessage);
   const [showConsent, setShowConsent] = useState<boolean>(
-    localStorage.getItem("consent") !== "false",
+    localStorage.getItem('consent') !== 'false',
   );
 
   return (
     <>
       {mainLoaderShow && (
-        <LinearProgress sx={{ position: "fixed", width: "100%" }} />
+        <LinearProgress sx={{ position: 'fixed', width: '100%' }} />
       )}
 
       <Snackbar open={alertShow}>
@@ -107,7 +107,7 @@ function App() {
       <Consent
         open={showConsent}
         handleClose={() => {
-          localStorage.setItem("consent", String(false));
+          localStorage.setItem('consent', String(false));
           setShowConsent(false);
         }}
       />
@@ -116,14 +116,14 @@ function App() {
         // sx={{ height: "100vh", width: "100%" }}
         direction="column"
       >
-        <Grid item sx={{ minHeight: "6vh" }}>
+        <Grid item sx={{ minHeight: '6vh' }}>
           <Toolbox />
         </Grid>
-        <Grid item sx={{ height: "94vh", width: "100vw" }}>
-          <Grid container spacing={1} sx={{ height: "100%" }}>
+        <Grid item sx={{ height: '94vh', width: '100vw' }}>
+          <Grid container spacing={1} sx={{ height: '100%' }}>
             <Hidden xsDown smDown mdDown>
               <Grid item xs={9} md={9}>
-                <Paper sx={{ height: "100%", width: "100%" }}>
+                <Paper sx={{ height: '100%', width: '100%' }}>
                   <Chart />
                 </Paper>
               </Grid>
@@ -133,14 +133,14 @@ function App() {
               xs={12}
               sm={12}
               md={3}
-              sx={{ height: "100%", width: "100%" }}
+              sx={{ height: '100%', width: '100%' }}
             >
               <Paper>
-                <Box sx={{ height: "50vh" }}>
+                <Box sx={{ height: '50vh' }}>
                   <SymbolsList />
                 </Box>
-                <Divider />
-                <Box sx={{ height: "43vh" }}>
+                {/*<Divider />*/}
+                <Box sx={{ height: '43vh' }}>
                   <SymbolInfo />
                 </Box>
               </Paper>

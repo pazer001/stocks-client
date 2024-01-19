@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box, Checkbox, Container, FormControlLabel,
   IconButton,
@@ -12,13 +12,14 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material';
-import { green, red, grey } from "@mui/material/colors";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import QueryStatsRoundedIcon from "@mui/icons-material/QueryStatsRounded";
-import CircularProgress from "@mui/material/CircularProgress";
-import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
-import TrendingDownRoundedIcon from "@mui/icons-material/TrendingDownRounded";
-import TrendingFlatRoundedIcon from "@mui/icons-material/TrendingFlatRounded";
+import { green, red, grey } from '@mui/material/colors';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
+import CircularProgress from '@mui/material/CircularProgress';
+import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
+import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded';
+import TrendingFlatRoundedIcon from '@mui/icons-material/TrendingFlatRounded';
+import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 // import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import {
   getByType,
@@ -26,9 +27,9 @@ import {
   getSelectedSymbol,
   symbolAtom,
   useSymbol,
-} from "../../atoms/symbol";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { Interval } from "./enums/Interval";
+} from '../../atoms/symbol';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Interval } from './enums/Interval';
 // import Grid from "@mui/material/Grid";
 // import SymbolChooser from "./SymbolChooser";
 // import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
@@ -63,7 +64,7 @@ export interface ISymbol {
   symbol: string;
   intervals: Array<Interval>;
   score: number;
-  recommendation: "Buy" | "Sell" | "Hold";
+  recommendation: 'Buy' | 'Sell' | 'Hold' | '';
   updatedAt: string;
 }
 
@@ -74,7 +75,7 @@ const SymbolsList = () => {
   // };
 
   return (
-    <Box sx={{ height: "100%" }}>
+    <Box sx={{ height: '100%' }}>
       {/*<Box sx={{ borderBottom: 1, borderColor: "divider" }}>*/}
       {/*  <Tabs value={tab} onChange={moveTab} variant="fullWidth">*/}
       {/*    <Tab label="Suggested symbols" />*/}
@@ -82,7 +83,7 @@ const SymbolsList = () => {
       {/*  </Tabs>*/}
       {/*</Box>*/}
       {/*<TabPanel value={tab} index={0}>*/}
-        <SuggestedSymbols />
+      <SuggestedSymbols />
       {/*</TabPanel>*/}
       {/*<TabPanel value={tab} index={1}>*/}
       {/*  <WatchlistSymbols />*/}
@@ -97,7 +98,7 @@ const SuggestedSymbols = () => {
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
   const [checkedSymbols, setCheckedSymbols] = useState<Array<string>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : []); // [
   const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false); // [
@@ -114,30 +115,37 @@ const SuggestedSymbols = () => {
 
   const handleCheckedSymbols = (value: number) => () => {
     const symbol = suggestedSymbols.find((symbol) => symbol.symbolNumber === value)?.symbol;
-    if(symbol === undefined) return console.log('Symbol not found');
+    if (symbol === undefined) return console.log('Symbol not found');
     // console.log(checkedSymbols, symbol, checkedSymbols.includes(symbol))
 
     setCheckedSymbols(prevCheckedSymbols => {
       const isChecked = prevCheckedSymbols.includes(symbol);
-      let watchlist = []
-      if(isChecked) {
-        watchlist = prevCheckedSymbols.filter((checkedSymbol) => checkedSymbol !== symbol)
+      let watchlist = [];
+      if (isChecked) {
+        watchlist = prevCheckedSymbols.filter((checkedSymbol) => checkedSymbol !== symbol);
       } else {
-        watchlist =  [...prevCheckedSymbols, symbol]
+        watchlist = [...prevCheckedSymbols, symbol];
       }
       localStorage.setItem('watchlist', JSON.stringify(watchlist));
-      return watchlist
-    })
+      return watchlist;
+    });
   };
 
-  // const selectedSymbols = useMemo(() => suggestedSymbols.filter((symbol) => checkedSymbols.includes(symbol.symbol)), [checkedSymbols, suggestedSymbols]);
+  const clearSuggestions = () => {
+    setSuggestedSymbols((prevSuggestedSymbols) =>
+      prevSuggestedSymbols.map((symbol) => ({
+        ...symbol,
+        recommendation: '',
+      })),
+    );
+  };
 
   const filteredSymbols = useMemo(
     () =>
       searchTerm || showOnlyChecked
-        ? suggestedSymbols.filter((supportedSymbol: ISymbol) =>
-            supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
-          ).filter((supportedSymbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(supportedSymbol.symbol) : true)
+        ? suggestedSymbols.filter((supportedSymbol) =>
+          supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
+        ).filter((symbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(symbol.symbol) : true)
         : suggestedSymbols,
     [searchTerm, suggestedSymbols, showOnlyChecked, checkedSymbols],
   );
@@ -145,28 +153,28 @@ const SuggestedSymbols = () => {
   const checkSymbols = async () => {
     setCheckSymbolsLoader(true);
     let count = 0;
-    for (const i in suggestedSymbols) {
-      if (count < 200 && !suggestedSymbols[i].recommendation) {
-        const symbol = suggestedSymbols[i].symbol;
+    for (const i in filteredSymbols) {
+      if (count < 200 && !filteredSymbols[i].recommendation) {
+        const symbol = filteredSymbols[i].symbol;
         try {
           const analyzedSymbol = await analyzeSymbol(symbol);
 
           const { minBuy, minSell } =
             analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
-          suggestedSymbols[i].score =
+          filteredSymbols[i].score =
             analyzedSymbol.data.prices[
-              analyzedSymbol.data.prices.length - 1
-            ].recommendation.score;
+            analyzedSymbol.data.prices.length - 1
+              ].recommendation.score;
 
-          if (suggestedSymbols[i].score >= minBuy) {
-            suggestedSymbols[i].recommendation = "Buy";
-          } else if (suggestedSymbols[i].score <= minSell) {
-            suggestedSymbols[i].recommendation = "Sell";
+          if (filteredSymbols[i].score >= minBuy) {
+            filteredSymbols[i].recommendation = 'Buy';
+          } else if (filteredSymbols[i].score <= minSell) {
+            filteredSymbols[i].recommendation = 'Sell';
           } else {
-            suggestedSymbols[i].recommendation = "Hold";
+            filteredSymbols[i].recommendation = 'Hold';
           }
 
-          setSuggestedSymbols(() => [...suggestedSymbols]);
+          setSuggestedSymbols(() => [...filteredSymbols]);
           count++;
         } catch (error) {
           console.log(error);
@@ -178,17 +186,17 @@ const SuggestedSymbols = () => {
 
   const getRecommendationSymbol = (recommendation: string) => {
     switch (recommendation) {
-      case "Buy": {
+      case 'Buy': {
         return <TrendingUpRoundedIcon sx={{ color: green[400] }} />;
       }
-      case "Sell": {
+      case 'Sell': {
         return <TrendingDownRoundedIcon sx={{ color: red[400] }} />;
       }
-      case "Hold": {
+      case 'Hold': {
         return <TrendingFlatRoundedIcon sx={{ color: grey[400] }} />;
       }
       default: {
-        return null
+        return null;
       }
     }
   };
@@ -208,29 +216,39 @@ const SuggestedSymbols = () => {
   return useMemo(
     () => (
       <Box>
-        <Container sx={{display: "flex"}}>
-        <Tooltip title="Check next 200 symbols">
-          {checkSymbolsLoader ? (
-            <IconButton>
-              <CircularProgress size={20} />
+        <Container sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title="Check next 200 symbols">
+            {checkSymbolsLoader ? (
+              <IconButton>
+                <CircularProgress size={20} />
+              </IconButton>
+            ) : (
+              <IconButton size="small" onClick={checkSymbols}>
+                <QueryStatsRoundedIcon />
+              </IconButton>
+            )}
+          </Tooltip>
+          <Tooltip title="Clear recommendations">
+            <IconButton onClick={clearSuggestions} disabled={checkSymbolsLoader}>
+              <HighlightOffRoundedIcon />
             </IconButton>
-          ) : (
-            <IconButton size="small" onClick={checkSymbols}>
-              <QueryStatsRoundedIcon />
-            </IconButton>
-          )}
-        </Tooltip>
-          <FormControlLabel sx={{marginInlineStart: "auto"}} control={<Switch onChange={(e) => setShowOnlyChecked(e.target.checked)} checked={showOnlyChecked} />} label="Filter selected" />
+          </Tooltip>
+
+
+          <FormControlLabel sx={{ marginInlineStart: 'auto' }}
+                            control={<Switch onChange={(e) => setShowOnlyChecked(e.target.checked)}
+                                             checked={showOnlyChecked} />}
+                            label={`Filter selected (${checkedSymbols.length})`} />
+
         </Container>
 
         <TextField
           label="Search symbol"
           fullWidth
-          margin="dense"
           size="small"
           onChange={(event) => setSearchTerm(event.target.value)}
           inputProps={{
-            style: { textTransform: "uppercase" },
+            style: { textTransform: 'uppercase' },
           }}
           InputProps={{
             endAdornment: (
@@ -240,7 +258,7 @@ const SuggestedSymbols = () => {
             ),
           }}
         />
-        <List dense disablePadding sx={{ overflowY: "auto", height: "38vh" }}>
+        <List dense disablePadding sx={{ overflowY: 'auto', height: '38vh' }}>
           {filteredSymbols.map((item) => (
             <ListItem
               key={item.symbol}
@@ -248,50 +266,50 @@ const SuggestedSymbols = () => {
               // disableGutters
               disablePadding
               divider
-              secondaryAction={getRecommendationSymbol(item.recommendation)}
+              // secondaryAction={getRecommendationSymbol(item.recommendation)}
+              secondaryAction={<Checkbox
+                edge="start"
+                checked={checkedSymbols.includes(item.symbol)}
+                onChange={handleCheckedSymbols(item.symbolNumber)}
+              />}
             >
-              <ListItemButton
-                selected={item.symbol === selectedSymbol}
-                dense
-                onClick={handleCheckedSymbols(item.symbolNumber)}
-              >
+              <ListItemButton onClick={() => {
+                const newInterval = item.intervals.includes(interval)
+                  ? interval
+                  : item.intervals[0];
+                const newIntervals: Array<Interval> = [];
+                const systemIntervals = Object.values(Interval);
+
+                systemIntervals.forEach((systemInterval) => {
+                  if (item.intervals.includes(systemInterval)) {
+                    newIntervals.push(systemInterval);
+                  }
+                });
+
+                setSymbolState((prevSymbolState) => ({
+                  ...prevSymbolState,
+                  selectedSymbol: item.symbol,
+                  settings: {
+                    ...prevSymbolState.settings,
+                    intervals: newIntervals,
+                    interval: newInterval,
+                  },
+                }));
+              }}>
                 <ListItemIcon>
-                  <Checkbox
-                    edge="start"
-                    checked={checkedSymbols.includes(item.symbol)}
-                  />
+
+                  {getRecommendationSymbol(item.recommendation)}
                 </ListItemIcon>
-                <ListItemButton onClick={() => {
-                  const newInterval = item.intervals.includes(interval)
-                    ? interval
-                    : item.intervals[0];
-                  const newIntervals: Array<Interval> = [];
-                  const systemIntervals = Object.values(Interval);
-
-                  systemIntervals.forEach((systemInterval) => {
-                    if (item.intervals.includes(systemInterval)) {
-                      newIntervals.push(systemInterval);
-                    }
-                  });
-
-                  setSymbolState((prevSymbolState) => ({
-                    ...prevSymbolState,
-                    selectedSymbol: item.symbol,
-                    settings: {
-                      ...prevSymbolState.settings,
-                      intervals: newIntervals,
-                      interval: newInterval,
-                    },
-                  }));
-                }}>
                 <ListItemText>
-                  <p style={{ display: "flex", gap: 12 }}>
+                  <p style={{ display: 'flex', gap: 12 }}>
                     <span>{item.symbolNumber}) </span>
                     <span>{item.symbol}</span>
                   </p>
                 </ListItemText>
-                </ListItemButton>
+
+
               </ListItemButton>
+
             </ListItem>
           ))}
         </List>
