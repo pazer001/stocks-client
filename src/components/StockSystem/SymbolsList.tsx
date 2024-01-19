@@ -143,40 +143,39 @@ const SuggestedSymbols = () => {
   };
 
   const filteredSymbols = useMemo(
-    () =>
-      searchTerm || showOnlyChecked
-        ? suggestedSymbols.filter((supportedSymbol) =>
-          supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
-        ).filter((symbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(symbol.symbol) : true)
-        : suggestedSymbols,
+    () => suggestedSymbols.filter((supportedSymbol) =>
+      searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true,
+    ).filter((symbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(symbol.symbol) : true)
+    ,
     [searchTerm, suggestedSymbols, showOnlyChecked, checkedSymbols],
   );
 
   const checkSymbols = async () => {
     setCheckSymbolsLoader(true);
     let count = 0;
-    for (const i in filteredSymbols) {
-      if (count < 200 && !filteredSymbols[i].recommendation) {
-        const symbol = filteredSymbols[i].symbol;
+    for (const i in suggestedSymbols) {
+      if (count < 200 && !suggestedSymbols[i].recommendation) {
+        const symbol = suggestedSymbols[i].symbol;
+        if (showOnlyChecked && !checkedSymbols.includes(symbol)) continue;
         try {
           const analyzedSymbol = await analyzeSymbol(symbol);
 
           const { minBuy, minSell } =
             analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
-          filteredSymbols[i].score =
+          suggestedSymbols[i].score =
             analyzedSymbol.data.prices[
             analyzedSymbol.data.prices.length - 1
               ].recommendation.score;
 
-          if (filteredSymbols[i].score >= minBuy) {
-            filteredSymbols[i].recommendation = 'Buy';
-          } else if (filteredSymbols[i].score <= minSell) {
-            filteredSymbols[i].recommendation = 'Sell';
+          if (suggestedSymbols[i].score >= minBuy) {
+            suggestedSymbols[i].recommendation = 'Buy';
+          } else if (suggestedSymbols[i].score <= minSell) {
+            suggestedSymbols[i].recommendation = 'Sell';
           } else {
-            filteredSymbols[i].recommendation = 'Hold';
+            suggestedSymbols[i].recommendation = 'Hold';
           }
 
-          setSuggestedSymbols(() => [...filteredSymbols]);
+          setSuggestedSymbols(() => [...suggestedSymbols]);
           count++;
         } catch (error) {
           console.log(error);
@@ -241,7 +240,8 @@ const SuggestedSymbols = () => {
 
             <FormControlLabel sx={{ marginInlineStart: 'auto' }}
                               control={<Switch onChange={(e) => setShowOnlyChecked(e.target.checked)}
-                                               checked={Boolean(showOnlyChecked && checkedSymbols.length)} />}
+                              />
+                              }
                               disabled={!checkedSymbols.length}
                               label={`Filter selected (${checkedSymbols.length})`} />
 
@@ -253,8 +253,6 @@ const SuggestedSymbols = () => {
             autoFocus
             placeholder="Search symbol"
             variant="standard"
-            // margin="normal"
-            sx={{ marginBottom: '1em' }}
             size="small"
             InputLabelProps={{
               shrink: true,
@@ -272,6 +270,7 @@ const SuggestedSymbols = () => {
             }}
           />
         </Box>
+        <br />
         <List dense disablePadding sx={{ overflowY: 'auto', height: '38vh' }}>
           {filteredSymbols.map((item) => (
             <ListItem
