@@ -106,14 +106,6 @@ const SuggestedSymbols = () => {
   const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false); // [
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
 
-  // const sendToWatchlist = () => {
-  //   const watchlist = localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : [];
-  //
-  //   const newWatchlist = [...watchlist, ...checkedSymbols];
-  //   localStorage.setItem('watchlist', JSON.stringify(newWatchlist));
-  // }
-
-  // const watchlist = localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : [];
 
   const handleCheckedSymbols = (value: number) => () => {
     const symbol = suggestedSymbols.find((symbol) => symbol.symbolNumber === value)?.symbol;
