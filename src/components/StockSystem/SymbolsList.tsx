@@ -26,7 +26,7 @@ import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
 import {
   getByType,
   getInterval,
-  getSelectedSymbol,
+  getSelectedSymbol, getSymbolData,
   symbolAtom,
   useSymbol,
 } from '../../atoms/symbol';
@@ -97,6 +97,7 @@ const SymbolsList = () => {
 const SuggestedSymbols = () => {
   const [, setSymbolState] = useRecoilState(symbolAtom);
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
+  const symbolData = useRecoilValue(getSymbolData);
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
@@ -105,6 +106,27 @@ const SuggestedSymbols = () => {
   const [checkedSymbols, setCheckedSymbols] = useState<Array<string>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : []); // [
   const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false); // [
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
+
+  useEffect(() => {
+    const symbolIndex = suggestedSymbols.findIndex((symbol) => symbol.symbol === selectedSymbol);
+    if (symbolIndex !== -1 && symbolData) {
+      setSuggestedSymbols((prevSuggestedSymbols) => {
+        const newSuggestedSymbols = [...prevSuggestedSymbols];
+        const { minBuy, minSell } = symbolData.recommendationsLinesModified.bestPermutation;
+        const score = symbolData.prices[symbolData.prices.length - 1].recommendation.score;
+        if (score >= minBuy) {
+          newSuggestedSymbols[symbolIndex].recommendation = 'Buy';
+        } else if (score <= minSell) {
+          newSuggestedSymbols[symbolIndex].recommendation = 'Sell';
+        } else {
+          newSuggestedSymbols[symbolIndex].recommendation = 'Hold';
+        }
+
+
+        return newSuggestedSymbols;
+      });
+    }
+  }, [symbolData]);
 
 
   const handleCheckedSymbols = (value: number) => () => {

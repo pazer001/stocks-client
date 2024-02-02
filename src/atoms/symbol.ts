@@ -1,9 +1,9 @@
-import { atom, selector, useRecoilState } from "recoil";
-import { Interval } from "../components/StockSystem/enums/Interval";
-import axios, { AxiosResponse } from "axios";
-import { useViewActions } from "./view";
-import { useEffect } from "react";
-import { ISymbol } from "../components/StockSystem/SymbolsList";
+import { atom, selector, useRecoilState } from 'recoil';
+import { Interval } from '../components/StockSystem/enums/Interval';
+import axios, { AxiosResponse } from 'axios';
+import { useViewActions } from './view';
+import { useEffect } from 'react';
+import { ISymbol } from '../components/StockSystem/SymbolsList';
 
 interface Recommendation {
   buyCount: number;
@@ -27,6 +27,10 @@ export interface SymbolData {
       open: number;
       volume: number;
     };
+    reasons: {
+      buy: Record<"symbol" | "index" | "sector", string[]>
+      sell: Record<"symbol" | "index" | "sector", string[]>
+    }
     recommendation: Recommendation;
   }>;
   analyzedResult: {

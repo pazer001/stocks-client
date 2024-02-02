@@ -1,39 +1,41 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   getByType,
   getNextEarning,
   getPricesMode,
   getSelectedSignal,
   getSymbolData,
-} from "../../atoms/symbol";
-import axios from "axios";
+} from '../../atoms/symbol';
+import axios from 'axios';
 
-import { green, red, grey } from "@mui/material/colors";
+import { green, red, grey, deepOrange, deepPurple, pink } from '@mui/material/colors';
 import {
+  Avatar,
   Box,
   Card,
   CardContent,
   Dialog,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-  IconButton,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemText,
+  // IconButton,
+  // List,
+  // ListItem,
+  // ListItemIcon,
+  // ListItemText,
   Typography,
-} from "@mui/material";
-import { startCase } from "lodash";
-import ReactECharts from "echarts-for-react";
-import { DateTime } from "luxon";
+} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+import { startCase } from 'lodash';
+import ReactECharts from 'echarts-for-react';
+import { DateTime } from 'luxon';
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
-function InfoIcon() {
-  return null;
-}
+// function InfoIcon() {
+//   return null;
+// }
 
 const SymbolInfo = () => {
   const symbolData = useRecoilValue(getSymbolData);
@@ -41,9 +43,9 @@ const SymbolInfo = () => {
   const byType = useRecoilValue(getByType);
   const priceMode = useRecoilValue(getPricesMode);
   const nextEarning = useRecoilValue(getNextEarning);
-  const [strategyName, setStrategyName] = useState<string>("");
+  const [strategyName, setStrategyName] = useState<string>('');
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
-  const [strategyDescription, setStrategyDescription] = useState<string>("");
+  const [strategyDescription, setStrategyDescription] = useState<string>('');
   const [indicatorInfoDialog, setIndicatorInfoDialog] =
     useState<boolean>(false);
 
@@ -79,14 +81,14 @@ const SymbolInfo = () => {
         symbolData.prices[symbolData.prices.length - 1].recommendation;
 
       if (currentRecommendation.score >= minBuy) {
-        return "Buy";
+        return 'Buy';
       } else if (
         currentRecommendation.score > minSell &&
         currentRecommendation.score < minBuy
       ) {
-        return "Hold";
+        return 'Hold';
       } else if (currentRecommendation.score <= minSell) {
-        return "Sell";
+        return 'Sell';
       } else {
         return `No decision`;
       }
@@ -98,12 +100,12 @@ const SymbolInfo = () => {
   const getRecommendationColor = () => {
     const recommendation = getRecommendation();
     switch (recommendation) {
-      case "Buy":
+      case 'Buy':
         return green[400];
-      case "Sell":
+      case 'Sell':
         return red[400];
       default:
-        return "inherit";
+        return 'inherit';
     }
   };
 
@@ -113,11 +115,30 @@ const SymbolInfo = () => {
     return (value - min) / (max - min);
   };
 
+  const symbolBuy = symbolData?.prices[symbolData.prices.length - 1].reasons.buy.symbol;
+  const indexBuy = symbolData?.prices[symbolData.prices.length - 1].reasons.buy.index;
+  const sectorBuy = symbolData?.prices[symbolData.prices.length - 1].reasons.buy.sector;
+  const symbolSell = symbolData?.prices[symbolData.prices.length - 1].reasons.sell.symbol;
+  const indexSell = symbolData?.prices[symbolData.prices.length - 1].reasons.sell.index;
+  const sectorSell = symbolData?.prices[symbolData.prices.length - 1].reasons.sell.sector;
+  const sectionIcon: Record<number, string> = {
+    0: 'Symbol',
+    1: 'Index',
+    2: 'Sector',
+  };
+
+  const sectionColor: Record<number, string> = {
+    0: deepOrange[500],
+    1: deepPurple[500],
+    2: pink[500],
+  };
+
+
   return useMemo(
     () => (
-      <Box sx={{ height: "100%" }}>
+      <Box sx={{ height: '100%' }}>
         {symbolData && strategyModalOpen && strategyName && (
-          <Dialog open={strategyModalOpen} onClose={() => setStrategyName("")}>
+          <Dialog open={strategyModalOpen} onClose={() => setStrategyName('')}>
             <DialogTitle>{startCase(strategyName)}</DialogTitle>
             <DialogContent>
               <DialogContentText>
@@ -125,17 +146,17 @@ const SymbolInfo = () => {
                 {Object.keys(
                   symbolData.analyzedResult.results[priceMode][byType][
                     strategyName
-                  ].bestPermutation,
+                    ].bestPermutation,
                 )
                   .map(
                     (param) =>
                       `${startCase(param)}: ${
                         symbolData.analyzedResult.results[priceMode][byType][
                           strategyName
-                        ].bestPermutation[param]
+                          ].bestPermutation[param]
                       }`,
                   )
-                  .join(", ")}
+                  .join(', ')}
                 ]
               </DialogContentText>
               <DialogContentText>
@@ -143,19 +164,19 @@ const SymbolInfo = () => {
                 {new Intl.NumberFormat().format(
                   symbolData.analyzedResult.results[priceMode][byType][
                     strategyName
-                  ].scannedPermutations,
+                    ].scannedPermutations,
                 )}
               </DialogContentText>
               <DialogContentText>
                 <b>Win Rate: </b>
                 {symbolData.analyzedResult.results[priceMode][byType][
                   strategyName
-                ].winRate.toFixed(2)}
+                  ].winRate.toFixed(2)}
                 %
               </DialogContentText>
               {strategyDescription && (
                 <DialogContentText>
-                  <b>Description: </b>{" "}
+                  <b>Description: </b>{' '}
                   <span
                     dangerouslySetInnerHTML={{ __html: strategyDescription }}
                   />
@@ -171,17 +192,17 @@ const SymbolInfo = () => {
         />
 
         {symbolData && (
-          <Card sx={{ height: "100%", overflowY: "auto" }}>
+          <Card sx={{ height: '100%', overflowY: 'auto' }}>
             <CardContent>
               <ReactECharts
                 option={{
                   series: [
                     {
-                      type: "gauge",
+                      type: 'gauge',
                       startAngle: 180,
                       endAngle: 0,
-                      center: ["50%", "50%"],
-                      radius: "90%",
+                      center: ['50%', '50%'],
+                      radius: '90%',
                       min: -100,
                       max: 100,
                       splitNumber: 8,
@@ -208,10 +229,10 @@ const SymbolInfo = () => {
                         },
                       },
                       pointer: {
-                        icon: "path://M12.8,0.7l12,40.1H0.7L12.8,0.7z",
-                        length: "12%",
+                        icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
+                        length: '12%',
                         width: 20,
-                        offsetCenter: [0, "-50%"],
+                        offsetCenter: [0, '-50%'],
                         itemStyle: {
                           color: getRecommendationColor(),
                         },
@@ -219,14 +240,14 @@ const SymbolInfo = () => {
                       axisTick: {
                         length: 12,
                         lineStyle: {
-                          color: "auto",
+                          color: 'auto',
                           width: 2,
                         },
                       },
                       splitLine: {
                         length: 20,
                         lineStyle: {
-                          color: "auto",
+                          color: 'auto',
                           width: 5,
                         },
                       },
@@ -234,15 +255,15 @@ const SymbolInfo = () => {
                         fontSize: 0,
                       },
                       title: {
-                        offsetCenter: [0, "-10%"],
+                        offsetCenter: [0, '-10%'],
                         fontSize: 16,
                         color: getRecommendationColor(),
                       },
                       detail: {
                         fontSize: 30,
-                        offsetCenter: [0, "-35%"],
+                        offsetCenter: [0, '-35%'],
                         valueAnimation: true,
-                        formatter: function (value: number) {
+                        formatter: function(value: number) {
                           return Math.round(value);
                         },
                         color: getRecommendationColor(),
@@ -250,8 +271,8 @@ const SymbolInfo = () => {
                       data: [
                         {
                           value:
-                            symbolData.prices[symbolData.prices.length - 1]
-                              .recommendation.score,
+                          symbolData.prices[symbolData.prices.length - 1]
+                            .recommendation.score,
                           name: getRecommendation(),
                         },
                       ],
@@ -260,30 +281,44 @@ const SymbolInfo = () => {
                 }}
                 notMerge={true}
                 lazyUpdate={true}
-                style={{ height: "200px" }}
+                style={{ height: '200px' }}
               />
               <div
                 className="symbolInfo-reasons"
-                style={{ marginTop: "-80px" }}
+                style={{ marginTop: '-80px' }}
               >
                 {nextEarning && (
                   <Typography>
                     <b>Next earnings report: </b>
                     {DateTime.fromSeconds(nextEarning).toISODate()} (
                     {DateTime.fromSeconds(nextEarning)
-                      .diff(DateTime.now(), "days")
+                      .diff(DateTime.now(), 'days')
                       .toObject()
-                      .days?.toFixed(0)}{" "}
+                      .days?.toFixed(0)}{' '}
                     Days)
                   </Typography>
                 )}
-                {symbolData &&
-                  selectedSignal === undefined &&
-                  symbolData?.recommendationsLinesModified && (
-                    <Typography>
-                      Click on a signal on the indicator to get full details ...
-                    </Typography>
-                  )}
+                {/*{symbolData &&*/}
+                {/*  selectedSignal === undefined &&*/}
+                {/*  symbolData?.recommendationsLinesModified && (*/}
+                {/*    <Typography>*/}
+                {/*      Click on a signal on the indicator to get full details ...*/}
+                {/*    </Typography>*/}
+                {/*  )}*/}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
+                  {Object.values(sectionIcon).map((section, index) => (
+                    <>
+                      <Avatar alt={sectionIcon[index]}
+                              sx={{ width: 24, height: 24, bgcolor: sectionColor[index] }}>
+                        {section[0].toUpperCase()}
+                      </Avatar>
+                      {sectionIcon[index]}
+                    </>
+                  ))}
+                </Box>
+                <br />
+
+
                 {selectedSignal !== undefined && (
                   <>
                     {Boolean(
@@ -291,20 +326,18 @@ const SymbolInfo = () => {
                         .recommendation.buyThresholdsReasons.length,
                     ) && (
                       <>
-                        <b>Minimum Thresholds:</b>{" "}
+                        <b>Minimum Thresholds:</b>{' '}
                         <List dense disablePadding>
                           {symbolData?.prices[
-                            symbolData.prices.length - 1
-                          ].recommendation.buyThresholdsReasons.map(
+                          symbolData.prices.length - 1
+                            ].recommendation.buyThresholdsReasons.map(
                             (reason: string) => (
-                              <ListItem key={reason} dense disablePadding>
-                                <ListItemIcon
-                                  onClick={() => showStrategyModal(reason)}
-                                >
-                                  <IconButton>
-                                    <InfoIcon />
-                                  </IconButton>
-                                </ListItemIcon>
+                              <ListItem key={reason} dense disablePadding secondaryAction={
+                                <IconButton onClick={() => showStrategyModal(reason)}>
+                                  <InfoIcon />
+                                </IconButton>
+                              }>
+
                                 <ListItemText
                                   primary={startCase(reason)}
                                 ></ListItemText>
@@ -314,67 +347,94 @@ const SymbolInfo = () => {
                         </List>
                       </>
                     )}
+                    <br />
 
-                    {Boolean(
-                      symbolData?.prices[symbolData.prices.length - 1]
-                        .recommendation.buyReasons.length,
-                    ) && (
-                      <>
-                        <b>Reasons to buy:</b>{" "}
-                        <List dense disablePadding>
-                          {symbolData?.prices[
-                            symbolData.prices.length - 1
-                          ].recommendation.buyReasons.map(
-                            (strategyName: string) => (
-                              <ListItem key={strategyName} dense disablePadding>
-                                <ListItemIcon
-                                  onClick={() =>
-                                    showStrategyModal(strategyName)
-                                  }
-                                >
-                                  <IconButton>
-                                    <InfoIcon />
-                                  </IconButton>
-                                </ListItemIcon>
-                                <ListItemText
-                                  primary={startCase(strategyName)}
-                                ></ListItemText>
-                              </ListItem>
-                            ),
-                          )}
-                        </List>
-                      </>
-                    )}
-                    {Boolean(
-                      symbolData?.prices[symbolData.prices.length - 1]
-                        .recommendation.sellReasons.length,
-                    ) && (
-                      <>
-                        <b>Reasons to sell:</b>{" "}
-                        <List dense disablePadding>
-                          {symbolData?.prices[
-                            symbolData.prices.length - 1
-                          ].recommendation.sellReasons.map(
-                            (strategyName: string) => (
-                              <ListItem key={strategyName} dense disablePadding>
-                                <ListItemIcon
-                                  onClick={() =>
-                                    showStrategyModal(strategyName)
-                                  }
-                                >
-                                  <IconButton>
-                                    <InfoIcon />
-                                  </IconButton>
-                                </ListItemIcon>
-                                <ListItemText
-                                  primary={startCase(strategyName)}
-                                ></ListItemText>
-                              </ListItem>
-                            ),
-                          )}
-                        </List>
-                      </>
-                    )}
+                    <b>Reasons to buy:</b>{' '}
+                    <List dense disablePadding>
+                      {[symbolBuy, indexBuy, sectorBuy].map((section, index) => (
+                        section && section.map(
+                          (strategyName: string) => (
+                            <ListItem key={strategyName} dense disablePadding secondaryAction={
+
+                              <IconButton onClick={() =>
+                                showStrategyModal(strategyName)
+                              }>
+                                <InfoIcon />
+                              </IconButton>
+
+                            }>
+                              <ListItemAvatar>
+                                <Avatar alt={sectionIcon[index]}
+                                        sx={{ width: 24, height: 24, bgcolor: sectionColor[index] }}>
+                                  {sectionIcon[index][0].toUpperCase()}
+                                </Avatar>
+                              </ListItemAvatar>
+                              <ListItemText
+                                primary={`${startCase(strategyName)}`}
+                              ></ListItemText>
+                            </ListItem>
+                          ),
+                        )))}
+                    </List>
+                    <br />
+                    <b>Reasons to sell:</b>{' '}
+                    <List dense disablePadding>
+                      {[symbolSell, indexSell, sectorSell].map((section, index) => (
+                        section && section.map(
+                          (strategyName: string) => (
+                            <ListItem key={strategyName} dense disablePadding secondaryAction={
+
+                              <IconButton onClick={() =>
+                                showStrategyModal(strategyName)
+                              }>
+                                <InfoIcon />
+                              </IconButton>
+
+                            }>
+                              <ListItemAvatar>
+                                <Avatar alt={sectionIcon[index]}
+                                        sx={{ width: 24, height: 24, bgcolor: sectionColor[index] }}>
+                                  {sectionIcon[index][0].toUpperCase()}
+                                </Avatar>
+                              </ListItemAvatar>
+                              <ListItemText
+                                primary={`${startCase(strategyName)}`}
+                              ></ListItemText>
+                            </ListItem>
+                          ),
+                        )))}
+                    </List>
+
+                    {/*{Boolean(*/}
+                    {/*  symbolData?.prices[symbolData.prices.length - 1]*/}
+                    {/*    .recommendation.sellReasons.length,*/}
+                    {/*) && (*/}
+                    {/*  <>*/}
+                    {/*    <b>Reasons to sell:</b>{' '}*/}
+                    {/*    <List dense disablePadding>*/}
+                    {/*      {symbolData?.prices[*/}
+                    {/*      symbolData.prices.length - 1*/}
+                    {/*        ].recommendation.sellReasons.map(*/}
+                    {/*        (strategyName: string) => (*/}
+                    {/*          <ListItem key={strategyName} dense disablePadding>*/}
+                    {/*            <ListItemIcon*/}
+                    {/*              onClick={() =>*/}
+                    {/*                showStrategyModal(strategyName)*/}
+                    {/*              }*/}
+                    {/*            >*/}
+                    {/*              <IconButton>*/}
+                    {/*                <InfoIcon />*/}
+                    {/*              </IconButton>*/}
+                    {/*            </ListItemIcon>*/}
+                    {/*            <ListItemText*/}
+                    {/*              primary={startCase(strategyName)}*/}
+                    {/*            ></ListItemText>*/}
+                    {/*          </ListItem>*/}
+                    {/*        ),*/}
+                    {/*      )}*/}
+                    {/*    </List>*/}
+                    {/*  </>*/}
+                    {/*)}*/}
                   </>
                 )}
               </div>
@@ -409,12 +469,12 @@ const IndicatorInfoDialog = (props: IIndicatorInfoDialogProps) => {
         <DialogTitle>Indicator Info</DialogTitle>
         <DialogContent>
           After collecting data from various strategies, an accumulation
-          indicator is generated that summarizes the results of the strategies.{" "}
+          indicator is generated that summarizes the results of the strategies.{' '}
           <br />
           A logical approach is to initiate a long trade when the indicator
           value is greater than 0 and to sell when it is less than 0. <br />
           However, we conduct additional backtesting on the accumulation
-          indicator to determine the optimal threshold for buying/selling.{" "}
+          indicator to determine the optimal threshold for buying/selling.{' '}
           <br /> <br />
           The outcome is represented by two lines - green and red - along with
           corresponding Win Rate/Profit values. <br />
