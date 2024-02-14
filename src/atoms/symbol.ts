@@ -91,9 +91,11 @@ export interface SymbolData {
     goodTrades: number;
     badTrades: number;
   };
-  stopLossPrice: number;
-  stopLossPercent: number;
   buyThresholdData: Record<string, Array<number>>;
+  atrBandsPercent: {
+    stopLoss: Array<number>;
+    takeProfit: Array<number>;
+  };
 }
 
 enum ByType {

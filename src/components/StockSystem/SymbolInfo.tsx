@@ -298,6 +298,8 @@ const SymbolInfo = () => {
                     Days)
                   </Typography>
                 )}
+
+
                 {/*{symbolData &&*/}
                 {/*  selectedSignal === undefined &&*/}
                 {/*  symbolData?.recommendationsLinesModified && (*/}
@@ -317,7 +319,8 @@ const SymbolInfo = () => {
                   ))}
                 </Box>
                 <br />
-
+                <Typography><b>Stop
+                  Loss:</b> {symbolData?.atrBandsPercent.stopLoss[symbolData?.atrBandsPercent.stopLoss.length - 1].toFixed(2)}%</Typography>
 
                 {selectedSignal !== undefined && (
                   <>
