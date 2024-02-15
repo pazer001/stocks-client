@@ -300,13 +300,8 @@ const SymbolInfo = () => {
                 )}
 
 
-                {/*{symbolData &&*/}
-                {/*  selectedSignal === undefined &&*/}
-                {/*  symbolData?.recommendationsLinesModified && (*/}
-                {/*    <Typography>*/}
-                {/*      Click on a signal on the indicator to get full details ...*/}
-                {/*    </Typography>*/}
-                {/*  )}*/}
+                <Typography><b>Stop
+                  Loss:</b> {symbolData?.atrBandsPercent.stopLoss[symbolData?.atrBandsPercent.stopLoss.length - 1].toFixed(2)}%</Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
                   {Object.values(sectionIcon).map((section, index) => (
                     <>
@@ -319,8 +314,7 @@ const SymbolInfo = () => {
                   ))}
                 </Box>
                 <br />
-                <Typography><b>Stop
-                  Loss:</b> {symbolData?.atrBandsPercent.stopLoss[symbolData?.atrBandsPercent.stopLoss.length - 1].toFixed(2)}%</Typography>
+
 
                 {selectedSignal !== undefined && (
                   <>
