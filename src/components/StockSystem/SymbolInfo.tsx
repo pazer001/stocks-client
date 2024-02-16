@@ -302,6 +302,7 @@ const SymbolInfo = () => {
 
                 <Typography><b>Stop
                   Loss:</b> {symbolData?.atrBandsPercent.stopLoss[symbolData?.atrBandsPercent.stopLoss.length - 1].toFixed(2)}%</Typography>
+                <br />
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
                   {Object.values(sectionIcon).map((section, index) => (
                     <>
@@ -334,6 +335,12 @@ const SymbolInfo = () => {
                                   <InfoIcon />
                                 </IconButton>
                               }>
+                                <ListItemAvatar>
+                                  <Avatar
+                                    sx={{ width: 24, height: 24, bgcolor: sectionColor[0] }}>
+                                    {sectionIcon[0][0].toUpperCase()}
+                                  </Avatar>
+                                </ListItemAvatar>
 
                                 <ListItemText
                                   primary={startCase(reason)}
