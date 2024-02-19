@@ -215,7 +215,7 @@ const SymbolInfo = () => {
                                 symbolData.recommendationsLinesModified
                                   .bestPermutation.minSell,
                               ),
-                              red[800],
+                              red[400],
                             ],
                             [
                               mapNumber(
@@ -224,7 +224,7 @@ const SymbolInfo = () => {
                               ),
                               grey[400],
                             ],
-                            [1, green[800]],
+                            [1, green[400]],
                           ],
                         },
                       },

@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { getInterval, symbolAtom } from "../../atoms/symbol";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { Button } from "@mui/material";
-import styled from "@emotion/styled";
-import ReactECharts from "echarts-for-react";
-import { DateTime } from "luxon";
+import React, { useEffect, useMemo, useState } from 'react';
+import { getInterval, symbolAtom } from '../../atoms/symbol';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Button } from '@mui/material';
+import styled from '@emotion/styled';
+import ReactECharts from 'echarts-for-react';
+import { DateTime } from 'luxon';
 import {
   blue,
   green,
@@ -13,10 +13,10 @@ import {
   lightBlue,
   lime,
   grey,
-} from "@mui/material/colors";
+} from '@mui/material/colors';
 
 const ChartContainer = styled.div`
-  height: 100%;
+    height: 100%;
 `;
 
 const Chart = () => {
@@ -43,63 +43,63 @@ const Chart = () => {
         },
         title: {
           text: symbolState.selectedSymbol,
-          textAlign: "center",
-          left: "50%",
+          textAlign: 'center',
+          left: '50%',
           textStyle: {
             color: grey.A100,
           },
         },
         tooltip: {
-          trigger: "axis",
+          trigger: 'axis',
           axisPointer: {
-            type: "cross",
-            link: { xAxisIndex: "all" },
+            type: 'cross',
+            link: { xAxisIndex: 'all' },
           },
         },
         axisPointer: {
-          link: { xAxisIndex: "all" },
+          link: { xAxisIndex: 'all' },
         },
         grid: [
           {
-            left: "10%",
-            right: "8%",
-            height: "50%",
+            left: '10%',
+            right: '8%',
+            height: '50%',
           },
           {
-            left: "10%",
-            right: "8%",
-            top: "60%",
-            height: "10%",
+            left: '10%',
+            right: '8%',
+            top: '60%',
+            height: '10%',
           },
           {
-            left: "10%",
-            right: "8%",
-            top: "72%",
-            height: "25%",
+            left: '10%',
+            right: '8%',
+            top: '72%',
+            height: '25%',
           },
         ],
         xAxis: [
           {
-            type: "category",
+            type: 'category',
             data: symbolState.symbolData?.prices.map((price) =>
-              interval === "1d"
+              interval === '1d'
                 ? DateTime.fromMillis(price.point.timestamp).toISODate()
                 : DateTime.fromMillis(price.point.timestamp).toISOTime(),
             ),
             boundaryGap: false,
-            axisLine: { onZero: false },
-            splitLine: { show: false },
-            min: "dataMin",
-            max: "dataMax",
+
+
+            min: 'dataMin',
+            max: 'dataMax',
             axisPointer: {
               z: 100,
             },
           },
           {
-            type: "category",
+            type: 'category',
             gridIndex: 1,
-            name: "Volume",
-            nameLocation: "start",
+            name: 'Volume',
+            nameLocation: 'start',
             data: symbolState.symbolData?.prices.map(
               (data) => data.point.volume,
             ),
@@ -108,14 +108,14 @@ const Chart = () => {
             axisTick: { show: false },
             splitLine: { show: false },
             axisLabel: { show: false },
-            min: "dataMin",
-            max: "dataMax",
+            min: 'dataMin',
+            max: 'dataMax',
           },
           {
-            type: "category",
+            type: 'category',
             gridIndex: 2,
-            name: "Score",
-            nameLocation: "start",
+            name: 'Score',
+            nameLocation: 'start',
             data: symbolState.symbolData?.prices.map(
               (data) => data.recommendation.score,
             ),
@@ -124,13 +124,19 @@ const Chart = () => {
             axisTick: { show: false },
             splitLine: { show: false },
             axisLabel: { show: false },
-            min: "dataMin",
-            max: "dataMax",
+            min: 'dataMin',
+            max: 'dataMax',
           },
         ],
         yAxis: [
           {
             scale: true,
+            splitLine: { // This is for the grid lines that are horizontal
+              show: true,
+              lineStyle: {
+                color: grey[800], // Change 'red' to your desired color
+              },
+            },
           },
           {
             scale: true,
@@ -139,7 +145,12 @@ const Chart = () => {
             axisLabel: { show: false },
             axisLine: { show: false },
             axisTick: { show: false },
-            splitLine: { show: false },
+            splitLine: { // This is for the grid lines that are horizontal
+              show: true,
+              lineStyle: {
+                color: grey[800], // Change 'red' to your desired color
+              },
+            },
           },
           {
             scale: true,
@@ -153,7 +164,7 @@ const Chart = () => {
         ],
         dataZoom: [
           {
-            type: "inside",
+            type: 'inside',
             xAxisIndex: [0, 1, 2],
             start: 0,
             end: 100,
@@ -163,7 +174,7 @@ const Chart = () => {
         series: [
           {
             name: symbolState.selectedSymbol,
-            type: "candlestick",
+            type: 'candlestick',
             itemStyle: {
               color: green[400],
               color0: red[400],
@@ -179,114 +190,114 @@ const Chart = () => {
           },
           symbolState.symbolData?.buyThresholdData.closeAboveSMA100
             ? {
-                name: "Simple Moving Average (100)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData.closeAboveSMA100,
-                smooth: true,
-                lineStyle: {
-                  color: deepOrange.A200,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Simple Moving Average (100)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData.closeAboveSMA100,
+              smooth: true,
+              lineStyle: {
+                color: deepOrange.A200,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveSMA150
             ? {
-                name: "Simple Moving Average (150)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData.closeAboveSMA150,
-                smooth: true,
-                lineStyle: {
-                  color: deepOrange.A400,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Simple Moving Average (150)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData.closeAboveSMA150,
+              smooth: true,
+              lineStyle: {
+                color: deepOrange.A400,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveSMA200
             ? {
-                name: "Simple Moving Average (200)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData.closeAboveSMA200,
-                smooth: true,
-                lineStyle: {
-                  color: deepOrange.A700,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Simple Moving Average (200)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData.closeAboveSMA200,
+              smooth: true,
+              lineStyle: {
+                color: deepOrange.A700,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveEMA100
             ? {
-                name: "Exponential Moving Average (100)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData.closeAboveEMA100,
-                smooth: true,
-                lineStyle: {
-                  color: lightBlue.A200,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Exponential Moving Average (100)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData.closeAboveEMA100,
+              smooth: true,
+              lineStyle: {
+                color: lightBlue.A200,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveEMA150
             ? {
-                name: "Exponential Moving Average (150)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData.closeAboveEMA150,
-                smooth: true,
-                lineStyle: {
-                  color: lightBlue.A400,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Exponential Moving Average (150)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData.closeAboveEMA150,
+              smooth: true,
+              lineStyle: {
+                color: lightBlue.A400,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveEMA200
             ? {
-                name: "Exponential Moving Average (200)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData.closeAboveEMA200,
-                smooth: true,
-                lineStyle: {
-                  color: lightBlue.A700,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Exponential Moving Average (200)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData.closeAboveEMA200,
+              smooth: true,
+              lineStyle: {
+                color: lightBlue.A700,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveDEMA100
             ? {
-                name: "Double Exponential Moving Average (100)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData
-                  .closeAboveDEMA100,
-                smooth: true,
-                lineStyle: {
-                  color: lime.A200,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Double Exponential Moving Average (100)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData
+                .closeAboveDEMA100,
+              smooth: true,
+              lineStyle: {
+                color: lime.A200,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveDEMA150
             ? {
-                name: "Double Exponential Moving Average (150)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData
-                  .closeAboveDEMA150,
-                smooth: true,
-                lineStyle: {
-                  color: lime.A400,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Double Exponential Moving Average (150)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData
+                .closeAboveDEMA150,
+              smooth: true,
+              lineStyle: {
+                color: lime.A400,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveDEMA200
             ? {
-                name: "Double Exponential Moving Average (200)",
-                type: "line",
-                data: symbolState.symbolData?.buyThresholdData
-                  .closeAboveDEMA200,
-                smooth: true,
-                lineStyle: {
-                  color: lime.A700,
-                  opacity: 0.5,
-                },
-              }
+              name: 'Double Exponential Moving Average (200)',
+              type: 'line',
+              data: symbolState.symbolData?.buyThresholdData
+                .closeAboveDEMA200,
+              smooth: true,
+              lineStyle: {
+                color: lime.A700,
+                opacity: 0.5,
+              },
+            }
             : undefined,
           // symbolState.symbolData?.buyThresholdData.supertrend40
           //   ? {
@@ -315,10 +326,10 @@ const Chart = () => {
           //     }
           //   : undefined,
           {
-            name: "Volume",
-            type: "bar",
-            colorBy: "series",
-            seriesLayoutBy: "row",
+            name: 'Volume',
+            type: 'bar',
+            colorBy: 'series',
+            seriesLayoutBy: 'row',
             xAxisIndex: 1,
             yAxisIndex: 1,
 
@@ -328,15 +339,15 @@ const Chart = () => {
                 color:
                   symbolState.symbolData?.prices[index - 1] &&
                   data.point.volume >
-                    symbolState.symbolData?.prices[index - 1].point.volume
+                  symbolState.symbolData?.prices[index - 1].point.volume
                     ? green[400]
                     : red[400],
               },
             })),
           },
           {
-            name: "Score",
-            type: "line",
+            name: 'Score',
+            type: 'line',
             xAxisIndex: 2,
             yAxisIndex: 2,
             data: symbolState.symbolData?.prices.map(
@@ -347,7 +358,7 @@ const Chart = () => {
             },
 
             markLine: {
-              symbol: "circle",
+              symbol: 'circle',
               data: [
                 {
                   lineStyle: {
@@ -358,16 +369,6 @@ const Chart = () => {
                       0,
                     ),
                 },
-                // {
-                //   label: {
-                //     show: false
-                //   },
-                //   lineStyle : {
-                //     color: 'white'
-                //   },
-                //   yAxis: 0,
-                // },
-
                 {
                   lineStyle: {
                     color: red[400],
@@ -399,7 +400,7 @@ const Chart = () => {
           option={stockChartOptions}
           notMerge={true}
           lazyUpdate={true}
-          style={{ height: "90vh", left: "-5vw", top: 0, width: "85vw" }}
+          style={{ height: '90vh', left: '-5vw', top: 0, width: '85vw' }}
         />
       </ChartContainer>
     ),

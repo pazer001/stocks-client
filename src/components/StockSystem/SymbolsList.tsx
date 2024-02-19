@@ -262,6 +262,7 @@ const SuggestedSymbols = () => {
           </Box>
 
           <TextField
+            type="search"
             // label="Search symbol"
             fullWidth
             autoFocus
@@ -276,7 +277,7 @@ const SuggestedSymbols = () => {
               style: { textTransform: 'uppercase' },
             }}
             InputProps={{
-              endAdornment: (
+              startAdornment: (
                 <InputAdornment position="start">
                   <SearchRoundedIcon />
                 </InputAdornment>
