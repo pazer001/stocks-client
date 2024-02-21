@@ -120,7 +120,7 @@ function App() {
           <Toolbox />
         </Grid>
 
-        <Grid item sx={{ height: '94vh' }}>
+        <Grid item sx={{ height: '94vh', width: '100%' }}>
 
 
           <Grid container spacing={1}>
@@ -134,25 +134,30 @@ function App() {
                 </Paper>
               </Grid>
             </Hidden>
-            <Grid
-              item
-              xl={2}
-              md={5}
-              sx={{ height: '100%', width: '100%' }}
-            >
-              <Paper sx={{ height: '94vh' }}>
-                <SymbolInfo />
-              </Paper>
-            </Grid>
+            <Hidden xsDown smDown mdDown>
+              <Grid
+                item
+                xl={2}
+                md={5}
+                sx={{ height: '100%', width: '100%' }}
+              >
+                <Paper sx={{ height: '94vh' }}>
+                  <SymbolInfo />
+                </Paper>
+              </Grid>
+            </Hidden>
             <Grid
               item
               xl={3}
               md={5}
+              xs={12}
               sx={{ height: '100%', width: '100%' }}
             >
+
               <Paper sx={{ height: '94vh' }}>
                 <SymbolsList />
               </Paper>
+
             </Grid>
 
           </Grid>
