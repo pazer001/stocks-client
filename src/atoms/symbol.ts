@@ -96,6 +96,9 @@ export interface SymbolData {
     stopLoss: Array<number>;
     takeProfit: Array<number>;
   };
+  isPennyStock: boolean;
+  logo: string;
+  name: string;
 }
 
 enum ByType {

@@ -400,7 +400,7 @@ const Chart = () => {
           option={stockChartOptions}
           notMerge={true}
           lazyUpdate={true}
-          style={{ height: '90vh', left: '-5vw', top: 0, width: '85vw' }}
+          style={{ height: '90vh', left: '-5vw', top: 0, width: '67vw' }}
         />
       </ChartContainer>
     ),

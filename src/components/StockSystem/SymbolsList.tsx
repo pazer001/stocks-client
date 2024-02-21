@@ -1,28 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Box, Checkbox, FormControlLabel,
+  Avatar,
+  Box, Divider, FormControlLabel,
   IconButton,
-  InputAdornment,
-  List,
-  ListItem,
-  ListItemButton, ListItemIcon,
-  ListItemText, Switch,
-  // Tab,
-  // Tabs,
-  TextField,
+  Switch,
   Tooltip,
 } from '@mui/material';
-import { green, red, grey } from '@mui/material/colors';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import { green, red, grey, blue } from '@mui/material/colors';
+
 import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
 import CircularProgress from '@mui/material/CircularProgress';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded';
 import TrendingFlatRoundedIcon from '@mui/icons-material/TrendingFlatRounded';
-// import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
+
 import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
-// import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+
 import {
   getByType,
   getInterval,
@@ -32,76 +26,63 @@ import {
 } from '../../atoms/symbol';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Interval } from './enums/Interval';
-// import Grid from "@mui/material/Grid";
-// import SymbolChooser from "./SymbolChooser";
-// import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-// import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import {
+  DataGrid,
+  GridColDef,
+  GridRowSelectionModel,
+  GridToolbarContainer, GridToolbarDensitySelector,
+  GridToolbarFilterButton, GridToolbarQuickFilter,
+} from '@mui/x-data-grid';
+import { DateTime } from 'luxon';
+import styled from '@emotion/styled';
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 
 
-// interface TabPanelProps {
-//   children?: React.ReactNode;
-//   index: number;
-//   value: number;
-// }
+const FlickerAnimation = styled.div`
 
-// function TabPanel(props: TabPanelProps) {
-//   const { children, value, index, ...other } = props;
-//
-//   return (
-//     <div
-//       role="tabpanel"
-//       hidden={value !== index}
-//       id={`simple-tabpanel-${index}`}
-//       aria-labelledby={`simple-tab-${index}`}
-//       {...other}
-//     >
-//       {value === index && <Box sx={{ p: 3, padding: 0 }}>{children}</Box>}
-//     </div>
-//   );
-// }
+    @keyframes flickerAnimation {
+        0% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.3;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    color: red;
+    animation: flickerAnimation 1s infinite;
+
+`;
+
 
 export interface ISymbol {
-  _id: string;
+  id: number;
   symbolNumber: number;
   symbol: string;
   intervals: Array<Interval>;
   score: number;
   recommendation: 'Buy' | 'Sell' | 'Hold' | '';
   updatedAt: string;
+  nextEarningReport: number;
+  isPennyStock: boolean;
+  logo: string;
+  lastClose: number;
+  name: string;
+  stopLoss?: number;
 }
 
+
 const SymbolsList = () => {
-  // const [tab, setTab] = React.useState(0);
-  // const moveTab = (event: React.SyntheticEvent, newValue: number) => {
-  //   setTab(newValue);
-  // };
-
-  return (
-    <Box sx={{ height: '100%' }}>
-      {/*<Box sx={{ borderBottom: 1, borderColor: "divider" }}>*/}
-      {/*  <Tabs value={tab} onChange={moveTab} variant="fullWidth">*/}
-      {/*    <Tab label="Suggested symbols" />*/}
-      {/*    <Tab label="Watchlists" />*/}
-      {/*  </Tabs>*/}
-      {/*</Box>*/}
-      {/*<TabPanel value={tab} index={0}>*/}
-      <SuggestedSymbols />
-      {/*</TabPanel>*/}
-      {/*<TabPanel value={tab} index={1}>*/}
-      {/*  <WatchlistSymbols />*/}
-      {/*</TabPanel>*/}
-    </Box>
-  );
-};
-
-const SuggestedSymbols = () => {
   const [, setSymbolState] = useRecoilState(symbolAtom);
   const selectedSymbol = useRecoilValue(getSelectedSymbol);
   const symbolData = useRecoilValue(getSymbolData);
   const interval = useRecoilValue(getInterval);
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  // const [searchTerm, setSearchTerm] = useState<string>('');
   const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
   const [checkedSymbols, setCheckedSymbols] = useState<Array<string>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : []); // [
   const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false); // [
@@ -122,6 +103,19 @@ const SuggestedSymbols = () => {
           newSuggestedSymbols[symbolIndex].recommendation = 'Hold';
         }
 
+        if (symbolData.nextEarning) {
+          const end = DateTime.fromSeconds(symbolData.nextEarning);
+          const start = DateTime.now();
+
+          const diffInMonths = end.diff(start, 'days');
+          newSuggestedSymbols[symbolIndex].nextEarningReport = Number(diffInMonths.days.toFixed(0));
+        }
+
+        newSuggestedSymbols[symbolIndex].isPennyStock = symbolData.isPennyStock;
+        newSuggestedSymbols[symbolIndex].lastClose = symbolData.prices[symbolData.prices.length - 1].point.close;
+        newSuggestedSymbols[symbolIndex].name = symbolData.name;
+        newSuggestedSymbols[symbolIndex].stopLoss = symbolData.atrBandsPercent.stopLoss.at(-1);
+
 
         return newSuggestedSymbols;
       });
@@ -129,21 +123,13 @@ const SuggestedSymbols = () => {
   }, [symbolData]);
 
 
-  const handleCheckedSymbols = (value: number) => () => {
-    const symbol = suggestedSymbols.find((symbol) => symbol.symbolNumber === value)?.symbol;
-    if (symbol === undefined) return console.log('Symbol not found');
-    // console.log(checkedSymbols, symbol, checkedSymbols.includes(symbol))
+  const handleCheckedSymbols = (rowSelectionModel: GridRowSelectionModel) => {
+    if (!rowSelectionModel.length) return;
+    const symbols = suggestedSymbols.filter((symbol) => rowSelectionModel.includes(symbol.id)).map((symbol) => symbol.symbol);
 
-    setCheckedSymbols(prevCheckedSymbols => {
-      const isChecked = prevCheckedSymbols.includes(symbol);
-      let watchlist = [];
-      if (isChecked) {
-        watchlist = prevCheckedSymbols.filter((checkedSymbol) => checkedSymbol !== symbol);
-      } else {
-        watchlist = [...prevCheckedSymbols, symbol];
-      }
-      localStorage.setItem('watchlist', JSON.stringify(watchlist));
-      return watchlist;
+    setCheckedSymbols(() => {
+      localStorage.setItem('watchlist', JSON.stringify(symbols));
+      return symbols;
     });
   };
 
@@ -157,12 +143,13 @@ const SuggestedSymbols = () => {
   };
 
   const filteredSymbols = useMemo(
-    () => suggestedSymbols.filter((supportedSymbol) =>
-      searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true,
-    ).filter((symbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(symbol.symbol) : true)
+    () => suggestedSymbols
+      // .filter((supportedSymbol) => searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true,)
+      .filter((symbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(symbol.symbol) : true)
     ,
-    [searchTerm, suggestedSymbols, showOnlyChecked, checkedSymbols],
+    [suggestedSymbols, showOnlyChecked, checkedSymbols],
   );
+
 
   const checkSymbols = async () => {
     setCheckSymbolsLoader(true);
@@ -188,6 +175,19 @@ const SuggestedSymbols = () => {
           } else {
             suggestedSymbols[i].recommendation = 'Hold';
           }
+
+          if (analyzedSymbol.data.nextEarning) {
+            const end = DateTime.fromSeconds(analyzedSymbol.data.nextEarning);
+            const start = DateTime.now();
+
+            const diffInMonths = end.diff(start, 'days');
+            suggestedSymbols[i].nextEarningReport = Number(diffInMonths.days.toFixed(0));
+          }
+
+          suggestedSymbols[i].isPennyStock = analyzedSymbol.data.isPennyStock;
+          suggestedSymbols[i].lastClose = analyzedSymbol.data.prices[analyzedSymbol.data.prices.length - 1].point.close;
+          suggestedSymbols[i].name = analyzedSymbol.data.name;
+          suggestedSymbols[i].stopLoss = analyzedSymbol.data.atrBandsPercent.stopLoss.at(-1);
 
           setSuggestedSymbols(() => [...suggestedSymbols]);
           count++;
@@ -218,236 +218,222 @@ const SuggestedSymbols = () => {
 
   useEffect(() => {
     const changeSuggestedSymbols = async () => {
-      let suggestedSymbols = await getSuggestedSymbols();
-      suggestedSymbols = suggestedSymbols.map((symbol, index) => ({
+      const suggestedSymbols = await getSuggestedSymbols();
+      setSuggestedSymbols(() => suggestedSymbols.map((symbol, index) => ({
         ...symbol,
+        id: index + 1,
         symbolNumber: index + 1,
-      }));
-      setSuggestedSymbols(suggestedSymbols);
+      })));
     };
     changeSuggestedSymbols();
   }, [byType]);
 
 
+  const nextEarningReportValue = (value: number) => {
+    if (value === 1) {
+      return <FlickerAnimation>{value}</FlickerAnimation>;
+    } else if (value > 1) {
+      return value;
+    } else {
+      return '-';
+    }
+  };
+
+  const isPennyStock = (value: boolean) => {
+    if (value === undefined || value === false) return '-';
+    if (value) {
+      return <CheckRoundedIcon sx={{ color: red[400] }} />;
+    }
+  };
+
+  const renderLogo = (iconUrl: string, symbol: string) => {
+    return <Avatar sx={{ width: 24, height: 24, bgcolor: blue[500] }} src={iconUrl}>{symbol[0]}</Avatar>;
+  };
+
+  const columns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'Priority',
+      width: 20,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'logo',
+      headerName: 'Logo',
+      width: 20,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => renderLogo(params.row.logo, params.row.symbol),
+    },
+    {
+      field: 'symbol',
+      headerName: 'Symbol',
+      width: 70,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'recommendation',
+      headerName: 'Recommendation',
+      width: 20,
+      renderCell: (params) => getRecommendationSymbol(params.row.recommendation),
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'stopLoss',
+      headerName: 'Stop Loss',
+      valueGetter: (params) => `${params.row.stopLoss ? `${params.row.stopLoss.toFixed(2)}%` : '-'}`,
+      width: 70,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'nextEarningReport',
+      headerName: 'Earning Report',
+      width: 20,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => nextEarningReportValue(params.row.nextEarningReport),
+    },
+    {
+      field: 'lastClose',
+      headerName: 'Last Close',
+      valueGetter: (params) => params.row.lastClose ? params.row.lastClose.toFixed(2) : '-',
+      minWidth: 70,
+      sortable: false,
+      filterable: false,
+
+    },
+
+    {
+      field: 'name',
+      headerName: 'Company Name',
+      // valueGetter: (params) => params.row.lastClose ? params.row.lastClose.toFixed(2) : '-',
+      minWidth: 60,
+      hideable: true,
+      sortable: false,
+      filterable: false,
+    },
+    {
+      field: 'isPennyStock',
+      headerName: 'Penny Stock',
+      width: 30,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => isPennyStock(params.row.isPennyStock),
+    },
+  ];
+
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer>
+
+        <GridToolbarFilterButton />
+        <GridToolbarDensitySelector />
+
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          <Tooltip title="Check next 200 symbols">
+            {checkSymbolsLoader ? (
+              <IconButton>
+                <CircularProgress size={20} />
+              </IconButton>
+            ) : (
+              <IconButton size="small" onClick={checkSymbols}>
+                <QueryStatsRoundedIcon />
+              </IconButton>
+            )}
+          </Tooltip>
+          <Tooltip title="Clear recommendations">
+            <span>
+          <IconButton onClick={clearSuggestions} disabled={checkSymbolsLoader}>
+            <ReplayRoundedIcon />
+          </IconButton>
+              </span>
+          </Tooltip>
+
+
+          <FormControlLabel sx={{ marginInlineStart: 'auto' }}
+                            control={<Switch checked={showOnlyChecked}
+                                             onChange={(e) => setShowOnlyChecked(e.target.checked)}
+                            />
+                            }
+                            disabled={!checkedSymbols.length}
+                            label={`Filter selected (${checkedSymbols.length})`} />
+
+        </Box>
+        <Divider sx={{ width: '100%' }} />
+        <GridToolbarQuickFilter sx={{ width: '100%' }} size="medium" />
+      </GridToolbarContainer>
+    );
+  }
+
+  const rowSelectionModel = useMemo(() => suggestedSymbols.filter((symbol) => checkedSymbols.includes(symbol.symbol)).map((symbol) => symbol.id), [checkedSymbols, suggestedSymbols]);
+
+
   return useMemo(
     () => (
       <Box>
-        <Box sx={{ paddingLeft: '0.5em', paddingRight: '0.5em' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Tooltip title="Check next 200 symbols">
-              {checkSymbolsLoader ? (
-                <IconButton>
-                  <CircularProgress size={20} />
-                </IconButton>
-              ) : (
-                <IconButton size="small" onClick={checkSymbols}>
-                  <QueryStatsRoundedIcon />
-                </IconButton>
-              )}
-            </Tooltip>
-            <Tooltip title="Clear recommendations">
-              <IconButton onClick={clearSuggestions} disabled={checkSymbolsLoader}>
-                <ReplayRoundedIcon />
-              </IconButton>
-            </Tooltip>
+
+        <DataGrid sx={{ height: '94vh' }} checkboxSelection
+                  onRowClick={(row) => {
+                    const newInterval = row.row.intervals.includes(interval)
+                      ? interval
+                      : row.row.intervals[0];
+                    const newIntervals: Array<Interval> = [];
+                    const systemIntervals = Object.values(Interval);
+
+                    systemIntervals.forEach((systemInterval) => {
+                      if (row.row.intervals.includes(systemInterval)) {
+                        newIntervals.push(systemInterval);
+                      }
+                    });
+
+                    setSymbolState((prevSymbolState) => ({
+                      ...prevSymbolState,
+                      selectedSymbol: row.row.symbol,
+                      settings: {
+                        ...prevSymbolState.settings,
+                        intervals: newIntervals,
+                        interval: newInterval,
+                      },
+                    }));
+                  }}
+                  rowSelectionModel={rowSelectionModel}
+                  disableColumnFilter
+                  disableColumnSelector
+                  disableDensitySelector
+                  disableColumnMenu
+                  disableRowSelectionOnClick
+                  density="compact"
+                  onRowSelectionModelChange={handleCheckedSymbols}
+                  rows={filteredSymbols}
+                  columns={columns} slotProps={{
+          toolbar: {
+            showQuickFilter: true,
+          },
+        }}
+
+                  slots={{ toolbar: CustomToolbar }}
+                  initialState={{
+                    pagination: { paginationModel: { pageSize: 100 } },
+                    columns: {
+                      columnVisibilityModel: {
+                        // Hide columns status and traderName, the other columns will remain visible
+                        name: false,
+                      },
+                    },
+                  }}
 
 
-            <FormControlLabel sx={{ marginInlineStart: 'auto' }}
-                              control={<Switch onChange={(e) => setShowOnlyChecked(e.target.checked)}
-                              />
-                              }
-                              disabled={!checkedSymbols.length}
-                              label={`Filter selected (${checkedSymbols.length})`} />
-
-          </Box>
-
-          <TextField
-            type="search"
-            // label="Search symbol"
-            fullWidth
-            autoFocus
-            placeholder="Search symbol"
-            variant="standard"
-            size="small"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            inputProps={{
-              style: { textTransform: 'uppercase' },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchRoundedIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Box>
+        />
         <br />
-        <List dense disablePadding sx={{ overflowY: 'auto', height: '38vh' }}>
-          {filteredSymbols.map((item) => (
-            <ListItem
-              key={item.symbol}
-              dense
-              disablePadding
-              divider
-              secondaryAction={<Checkbox
-                edge="start"
-                checked={checkedSymbols.includes(item.symbol)}
-                onChange={handleCheckedSymbols(item.symbolNumber)}
-              />}
-            >
-              <ListItemButton onClick={() => {
-                const newInterval = item.intervals.includes(interval)
-                  ? interval
-                  : item.intervals[0];
-                const newIntervals: Array<Interval> = [];
-                const systemIntervals = Object.values(Interval);
 
-                systemIntervals.forEach((systemInterval) => {
-                  if (item.intervals.includes(systemInterval)) {
-                    newIntervals.push(systemInterval);
-                  }
-                });
-
-                setSymbolState((prevSymbolState) => ({
-                  ...prevSymbolState,
-                  selectedSymbol: item.symbol,
-                  settings: {
-                    ...prevSymbolState.settings,
-                    intervals: newIntervals,
-                    interval: newInterval,
-                  },
-                }));
-              }}>
-                <ListItemIcon>
-                  {getRecommendationSymbol(item.recommendation)}
-                </ListItemIcon>
-                <ListItemText>
-                  <p style={{ display: 'flex', gap: 12 }}>
-                    <span>{item.symbolNumber}) </span>
-                    <span>{item.symbol}</span>
-                  </p>
-                </ListItemText>
-              </ListItemButton>
-
-            </ListItem>
-          ))}
-        </List>
       </Box>
     ),
-    [filteredSymbols, selectedSymbol, checkSymbolsLoader, checkedSymbols, showOnlyChecked],
+    [filteredSymbols, selectedSymbol, checkSymbolsLoader, checkedSymbols, showOnlyChecked, rowSelectionModel],
   );
 };
-
-// const WatchlistSymbols = () => <div></div>;
-
-// const WatchlistSymbols = () => {
-//   const { getWatchlistSymbols, addWatchlistSymbols } = useSymbol();
-//   const [, setSymbolState] = useRecoilState(symbolAtom);
-//   const interval = useRecoilValue(getInterval);
-//   const [watchlistItems, setWatchlistItems] = useState<Array<ISymbol>>([]);
-//   const [openSymbolChooser, setOpenSymbolChooser] = useState<boolean>(false);
-//   const [searchTerm, setSearchTerm] = useState<string>("");
-//   const filteredSymbols = useMemo(
-//     () =>
-//       searchTerm
-//         ? watchlistItems.filter((supportedSymbol) =>
-//             supportedSymbol.symbol.includes(searchTerm.toUpperCase()),
-//           )
-//         : watchlistItems,
-//     [searchTerm, watchlistItems],
-//   );
-//
-//   const getWatchlist = async () => {
-//     const watchListItemsResult = await getWatchlistSymbols();
-//     setWatchlistItems(watchListItemsResult.data);
-//   };
-//
-//   const addToWatchlist = async (symbols: Array<string>) => {
-//     addWatchlistSymbols(symbols);
-//     getWatchlist();
-//   };
-//
-//   useEffect(() => {
-//     getWatchlist();
-//   }, []);
-//
-//   return useMemo(
-//     () => (
-//       <Box sx={{ height: "100%" }}>
-//         <Grid container alignItems="center">
-//           <Grid item>
-//             <TextField
-//               label="Search symbol"
-//               margin="dense"
-//               size="small"
-//               onChange={(event) => setSearchTerm(event.target.value)}
-//               inputProps={{
-//                 style: { textTransform: "uppercase" },
-//               }}
-//             />
-//           </Grid>
-//           <Grid item>
-//             <IconButton onClick={() => setOpenSymbolChooser(true)}>
-//               <AddCircleOutlineRoundedIcon fontSize="small" />
-//             </IconButton>
-//           </Grid>
-//         </Grid>
-//         <SymbolChooser
-//           open={openSymbolChooser}
-//           onClose={() => setOpenSymbolChooser(false)}
-//           onConfirm={(symbols: string[]) => {
-//             setOpenSymbolChooser(() => false);
-//             addToWatchlist(symbols);
-//           }}
-//         />
-//         <List dense disablePadding sx={{ height: "86%", overflowY: "auto" }}>
-//           {filteredSymbols.map((item) => (
-//             <ListItem
-//               key={item.symbol}
-//               dense
-//               disableGutters
-//               disablePadding
-//               divider
-//             >
-//               <ListItemButton
-//                 dense
-//                 onClick={() => {
-//                   const newInterval = item.intervals.includes(interval)
-//                     ? interval
-//                     : item.intervals[0];
-//                   const newIntervals: Array<Interval> = [];
-//                   const systemIntervals = Object.values(Interval);
-//
-//                   systemIntervals.forEach((systemInterval) => {
-//                     if (item.intervals.includes(systemInterval)) {
-//                       newIntervals.push(systemInterval);
-//                     }
-//                   });
-//
-//                   setSymbolState((prevSymbolState) => ({
-//                     ...prevSymbolState,
-//                     selectedSymbol: item.symbol,
-//                     settings: {
-//                       ...prevSymbolState.settings,
-//                       intervals: newIntervals,
-//                       interval: newInterval,
-//                     },
-//                   }));
-//                 }}
-//               >
-//                 <ListItemText primary={item.symbol}></ListItemText>
-//               </ListItemButton>
-//             </ListItem>
-//           ))}
-//         </List>
-//       </Box>
-//     ),
-//     [filteredSymbols, openSymbolChooser],
-//   );
-// };
 
 export default React.memo(SymbolsList);
