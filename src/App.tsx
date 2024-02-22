@@ -115,21 +115,20 @@ function App() {
       <Grid
         container
         direction="column"
+        sx={{ height: '100svh' }}
       >
-        <Grid item sx={{ minHeight: '6vh' }}>
+        <Grid item sx={{ height: '5%' }}>
           <Toolbox />
         </Grid>
 
-        <Grid item sx={{ height: '94vh', width: '100%' }}>
-
-
+        <Grid item sx={{ height: '95%', width: '100%' }}>
           <Grid container spacing={1}>
             <Hidden xsDown smDown mdDown>
               <Grid item
                     xl={7}
                     md={7}
               >
-                <Paper>
+                <Paper sx={{ height: '100%' }}>
                   <Chart />
                 </Paper>
               </Grid>
