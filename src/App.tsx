@@ -115,7 +115,7 @@ function App() {
       <Grid
         container
         direction="column"
-        sx={{ height: '100svh' }}
+        sx={{ height: 'calc(100vh - env(safe-area-inset-bottom))' }}
       >
         <Grid item sx={{ height: '5%' }}>
           <Toolbox />
