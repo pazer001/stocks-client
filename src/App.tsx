@@ -117,11 +117,11 @@ function App() {
         direction="column"
         sx={{ height: '100dvh' }}
       >
-        <Grid item sx={{ height: '5%' }}>
+        <Grid item sx={{ height: '5dvh' }}>
           <Toolbox />
         </Grid>
 
-        <Grid item sx={{ height: '95%', width: '100%' }}>
+        <Grid item sx={{ height: '95dvh', width: '100%' }}>
           <Grid container spacing={1}>
             <Hidden xsDown smDown mdDown>
               <Grid item
