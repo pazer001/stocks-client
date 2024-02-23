@@ -83,9 +83,9 @@ const SymbolsList = () => {
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
   // const [searchTerm, setSearchTerm] = useState<string>('');
-  const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false); // [
+  const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
   const [checkedSymbols, setCheckedSymbols] = useState<Array<string>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : []); // [
-
+  const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false); // [
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
 
   useEffect(() => {
@@ -145,11 +145,59 @@ const SymbolsList = () => {
   const filteredSymbols = useMemo(
     () => suggestedSymbols
       // .filter((supportedSymbol) => searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true,)
-      .filter((symbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(symbol.symbol) : true)
+      .filter((symbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(symbol.symbol) : true).sort((a, b) => b.score - a.score)
     ,
     [suggestedSymbols, showOnlyChecked, checkedSymbols],
   );
 
+
+  const checkSymbols = async () => {
+    setCheckSymbolsLoader(true);
+    let count = 0;
+    for (const i in suggestedSymbols) {
+      if (count < 200 && !suggestedSymbols[i].recommendation) {
+        const symbol = suggestedSymbols[i].symbol;
+        if (showOnlyChecked && !checkedSymbols.includes(symbol)) continue;
+        try {
+          const analyzedSymbol = await analyzeSymbol(symbol);
+
+          const { minBuy, minSell } =
+            analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
+          suggestedSymbols[i].score =
+            analyzedSymbol.data.prices[
+            analyzedSymbol.data.prices.length - 1
+              ].recommendation.score;
+
+          if (suggestedSymbols[i].score >= minBuy) {
+            suggestedSymbols[i].recommendation = 'Buy';
+          } else if (suggestedSymbols[i].score <= minSell) {
+            suggestedSymbols[i].recommendation = 'Sell';
+          } else {
+            suggestedSymbols[i].recommendation = 'Hold';
+          }
+
+          if (analyzedSymbol.data.nextEarning) {
+            const end = DateTime.fromSeconds(analyzedSymbol.data.nextEarning);
+            const start = DateTime.now();
+
+            const diffInMonths = end.diff(start, 'days');
+            suggestedSymbols[i].nextEarningReport = Number(diffInMonths.days.toFixed(0));
+          }
+
+          suggestedSymbols[i].isPennyStock = analyzedSymbol.data.isPennyStock;
+          suggestedSymbols[i].lastClose = analyzedSymbol.data.prices[analyzedSymbol.data.prices.length - 1].point.close;
+          suggestedSymbols[i].name = analyzedSymbol.data.name;
+          suggestedSymbols[i].stopLoss = analyzedSymbol.data.atrBandsPercent.stopLoss.at(-1);
+
+          setSuggestedSymbols(() => [...suggestedSymbols]);
+          count++;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    setCheckSymbolsLoader(false);
+  };
 
   const getRecommendationSymbol = (recommendation: string) => {
     switch (recommendation) {
@@ -173,7 +221,7 @@ const SymbolsList = () => {
       const suggestedSymbols = await getSuggestedSymbols();
       setSuggestedSymbols(() => suggestedSymbols.map((symbol, index) => ({
         ...symbol,
-        id: index + 1,
+        id: index,
         symbolNumber: index + 1,
       })));
     };
@@ -278,60 +326,10 @@ const SymbolsList = () => {
     },
   ];
 
-  const CustomToolbar = () => {
-    const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
-
-    const checkSymbols = async () => {
-      setCheckSymbolsLoader(true);
-      let count = 0;
-      for (const i in suggestedSymbols) {
-        if (count < 200 && !suggestedSymbols[i].recommendation) {
-          const symbol = suggestedSymbols[i].symbol;
-          if (showOnlyChecked && !checkedSymbols.includes(symbol)) continue;
-          try {
-            const analyzedSymbol = await analyzeSymbol(symbol);
-
-            const { minBuy, minSell } =
-              analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
-            suggestedSymbols[i].score =
-              analyzedSymbol.data.prices[
-              analyzedSymbol.data.prices.length - 1
-                ].recommendation.score;
-
-            if (suggestedSymbols[i].score >= minBuy) {
-              suggestedSymbols[i].recommendation = 'Buy';
-            } else if (suggestedSymbols[i].score <= minSell) {
-              suggestedSymbols[i].recommendation = 'Sell';
-            } else {
-              suggestedSymbols[i].recommendation = 'Hold';
-            }
-
-            if (analyzedSymbol.data.nextEarning) {
-              const end = DateTime.fromSeconds(analyzedSymbol.data.nextEarning);
-              const start = DateTime.now();
-
-              const diffInMonths = end.diff(start, 'days');
-              suggestedSymbols[i].nextEarningReport = Number(diffInMonths.days.toFixed(0));
-            }
-
-            suggestedSymbols[i].isPennyStock = analyzedSymbol.data.isPennyStock;
-            suggestedSymbols[i].lastClose = analyzedSymbol.data.prices[analyzedSymbol.data.prices.length - 1].point.close;
-            suggestedSymbols[i].name = analyzedSymbol.data.name;
-            suggestedSymbols[i].stopLoss = analyzedSymbol.data.atrBandsPercent.stopLoss.at(-1);
-
-            setSuggestedSymbols(() => [...suggestedSymbols]);
-            count++;
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      }
-      setCheckSymbolsLoader(false);
-    };
-
-    return useMemo(() =>
+  function CustomToolbar() {
+    return (
       <GridToolbarContainer>
-
+        <GridToolbarQuickFilter sx={{ width: '100%' }} />
         <GridToolbarFilterButton />
         <GridToolbarDensitySelector />
 
@@ -365,11 +363,10 @@ const SymbolsList = () => {
                             label={`Filter selected (${checkedSymbols.length})`} />
 
         </Box>
-        <Divider sx={{ width: '100%' }} />
-        <GridToolbarQuickFilter sx={{ width: '100%' }} size="medium" />
-      </GridToolbarContainer>, [],
+        <Divider variant={'fullWidth'} />
+      </GridToolbarContainer>
     );
-  };
+  }
 
   const rowSelectionModel = useMemo(() => suggestedSymbols.filter((symbol) => checkedSymbols.includes(symbol.symbol)).map((symbol) => symbol.id), [checkedSymbols, suggestedSymbols]);
 
@@ -410,7 +407,7 @@ const SymbolsList = () => {
                   disableRowSelectionOnClick
                   density="compact"
                   onRowSelectionModelChange={handleCheckedSymbols}
-                  rows={filteredSymbols.sort((a, b) => b.score - a.score)}
+                  rows={filteredSymbols}
                   columns={columns} slotProps={{
           toolbar: {
             showQuickFilter: true,
@@ -434,7 +431,7 @@ const SymbolsList = () => {
 
       </Box>
     ),
-    [filteredSymbols, selectedSymbol, checkedSymbols, rowSelectionModel],
+    [filteredSymbols, selectedSymbol, checkSymbolsLoader, checkedSymbols, showOnlyChecked, rowSelectionModel],
   );
 };
 
