@@ -83,9 +83,9 @@ const SymbolsList = () => {
   const byType = useRecoilValue(getByType);
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
   // const [searchTerm, setSearchTerm] = useState<string>('');
-  const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
-  const [checkedSymbols, setCheckedSymbols] = useState<Array<string>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : []); // [
   const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false); // [
+  const [checkedSymbols, setCheckedSymbols] = useState<Array<string>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : []); // [
+
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
 
   useEffect(() => {
@@ -150,54 +150,6 @@ const SymbolsList = () => {
     [suggestedSymbols, showOnlyChecked, checkedSymbols],
   );
 
-
-  const checkSymbols = async () => {
-    setCheckSymbolsLoader(true);
-    let count = 0;
-    for (const i in suggestedSymbols) {
-      if (count < 200 && !suggestedSymbols[i].recommendation) {
-        const symbol = suggestedSymbols[i].symbol;
-        if (showOnlyChecked && !checkedSymbols.includes(symbol)) continue;
-        try {
-          const analyzedSymbol = await analyzeSymbol(symbol);
-
-          const { minBuy, minSell } =
-            analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
-          suggestedSymbols[i].score =
-            analyzedSymbol.data.prices[
-            analyzedSymbol.data.prices.length - 1
-              ].recommendation.score;
-
-          if (suggestedSymbols[i].score >= minBuy) {
-            suggestedSymbols[i].recommendation = 'Buy';
-          } else if (suggestedSymbols[i].score <= minSell) {
-            suggestedSymbols[i].recommendation = 'Sell';
-          } else {
-            suggestedSymbols[i].recommendation = 'Hold';
-          }
-
-          if (analyzedSymbol.data.nextEarning) {
-            const end = DateTime.fromSeconds(analyzedSymbol.data.nextEarning);
-            const start = DateTime.now();
-
-            const diffInMonths = end.diff(start, 'days');
-            suggestedSymbols[i].nextEarningReport = Number(diffInMonths.days.toFixed(0));
-          }
-
-          suggestedSymbols[i].isPennyStock = analyzedSymbol.data.isPennyStock;
-          suggestedSymbols[i].lastClose = analyzedSymbol.data.prices[analyzedSymbol.data.prices.length - 1].point.close;
-          suggestedSymbols[i].name = analyzedSymbol.data.name;
-          suggestedSymbols[i].stopLoss = analyzedSymbol.data.atrBandsPercent.stopLoss.at(-1);
-
-          setSuggestedSymbols(() => [...suggestedSymbols]);
-          count++;
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    }
-    setCheckSymbolsLoader(false);
-  };
 
   const getRecommendationSymbol = (recommendation: string) => {
     switch (recommendation) {
@@ -326,8 +278,58 @@ const SymbolsList = () => {
     },
   ];
 
-  function CustomToolbar() {
-    return (
+  const CustomToolbar = () => {
+    const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
+
+    const checkSymbols = async () => {
+      setCheckSymbolsLoader(true);
+      let count = 0;
+      for (const i in suggestedSymbols) {
+        if (count < 200 && !suggestedSymbols[i].recommendation) {
+          const symbol = suggestedSymbols[i].symbol;
+          if (showOnlyChecked && !checkedSymbols.includes(symbol)) continue;
+          try {
+            const analyzedSymbol = await analyzeSymbol(symbol);
+
+            const { minBuy, minSell } =
+              analyzedSymbol.data.recommendationsLinesModified.bestPermutation;
+            suggestedSymbols[i].score =
+              analyzedSymbol.data.prices[
+              analyzedSymbol.data.prices.length - 1
+                ].recommendation.score;
+
+            if (suggestedSymbols[i].score >= minBuy) {
+              suggestedSymbols[i].recommendation = 'Buy';
+            } else if (suggestedSymbols[i].score <= minSell) {
+              suggestedSymbols[i].recommendation = 'Sell';
+            } else {
+              suggestedSymbols[i].recommendation = 'Hold';
+            }
+
+            if (analyzedSymbol.data.nextEarning) {
+              const end = DateTime.fromSeconds(analyzedSymbol.data.nextEarning);
+              const start = DateTime.now();
+
+              const diffInMonths = end.diff(start, 'days');
+              suggestedSymbols[i].nextEarningReport = Number(diffInMonths.days.toFixed(0));
+            }
+
+            suggestedSymbols[i].isPennyStock = analyzedSymbol.data.isPennyStock;
+            suggestedSymbols[i].lastClose = analyzedSymbol.data.prices[analyzedSymbol.data.prices.length - 1].point.close;
+            suggestedSymbols[i].name = analyzedSymbol.data.name;
+            suggestedSymbols[i].stopLoss = analyzedSymbol.data.atrBandsPercent.stopLoss.at(-1);
+
+            setSuggestedSymbols(() => [...suggestedSymbols]);
+            count++;
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+      setCheckSymbolsLoader(false);
+    };
+
+    return useMemo(() =>
       <GridToolbarContainer>
 
         <GridToolbarFilterButton />
@@ -365,9 +367,9 @@ const SymbolsList = () => {
         </Box>
         <Divider sx={{ width: '100%' }} />
         <GridToolbarQuickFilter sx={{ width: '100%' }} size="medium" />
-      </GridToolbarContainer>
+      </GridToolbarContainer>, [],
     );
-  }
+  };
 
   const rowSelectionModel = useMemo(() => suggestedSymbols.filter((symbol) => checkedSymbols.includes(symbol.symbol)).map((symbol) => symbol.id), [checkedSymbols, suggestedSymbols]);
 
@@ -408,7 +410,7 @@ const SymbolsList = () => {
                   disableRowSelectionOnClick
                   density="compact"
                   onRowSelectionModelChange={handleCheckedSymbols}
-                  rows={filteredSymbols}
+                  rows={filteredSymbols.sort((a, b) => b.score - a.score)}
                   columns={columns} slotProps={{
           toolbar: {
             showQuickFilter: true,
@@ -432,7 +434,7 @@ const SymbolsList = () => {
 
       </Box>
     ),
-    [filteredSymbols, selectedSymbol, checkSymbolsLoader, checkedSymbols, showOnlyChecked, rowSelectionModel],
+    [filteredSymbols, selectedSymbol, checkedSymbols, rowSelectionModel],
   );
 };
 
