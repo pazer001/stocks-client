@@ -2,14 +2,12 @@
 import React, { useState } from 'react';
 import {
   Alert,
-  // Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  // Hidden,
   List,
   ListItem,
   ListItemText,
@@ -136,10 +134,8 @@ function App() {
         >
           <Grid container 
             height="100%"
-            columnSpacing={1} 
-            // wrap='nowrap'        
+            columnSpacing={1}     
           >
-            {/* <Hidden xsDown smDown mdDown> */}
               <Grid item
                     xl={7}
                     md={7}
@@ -149,8 +145,6 @@ function App() {
                   <Chart />
                 </Paper>
               </Grid>
-            {/* </Hidden> */}
-            {/* <Hidden xsDown smDown mdDown> */}
               <Grid
                 item
                 xl={2}
@@ -161,7 +155,6 @@ function App() {
                   <SymbolInfo />
                 </Paper>
               </Grid>
-            {/* </Hidden> */}
             <Grid
               item
               xl={3}
