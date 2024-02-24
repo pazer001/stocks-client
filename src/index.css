@@ -1,3 +1,4 @@
 body {
-  height: 100dvh;
+  height: calc(100vh - env(safe-area-inset-bottom)); /* Adjust for safe area */
+
 }

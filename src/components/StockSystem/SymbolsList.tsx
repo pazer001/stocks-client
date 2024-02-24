@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Avatar,
-  Box, Divider, FormControl,
-  IconButton, InputLabel, MenuItem, Select,
+  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl,
+  IconButton, InputLabel, MenuItem, Select, TextField,
 
   Tooltip,
 } from '@mui/material';
@@ -85,7 +85,7 @@ const SymbolsList = () => {
   // const [searchTerm, setSearchTerm] = useState<string>('');
   const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
   const [watchlist, setWatchlist] = useState<Record<string, Array<string>>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : {});
-  const [currentWatchlistId, setCurrentWatchlistId] = useState<string>('');
+  const [currentWatchlistName, setCurrentWatchlistName] = useState<string>('');
   const [showOnlyChecked] = useState<boolean>(false); // [
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
 
@@ -130,7 +130,7 @@ const SymbolsList = () => {
     setWatchlist(prevWatchlist => {
       const newWatchlist: Record<string, string[]> = {
         ...prevWatchlist,
-        [currentWatchlistId]: rowSelectionModel.map(id => suggestedSymbols.find(symbol => symbol.id === id)?.symbol).filter((symbol): symbol is string => symbol !== undefined),
+        [currentWatchlistName]: rowSelectionModel.map(id => suggestedSymbols.find(symbol => symbol.id === id)?.symbol).filter((symbol): symbol is string => symbol !== undefined),
       };
 
       localStorage.setItem('watchlist', JSON.stringify(newWatchlist));
@@ -150,7 +150,7 @@ const SymbolsList = () => {
   const filteredSymbols = useMemo(
     () => suggestedSymbols
       // .filter((supportedSymbol) => searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true,)
-      .filter((symbol: ISymbol) => showOnlyChecked ? watchlist[currentWatchlistId].includes(symbol.symbol) : true)
+      .filter((symbol: ISymbol) => showOnlyChecked ? watchlist[currentWatchlistName].includes(symbol.symbol) : true)
     ,
     [suggestedSymbols, showOnlyChecked, watchlist],
   );
@@ -162,7 +162,7 @@ const SymbolsList = () => {
     for (const i in suggestedSymbols) {
       if (count < 200 && !suggestedSymbols[i].recommendation) {
         const symbol = suggestedSymbols[i].symbol;
-        if (showOnlyChecked && !watchlist[currentWatchlistId].includes(symbol)) continue;
+        if (showOnlyChecked && !watchlist[currentWatchlistName].includes(symbol)) continue;
         try {
           const analyzedSymbol = await analyzeSymbol(symbol);
 
@@ -260,7 +260,7 @@ const SymbolsList = () => {
       field: 'id',
       headerName: 'Priority',
       width: 20,
-      sortable: false,
+      sortable: true,
       filterable: false,
     },
     {
@@ -276,7 +276,7 @@ const SymbolsList = () => {
       headerName: 'Symbol',
       width: 70,
       sortable: false,
-      filterable: false,
+      filterable: true,
     },
     {
       field: 'recommendation',
@@ -340,6 +340,9 @@ const SymbolsList = () => {
   ];
 
   function CustomToolbar() {
+    const [showAddWatchlist, setShowAddWatchlist] = useState<boolean>(false);
+    const addWatchlistName = useRef<HTMLInputElement>(null);
+
     return (
       <GridToolbarContainer>
         <GridToolbarQuickFilter sx={{ width: '100%' }} />
@@ -380,20 +383,50 @@ const SymbolsList = () => {
                     placeholder={'Watchlist'}
                     size="small"
               // variant="standard"
-                    value={currentWatchlistId}
+                    value={currentWatchlistName}
                     label="Watchlist"
-                    onChange={(e) => setCurrentWatchlistId(e.target.value as string)}
+                    onChange={(e) => setCurrentWatchlistName(e.target.value as string)}
             >
-              <MenuItem value={0}>My Watchlist</MenuItem>
+              {Object.keys(watchlist).map((watchlistId) => (
+                <MenuItem key={watchlistId} value={watchlistId}>{watchlistId}</MenuItem>
+              ))}
+
 
             </Select>
 
           </FormControl>
           <Tooltip title="Add new watchlist">
-            <IconButton size="small">
+            <IconButton size="small" onClick={() => setShowAddWatchlist(true)}>
               <AddCircleRoundedIcon />
             </IconButton>
           </Tooltip>
+          <Dialog open={showAddWatchlist} onClose={() => setShowAddWatchlist(false)}>
+            <DialogTitle>Add new watchlist</DialogTitle>
+            <DialogContent>
+              <FormControl fullWidth>
+                <TextField label="Watchlist name" size="small" inputRef={addWatchlistName} />
+              </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setShowAddWatchlist(false)} autoFocus>
+                Cancel
+              </Button>
+              <Button onClick={() => {
+                const watchlistName = addWatchlistName.current?.value;
+                if (watchlistName) {
+                  setWatchlist((prevWatchlist) => {
+                    const modifiedWatchlist = { ...prevWatchlist, [watchlistName]: [] };
+                    localStorage.setItem('watchlist', JSON.stringify(modifiedWatchlist));
+                    return modifiedWatchlist;
+                  });
+                  setCurrentWatchlistName(addWatchlistName.current.value);
+                  setShowAddWatchlist(false);
+                }
+              }}>
+                Create
+              </Button>
+            </DialogActions>
+          </Dialog>
 
         </Box>
         <Divider variant={'fullWidth'} />
@@ -401,7 +434,7 @@ const SymbolsList = () => {
     );
   }
 
-  const rowSelectionModel = useMemo(() => currentWatchlistId ? suggestedSymbols.filter((symbol) => watchlist[currentWatchlistId].includes(symbol.symbol)).map((symbol) => symbol.id) : [], [watchlist, suggestedSymbols]);
+  const rowSelectionModel = useMemo(() => currentWatchlistName ? suggestedSymbols.filter((symbol) => watchlist[currentWatchlistName].includes(symbol.symbol)).map((symbol) => symbol.id) : [], [watchlist, suggestedSymbols]);
 
 
   return useMemo(
@@ -409,7 +442,7 @@ const SymbolsList = () => {
       <Box>
 
         <DataGrid sx={{
-          height: '94vh',
+          height: '94dvh',
           '& .MuiDataGrid-row': { // Targeting the row class
             cursor: 'pointer', // Set the cursor to pointer
           },
@@ -454,7 +487,6 @@ const SymbolsList = () => {
             showQuickFilter: true,
           },
         }}
-
                   slots={{ toolbar: CustomToolbar }}
                   initialState={{
                     pagination: { paginationModel: { pageSize: 100 } },
@@ -472,7 +504,7 @@ const SymbolsList = () => {
 
       </Box>
     ),
-    [filteredSymbols, selectedSymbol, checkSymbolsLoader, watchlist, showOnlyChecked, rowSelectionModel, currentWatchlistId],
+    [filteredSymbols, selectedSymbol, checkSymbolsLoader, watchlist, showOnlyChecked, rowSelectionModel, currentWatchlistName],
   );
 };
 

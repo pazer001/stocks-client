@@ -1,4 +1,4 @@
-import './App.css';
+// import './App.css';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -115,20 +115,23 @@ function App() {
       <Grid
         container
         direction="column"
-        sx={{ height: '100dvh' }}
+        sx={{
+          // minHeight: '100dvh', // Adjust to 'minHeight' to ensure content covers the viewport height
+          // paddingBottom: '0', // Add padding at the bottom
+        }}
       >
-        <Grid item sx={{ height: '5dvh' }}>
+        <Grid item sx={{ height: '6%' }}>
           <Toolbox />
         </Grid>
 
-        <Grid item sx={{ height: '95dvh', width: '100%' }}>
+        <Grid item sx={{ height: '94dvh', width: '100%' }}>
           <Grid container spacing={1}>
             <Hidden xsDown smDown mdDown>
               <Grid item
                     xl={7}
                     md={7}
               >
-                <Paper sx={{ height: '100%' }}>
+                <Paper>
                   <Chart />
                 </Paper>
               </Grid>
@@ -138,9 +141,9 @@ function App() {
                 item
                 xl={2}
                 md={5}
-                sx={{ height: '100%', width: '100%' }}
+                sx={{ width: '100%' }}
               >
-                <Paper sx={{ height: '94vh' }}>
+                <Paper>
                   <SymbolInfo />
                 </Paper>
               </Grid>
@@ -150,10 +153,9 @@ function App() {
               xl={3}
               md={5}
               xs={12}
-              sx={{ height: '100%', width: '100%' }}
+              sx={{ width: '100%' }}
             >
-
-              <Paper sx={{ height: '94vh' }}>
+              <Paper>
                 <SymbolsList />
               </Paper>
 
