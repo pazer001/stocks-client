@@ -409,7 +409,7 @@ const SymbolsList = () => {
       <Box>
 
         <DataGrid sx={{
-          height: '94vh',
+          height: 'calc(100dvh - 48px)',
           '& .MuiDataGrid-row': { // Targeting the row class
             cursor: 'pointer', // Set the cursor to pointer
           },
