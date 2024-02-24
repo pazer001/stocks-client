@@ -136,7 +136,7 @@ const SymbolInfo = () => {
 
   return useMemo(
     () => (
-      <Box sx={{ height: '100%' }}>
+      <Box>
         {symbolData && strategyModalOpen && strategyName && (
           <Dialog open={strategyModalOpen} onClose={() => setStrategyName('')}>
             <DialogTitle>{startCase(strategyName)}</DialogTitle>

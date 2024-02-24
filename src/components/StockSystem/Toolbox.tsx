@@ -41,7 +41,7 @@ const Toolbox = () => {
         <Toolbar
           variant="dense"
           disableGutters
-          sx={{ justifyContent: "space-around" }}
+          sx={{ justifyContent: "space-between", padding:"0 1em" }}
         >
           {/*<Hidden smDown>*/}
           {/*<Grid container justifyContent="space-around"*/}

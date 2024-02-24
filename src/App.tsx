@@ -117,18 +117,18 @@ function App() {
         direction="column"
         sx={{ height: '100dvh' }}
       >
-        <Grid item sx={{ height: '5dvh' }}>
+        <Grid item>
           <Toolbox />
         </Grid>
 
-        <Grid item sx={{ height: '95dvh', width: '100%' }}>
+        <Grid item sx={{ height: 'calc(100dvh - 48px)', width: '100%' }}>
           <Grid container spacing={1}>
             <Hidden xsDown smDown mdDown>
               <Grid item
                     xl={7}
                     md={7}
               >
-                <Paper sx={{ height: '100%' }}>
+                <Paper sx={{ height: '100%', overflow: "clip" }}>
                   <Chart />
                 </Paper>
               </Grid>
@@ -140,7 +140,7 @@ function App() {
                 md={5}
                 sx={{ height: '100%', width: '100%' }}
               >
-                <Paper sx={{ height: '94vh' }}>
+                <Paper sx={{ height: 'calc(100dvh - 48px)', overflow: "auto" }}>
                   <SymbolInfo />
                 </Paper>
               </Grid>
@@ -153,7 +153,7 @@ function App() {
               sx={{ height: '100%', width: '100%' }}
             >
 
-              <Paper sx={{ height: '94vh' }}>
+              <Paper>
                 <SymbolsList />
               </Paper>
 
