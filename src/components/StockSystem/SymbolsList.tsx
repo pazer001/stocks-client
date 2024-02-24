@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Avatar,
-  Box, Divider, FormControlLabel,
-  IconButton,
-  Switch,
+  Box, Divider, FormControl,
+  IconButton, InputLabel, MenuItem, Select,
+
   Tooltip,
 } from '@mui/material';
 import { green, red, grey, blue } from '@mui/material/colors';
@@ -13,7 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded';
 import TrendingFlatRoundedIcon from '@mui/icons-material/TrendingFlatRounded';
-
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
 
@@ -84,8 +84,9 @@ const SymbolsList = () => {
   const [suggestedSymbols, setSuggestedSymbols] = useState<Array<ISymbol>>([]);
   // const [searchTerm, setSearchTerm] = useState<string>('');
   const [checkSymbolsLoader, setCheckSymbolsLoader] = useState<boolean>(false);
-  const [checkedSymbols, setCheckedSymbols] = useState<Array<string>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : []); // [
-  const [showOnlyChecked, setShowOnlyChecked] = useState<boolean>(false); // [
+  const [watchlist, setWatchlist] = useState<Record<string, Array<string>>>(localStorage.getItem('watchlist') ? JSON.parse(localStorage.getItem('watchlist') as string) : {});
+  const [currentWatchlistId, setCurrentWatchlistId] = useState<string>('');
+  const [showOnlyChecked] = useState<boolean>(false); // [
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
 
   useEffect(() => {
@@ -125,11 +126,15 @@ const SymbolsList = () => {
 
   const handleCheckedSymbols = (rowSelectionModel: GridRowSelectionModel) => {
     if (!rowSelectionModel.length) return;
-    const symbols = suggestedSymbols.filter((symbol) => rowSelectionModel.includes(symbol.id)).map((symbol) => symbol.symbol);
 
-    setCheckedSymbols(() => {
-      localStorage.setItem('watchlist', JSON.stringify(symbols));
-      return symbols;
+    setWatchlist(prevWatchlist => {
+      const newWatchlist: Record<string, string[]> = {
+        ...prevWatchlist,
+        [currentWatchlistId]: rowSelectionModel.map(id => suggestedSymbols.find(symbol => symbol.id === id)?.symbol).filter((symbol): symbol is string => symbol !== undefined),
+      };
+
+      localStorage.setItem('watchlist', JSON.stringify(newWatchlist));
+      return newWatchlist;
     });
   };
 
@@ -145,9 +150,9 @@ const SymbolsList = () => {
   const filteredSymbols = useMemo(
     () => suggestedSymbols
       // .filter((supportedSymbol) => searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true,)
-      .filter((symbol: ISymbol) => showOnlyChecked ? checkedSymbols.includes(symbol.symbol) : true).sort((a, b) => b.score - a.score)
+      .filter((symbol: ISymbol) => showOnlyChecked ? watchlist[currentWatchlistId].includes(symbol.symbol) : true)
     ,
-    [suggestedSymbols, showOnlyChecked, checkedSymbols],
+    [suggestedSymbols, showOnlyChecked, watchlist],
   );
 
 
@@ -157,7 +162,7 @@ const SymbolsList = () => {
     for (const i in suggestedSymbols) {
       if (count < 200 && !suggestedSymbols[i].recommendation) {
         const symbol = suggestedSymbols[i].symbol;
-        if (showOnlyChecked && !checkedSymbols.includes(symbol)) continue;
+        if (showOnlyChecked && !watchlist[currentWatchlistId].includes(symbol)) continue;
         try {
           const analyzedSymbol = await analyzeSymbol(symbol);
 
@@ -282,6 +287,14 @@ const SymbolsList = () => {
       filterable: false,
     },
     {
+      field: 'score',
+      headerName: 'Score',
+      width: 20,
+      renderCell: (params) => params.row.score !== undefined ? params.row.score.toFixed(0) : '-',
+      sortable: true,
+      filterable: false,
+    },
+    {
       field: 'stopLoss',
       headerName: 'Stop Loss',
       valueGetter: (params) => `${params.row.stopLoss ? `${params.row.stopLoss.toFixed(2)}%` : '-'}`,
@@ -333,7 +346,7 @@ const SymbolsList = () => {
         <GridToolbarFilterButton />
         <GridToolbarDensitySelector />
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <Tooltip title="Check next 200 symbols">
             {checkSymbolsLoader ? (
               <IconButton>
@@ -354,13 +367,33 @@ const SymbolsList = () => {
           </Tooltip>
 
 
-          <FormControlLabel sx={{ marginInlineStart: 'auto' }}
-                            control={<Switch checked={showOnlyChecked}
-                                             onChange={(e) => setShowOnlyChecked(e.target.checked)}
-                            />
-                            }
-                            disabled={!checkedSymbols.length}
-                            label={`Filter selected (${checkedSymbols.length})`} />
+          {/*<FormControlLabel sx={{ marginInlineStart: 'auto' }}*/}
+          {/*                  control={<Switch checked={showOnlyChecked}*/}
+          {/*                                   onChange={(e) => setShowOnlyChecked(e.target.checked)}*/}
+          {/*                  />*/}
+          {/*                  }*/}
+          {/*                  disabled={!watchlist.length}*/}
+          {/*                  label={`Filter selected (${watchlist.length})`} />*/}
+          <FormControl margin="none" size="small" sx={{ width: '30%', marginInlineStart: 'auto', marginRight: '1em' }}>
+            <InputLabel>Watchlist</InputLabel>
+            <Select fullWidth
+                    placeholder={'Watchlist'}
+                    size="small"
+              // variant="standard"
+                    value={currentWatchlistId}
+                    label="Watchlist"
+                    onChange={(e) => setCurrentWatchlistId(e.target.value as string)}
+            >
+              <MenuItem value={0}>My Watchlist</MenuItem>
+
+            </Select>
+
+          </FormControl>
+          <Tooltip title="Add new watchlist">
+            <IconButton size="small">
+              <AddCircleRoundedIcon />
+            </IconButton>
+          </Tooltip>
 
         </Box>
         <Divider variant={'fullWidth'} />
@@ -368,14 +401,22 @@ const SymbolsList = () => {
     );
   }
 
-  const rowSelectionModel = useMemo(() => suggestedSymbols.filter((symbol) => checkedSymbols.includes(symbol.symbol)).map((symbol) => symbol.id), [checkedSymbols, suggestedSymbols]);
+  const rowSelectionModel = useMemo(() => currentWatchlistId ? suggestedSymbols.filter((symbol) => watchlist[currentWatchlistId].includes(symbol.symbol)).map((symbol) => symbol.id) : [], [watchlist, suggestedSymbols]);
 
 
   return useMemo(
     () => (
       <Box>
 
-        <DataGrid sx={{ height: '94vh' }} checkboxSelection
+        <DataGrid sx={{
+          height: '94vh',
+          '& .MuiDataGrid-row': { // Targeting the row class
+            cursor: 'pointer', // Set the cursor to pointer
+          },
+          '& .MuiDataGrid-cell:focus': {
+            outline: 'none',
+          },
+        }} checkboxSelection
                   onRowClick={(row) => {
                     const newInterval = row.row.intervals.includes(interval)
                       ? interval
@@ -431,7 +472,7 @@ const SymbolsList = () => {
 
       </Box>
     ),
-    [filteredSymbols, selectedSymbol, checkSymbolsLoader, checkedSymbols, showOnlyChecked, rowSelectionModel],
+    [filteredSymbols, selectedSymbol, checkSymbolsLoader, watchlist, showOnlyChecked, rowSelectionModel, currentWatchlistId],
   );
 };
 
