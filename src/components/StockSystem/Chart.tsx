@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getInterval, symbolAtom } from '../../atoms/symbol';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Button } from '@mui/material';
-import styled from '@emotion/styled';
+// import { Button } from '@mui/material';
 import ReactECharts from 'echarts-for-react';
 import { DateTime } from 'luxon';
 import {
@@ -14,10 +13,6 @@ import {
   lime,
   grey,
 } from '@mui/material/colors';
-
-const ChartContainer = styled.div`
-    height: 100%;
-`;
 
 const Chart = () => {
   // const selectedSymbol = useRecoilValue(getSelectedSymbol);
@@ -394,15 +389,15 @@ const Chart = () => {
 
   return useMemo(
     () => (
-      <ChartContainer>
-        <Button onClick={() => setChart()}>Refresh</Button>
+      <>
+        {/* <Button onClick={() => setChart()}>Refresh</Button> */}
         <ReactECharts
           option={stockChartOptions}
           notMerge={true}
           lazyUpdate={true}
-          style={{ height: '90vh', left: '-5vw', top: 0, width: '67vw' }}
+          style={{ height: '100%' }}
         />
-      </ChartContainer>
+      </>
     ),
     [stockChartOptions],
   );

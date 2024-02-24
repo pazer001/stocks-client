@@ -9,22 +9,23 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Hidden,
+  // Hidden,
   List,
   ListItem,
   ListItemText,
   Paper,
   Snackbar,
+  useTheme,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import LinearProgress from '@mui/material/LinearProgress';
 import Chart from './components/StockSystem/Chart';
 import SymbolsList from './components/StockSystem/SymbolsList';
-// import SymbolInfo from './components/StockSystem/SymbolInfo';
+import SymbolInfo from './components/StockSystem/SymbolInfo';
 import Toolbox from './components/StockSystem/Toolbox';
 import { getAlertMessage, getAlertShow, getMainLoaderShow } from './atoms/view';
 import { useRecoilValue } from 'recoil';
-import SymbolInfo from './components/StockSystem/SymbolInfo';
+import "./App.css";
 
 interface IConsentProps {
   open: boolean;
@@ -89,6 +90,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
+  const  theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
   const alertMessage = useRecoilValue(getAlertMessage);
@@ -115,47 +117,58 @@ function App() {
       <Grid
         container
         direction="column"
+        rowSpacing={1}
+        paddingBottom={theme.spacing(1)}
         sx={{
           // minHeight: '100dvh', // Adjust to 'minHeight' to ensure content covers the viewport height
           // paddingBottom: '0', // Add padding at the bottom
         }}
       >
-        <Grid item sx={{ height: '6%' }}>
+        <Grid item>
           <Toolbox />
         </Grid>
 
-        <Grid item sx={{ height: '94dvh', width: '100%' }}>
-          <Grid container spacing={1}>
-            <Hidden xsDown smDown mdDown>
+        <Grid item             
+          paddingLeft={theme.spacing(1)}
+          paddingRight={theme.spacing(1)}
+          flex={1}
+          width="100%"
+        >
+          <Grid container 
+            height="100%"
+            columnSpacing={1} 
+            // wrap='nowrap'        
+          >
+            {/* <Hidden xsDown smDown mdDown> */}
               <Grid item
                     xl={7}
                     md={7}
+                    sx={{ display: { xs: 'none', sm: 'none', md:'none', xl: 'block', } }}
               >
-                <Paper>
+                <Paper sx={{height: 'calc(100dvh - 64px)'}}>
                   <Chart />
                 </Paper>
               </Grid>
-            </Hidden>
-            <Hidden xsDown smDown mdDown>
+            {/* </Hidden> */}
+            {/* <Hidden xsDown smDown mdDown> */}
               <Grid
                 item
                 xl={2}
                 md={5}
-                sx={{ width: '100%' }}
+                sx={{ display: { xs: 'none', sm: 'none', md:'none', xl: 'block', } }}
               >
-                <Paper>
+                <Paper sx={{height: 'calc(100dvh - 64px)'}}>
                   <SymbolInfo />
                 </Paper>
               </Grid>
-            </Hidden>
+            {/* </Hidden> */}
             <Grid
               item
               xl={3}
               md={5}
               xs={12}
-              sx={{ width: '100%' }}
             >
-              <Paper>
+              <Paper sx={{height: 'calc(100dvh - 64px)'}}>
                 <SymbolsList />
               </Paper>
 

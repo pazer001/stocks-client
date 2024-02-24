@@ -439,10 +439,7 @@ const SymbolsList = () => {
 
   return useMemo(
     () => (
-      <Box>
-
         <DataGrid sx={{
-          height: '94dvh',
           '& .MuiDataGrid-row': { // Targeting the row class
             cursor: 'pointer', // Set the cursor to pointer
           },
@@ -497,12 +494,7 @@ const SymbolsList = () => {
                       },
                     },
                   }}
-
-
         />
-        <br />
-
-      </Box>
     ),
     [filteredSymbols, selectedSymbol, checkSymbolsLoader, watchlist, showOnlyChecked, rowSelectionModel, currentWatchlistName],
   );

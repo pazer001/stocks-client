@@ -10,7 +10,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { RecoilRoot } from 'recoil';
 import './index.css';
 
-const darkTheme = createTheme({
+export const darkTheme = createTheme({
   palette: {
     mode: 'dark',
   },
