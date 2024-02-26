@@ -23,7 +23,7 @@ import SymbolInfo from './components/StockSystem/SymbolInfo';
 import Toolbox from './components/StockSystem/Toolbox';
 import { getAlertMessage, getAlertShow, getMainLoaderShow } from './atoms/view';
 import { useRecoilValue } from 'recoil';
-import "./App.css";
+import './App.css';
 
 interface IConsentProps {
   open: boolean;
@@ -88,7 +88,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  const  theme = useTheme();
+  const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
   const alertMessage = useRecoilValue(getAlertMessage);
@@ -126,42 +126,42 @@ function App() {
           <Toolbox />
         </Grid>
 
-        <Grid item             
-          paddingLeft={theme.spacing(1)}
-          paddingRight={theme.spacing(1)}
-          flex={1}
-          width="100%"
+        <Grid item
+              paddingLeft={theme.spacing(1)}
+              paddingRight={theme.spacing(1)}
+              flex={1}
+              width="100%"
         >
-          <Grid container 
-            height="100%"
-            columnSpacing={1}     
+          <Grid container
+                height="100%"
+                columnSpacing={1}
           >
-              <Grid item
-                    xl={7}
-                    md={7}
-                    sx={{ display: { xs: 'none', sm: 'none', md:'none', xl: 'block', } }}
-              >
-                <Paper sx={{height: 'calc(100dvh - 64px)'}}>
-                  <Chart />
-                </Paper>
-              </Grid>
-              <Grid
-                item
-                xl={2}
-                md={5}
-                sx={{ display: { xs: 'none', sm: 'none', md:'none', xl: 'block', } }}
-              >
-                <Paper sx={{height: 'calc(100dvh - 64px)'}}>
-                  <SymbolInfo />
-                </Paper>
-              </Grid>
+            <Grid item
+                  xl={7}
+                  md={7}
+                  sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
+            >
+              <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
+                <Chart />
+              </Paper>
+            </Grid>
+            <Grid
+              item
+              xl={2}
+              md={5}
+              sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
+            >
+              <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
+                <SymbolInfo />
+              </Paper>
+            </Grid>
             <Grid
               item
               xl={3}
               md={5}
               xs={12}
             >
-              <Paper sx={{height: 'calc(100dvh - 64px)'}}>
+              <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
                 <SymbolsList />
               </Paper>
 

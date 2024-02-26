@@ -185,7 +185,7 @@ const Chart = () => {
           },
           symbolState.symbolData?.buyThresholdData.closeAboveSMA100
             ? {
-              name: 'Simple Moving Average (100)',
+              name: 'SMA 100',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData.closeAboveSMA100,
               smooth: true,
@@ -197,7 +197,7 @@ const Chart = () => {
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveSMA150
             ? {
-              name: 'Simple Moving Average (150)',
+              name: 'SMA000 150',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData.closeAboveSMA150,
               smooth: true,
@@ -209,7 +209,7 @@ const Chart = () => {
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveSMA200
             ? {
-              name: 'Simple Moving Average (200)',
+              name: 'SMA 200',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData.closeAboveSMA200,
               smooth: true,
@@ -221,7 +221,7 @@ const Chart = () => {
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveEMA100
             ? {
-              name: 'Exponential Moving Average (100)',
+              name: 'EMA 100',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData.closeAboveEMA100,
               smooth: true,
@@ -233,7 +233,7 @@ const Chart = () => {
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveEMA150
             ? {
-              name: 'Exponential Moving Average (150)',
+              name: 'EMA 150',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData.closeAboveEMA150,
               smooth: true,
@@ -245,7 +245,7 @@ const Chart = () => {
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveEMA200
             ? {
-              name: 'Exponential Moving Average (200)',
+              name: 'EMA 200',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData.closeAboveEMA200,
               smooth: true,
@@ -257,7 +257,7 @@ const Chart = () => {
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveDEMA100
             ? {
-              name: 'Double Exponential Moving Average (100)',
+              name: 'DEMA 100',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData
                 .closeAboveDEMA100,
@@ -270,7 +270,7 @@ const Chart = () => {
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveDEMA150
             ? {
-              name: 'Double Exponential Moving Average (150)',
+              name: 'DEMA 150',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData
                 .closeAboveDEMA150,
@@ -283,7 +283,7 @@ const Chart = () => {
             : undefined,
           symbolState.symbolData?.buyThresholdData.closeAboveDEMA200
             ? {
-              name: 'Double Exponential Moving Average (200)',
+              name: 'DEMA 200',
               type: 'line',
               data: symbolState.symbolData?.buyThresholdData
                 .closeAboveDEMA200,
