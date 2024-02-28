@@ -273,7 +273,7 @@ const SymbolsList = () => {
             event.stopPropagation(); // Also stop the change event from propagating
             checkWatchlistSymbols(symbol, currentWatchlistName, event.target.checked);
           }}
-        />, [isChecked],
+        />, [isChecked, currentWatchlistName],
       );
     }
   }, []);
