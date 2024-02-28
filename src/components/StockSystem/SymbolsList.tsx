@@ -176,14 +176,19 @@ const SymbolsList = () => {
   const checkSymbols = async () => {
     setCheckSymbolsLoader(true);
     let count = 0;
+    const limit = showOnlyChecked && currentWatchlistName ? watchlist[currentWatchlistName].length : ANALYZE_SYMBOLS_LIMIT;
     setAnalyzedCount(() => 0);
+    setMaxAnalyzedCount(() => limit);
     for (const i in suggestedSymbols) {
-      if (count < ANALYZE_SYMBOLS_LIMIT && !suggestedSymbols[i].recommendation) {
+
+      if (count < limit && !suggestedSymbols[i].recommendation) {
         const symbol = suggestedSymbols[i].symbol;
+
         if (showOnlyChecked && !watchlist[currentWatchlistName].includes(symbol)) continue;
+
         try {
           const analyzedSymbol = await analyzeSymbol(symbol);
-          const newSuggestedSymbols = updatedSuggestedSymbols(suggestedSymbols, analyzedSymbol.data, count);
+          const newSuggestedSymbols = updatedSuggestedSymbols(suggestedSymbols, analyzedSymbol.data, Number(i));
 
           const rowExists = dataGridRef.current.getRow(newSuggestedSymbols[i].id) != null;
           if (rowExists) {

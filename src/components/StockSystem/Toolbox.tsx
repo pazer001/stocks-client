@@ -48,15 +48,14 @@ const Toolbox = () => {
           {/*      alignItems="center">*/}
           {/*  <Grid item xs>*/}
           {/*<div>*/}
-          <img src={Logo} alt="Symdata" style={{ maxWidth: '120px' }} />
+          <img src={Logo} alt="Symdata" style={{ maxWidth: '100px' }} />
           {/*</div>*/}
           {/*</Grid>*/}
           <Hidden mdUp>
             {/*<Grid item xs={2}>*/}
-            <SettingsRoundedIcon
-              onClick={() => setShowSettings(true)}
-              fontSize="large"
-            />
+            <IconButton onClick={() => setShowSettings(true)} size="medium">
+              <SettingsRoundedIcon />
+            </IconButton>
             <Dialog
               open={showSettings}
               onClose={() => setShowSettings(false)}
