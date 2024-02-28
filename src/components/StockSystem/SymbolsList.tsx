@@ -383,12 +383,12 @@ const SymbolsList = () => {
     </Box>;
   };
 
-  const handleSearch = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchTerm(event.target.value);
-    },
-    [setSearchTerm], // dependencies array, setSearchTerm is stable and doesn't technically need to be included, but it's a good practice
-  );
+  // const handleSearch = useCallback(
+  //   (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     setSearchTerm(event.target.value);
+  //   },
+  //   [setSearchTerm], // dependencies array, setSearchTerm is stable and doesn't technically need to be included, but it's a good practice
+  // );
 
   const CustomToolbar = useCallback(() => {
     const [showAddWatchlist, setShowAddWatchlist] = useState<boolean>(false);
@@ -478,7 +478,7 @@ const SymbolsList = () => {
 
       <Box display="flex" width="100%" justifyContent="center" alignItems="center">
         <TextField label="Search" fullWidth size="small"
-                   onChange={handleSearch} />
+                   onChange={e => setSearchTerm(e.target.value)} />
         <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
           <Tooltip title={`Check next ${ANALYZE_SYMBOLS_LIMIT} symbols`}>
             <Button onClick={checkSymbols} size="large">
