@@ -92,10 +92,7 @@ export interface SymbolData {
     badTrades: number;
   };
   buyThresholdData: Record<string, Array<number>>;
-  atrBandsPercent: {
-    stopLoss: Array<number>;
-    takeProfit: Array<number>;
-  };
+  stopLoss: Array<number>;
   isPennyStock: boolean;
   logo: string;
   name: string;

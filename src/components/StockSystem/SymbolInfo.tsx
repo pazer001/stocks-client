@@ -301,7 +301,7 @@ const SymbolInfo = () => {
 
 
                 <Typography><b>Stop
-                  Loss:</b> {symbolData?.atrBandsPercent.stopLoss[symbolData?.atrBandsPercent.stopLoss.length - 1].toFixed(2)}%</Typography>
+                  Loss:</b> {symbolData?.stopLoss[0].toFixed(1)}%</Typography>
                 <br />
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
                   {Object.values(sectionIcon).map((section, index) => (
