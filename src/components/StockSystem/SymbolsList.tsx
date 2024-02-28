@@ -260,17 +260,24 @@ const SymbolsList = () => {
 
   };
 
-  const renderWatchlistCheckbox = (symbol: string, watchlist: Record<string, Array<string>>, currentWatchlistName: string) => {
+  const renderWatchlistCheckbox = useCallback((symbol: string, watchlist: Record<string, Array<string>>, currentWatchlistName: string) => {
     if (watchlist && currentWatchlistName) {
-      const watchlistSymbols = watchlist[currentWatchlistName];
-      return <Checkbox checked={watchlistSymbols.includes(symbol)}
-                       onClick={event => {
-                         event.stopPropagation();
-                       }} onChange={event => {
-        checkWatchlistSymbols(symbol, currentWatchlistName, event.target.checked);
-      }} />;
+      const isChecked = watchlist[currentWatchlistName].includes(symbol);
+      return useMemo(() =>
+        <Checkbox
+          checked={isChecked}
+          onClick={(event) => {
+            event.stopPropagation(); // Stop the click from propagating to the row
+          }}
+          onChange={(event) => {
+            event.stopPropagation(); // Also stop the change event from propagating
+            checkWatchlistSymbols(symbol, currentWatchlistName, event.target.checked);
+          }}
+        />, [isChecked],
+      );
     }
-  };
+  }, []);
+
 
   const checkWatchlistSymbols = (symbol: string, currentWatchlistName: string, isChecked: boolean) => {
     if (isChecked) {
@@ -303,6 +310,7 @@ const SymbolsList = () => {
       sortable: false,
       filterable: false,
       hideable: true,
+      // ...GRID_CHECKBOX_SELECTION_COL_DEF,
       renderCell: (params) => renderWatchlistCheckbox(params.row.symbol, watchlist, currentWatchlistName),
 
     },
@@ -557,7 +565,6 @@ const SymbolsList = () => {
                   : row.row.intervals[0];
                 const newIntervals: Array<Interval> = [];
                 const systemIntervals = Object.values(Interval);
-
                 systemIntervals.forEach((systemInterval) => {
                   if (row.row.intervals.includes(systemInterval)) {
                     newIntervals.push(systemInterval);
@@ -574,6 +581,7 @@ const SymbolsList = () => {
                   },
                 }));
               }}
+      // checkboxSelection
       // rowSelectionModel={rowSelectionModel}
               disableColumnFilter
               disableColumnSelector
