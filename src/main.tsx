@@ -19,7 +19,7 @@ export const darkTheme = createTheme({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <RecoilRoot>
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
+      <CssBaseline enableColorScheme />
       <App />
     </ThemeProvider>
   </RecoilRoot>,

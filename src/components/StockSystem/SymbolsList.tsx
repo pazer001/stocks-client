@@ -428,6 +428,7 @@ const SymbolsList = () => {
             </Tooltip>
             <Tooltip title="Filter watchlist">
               <Button
+                disabled={!currentWatchlistName || watchlist[currentWatchlistName].length === 0}
                 size="large"
                 variant={showOnlyChecked ? 'contained' : 'outlined'}
                 onClick={() => setShowOnlyChecked(!showOnlyChecked)}
@@ -493,7 +494,7 @@ const SymbolsList = () => {
           {/*}} />*/}
         </Box>
         <AnalyzedCount />
-      </Box>, [],
+      </Box>, [showAddWatchlist],
     );
   }
 
@@ -587,7 +588,7 @@ const SymbolsList = () => {
         />
       </Box>
     ),
-    [filteredSymbols, selectedSymbol, checkSymbolsLoader, watchlist, showOnlyChecked, currentWatchlistName],
+    [filteredSymbols, selectedSymbol, checkSymbolsLoader, watchlist, showOnlyChecked, currentWatchlistName, analyzedCount],
   );
 };
 

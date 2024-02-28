@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   AppBar,
   Box,
@@ -12,18 +12,18 @@ import {
   ToggleButtonGroup,
   Toolbar,
   Typography,
-} from "@mui/material";
-import HelpCenterRoundedIcon from "@mui/icons-material/HelpCenterRounded";
-import { useRecoilState, useRecoilValue } from "recoil";
+} from '@mui/material';
+import HelpCenterRoundedIcon from '@mui/icons-material/HelpCenterRounded';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   getByType,
   getInterval,
   getIntervals,
   getPricesMode,
   symbolAtom,
-} from "../../atoms/symbol";
-import Logo from "../../assets/symbata-high-resolution-logo-color-on-transparent-background.svg";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+} from '../../atoms/symbol';
+import Logo from '../../assets/symbata-high-resolution-logo-color-on-transparent-background.svg';
+import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 
 const Toolbox = () => {
   const [, setSymbol] = useRecoilState(symbolAtom);
@@ -40,15 +40,15 @@ const Toolbox = () => {
         {/*<Grid container>*/}
         <Toolbar
           variant="dense"
-          disableGutters
-          sx={{ justifyContent: "space-around" }}
+          // disableGutters
+          sx={{ justifyContent: 'space-between' }}
         >
           {/*<Hidden smDown>*/}
           {/*<Grid container justifyContent="space-around"*/}
           {/*      alignItems="center">*/}
           {/*  <Grid item xs>*/}
           {/*<div>*/}
-          <img src={Logo} alt="Symdata" style={{ maxWidth: "120px" }} />
+          <img src={Logo} alt="Symdata" style={{ maxWidth: '120px' }} />
           {/*</div>*/}
           {/*</Grid>*/}
           <Hidden mdUp>
