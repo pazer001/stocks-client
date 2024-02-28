@@ -398,6 +398,7 @@ const SymbolsList = () => {
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 
+
           <TextField
             select
             disabled={Object.keys(watchlist).length === 0}
@@ -414,18 +415,7 @@ const SymbolsList = () => {
             ))}
           </TextField>
 
-
-          <ButtonGroup sx={{ marginLeft: theme.spacing(1) }}>
-            <Tooltip title="Add watchlist">
-              <Button size="large" onClick={() => setShowAddWatchlist(true)}>
-                <PlaylistAddRoundedIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Remove watchlist">
-              <Button size="large" onClick={() => removeWatchlist(currentWatchlistName)}>
-                <PlaylistRemoveOutlined />
-              </Button>
-            </Tooltip>
+          <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
             <Tooltip title="Filter watchlist">
               <Button
                 disabled={!currentWatchlistName || watchlist[currentWatchlistName].length === 0}
@@ -436,6 +426,17 @@ const SymbolsList = () => {
                 <FilterListRounded />
               </Button>
             </Tooltip>
+            <Tooltip title="Add watchlist">
+              <Button size="large" onClick={() => setShowAddWatchlist(true)}>
+                <PlaylistAddRoundedIcon />
+              </Button>
+            </Tooltip>
+            <Tooltip title="Remove watchlist">
+              <Button size="large" onClick={() => removeWatchlist(currentWatchlistName)}>
+                <PlaylistRemoveOutlined />
+              </Button>
+            </Tooltip>
+
           </ButtonGroup>
 
 
@@ -471,7 +472,9 @@ const SymbolsList = () => {
 
 
         <Box display="flex" width="100%" justifyContent="center" alignItems="center">
-          <ButtonGroup sx={{ marginRight: theme.spacing(1) }}>
+          <TextField label="Search" fullWidth size="small" value={searchTerm}
+                     onChange={e => setSearchTerm(e.target.value)} />
+          <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
             <Tooltip title={`Check next ${ANALYZE_SYMBOLS_LIMIT} symbols`}>
               <Button onClick={checkSymbols} size="large">
                 <QueryStatsRoundedIcon />
@@ -486,8 +489,7 @@ const SymbolsList = () => {
             </Tooltip>
 
           </ButtonGroup>
-          <TextField label="Search" fullWidth size="small" value={searchTerm}
-                     onChange={e => setSearchTerm(e.target.value)} />
+
 
           {/*<GridToolbarQuickFilter sx={{ width: '100%', height: 40 }} variant={'outlined'} InputProps={{*/}
           {/*  size: 'small',*/}
