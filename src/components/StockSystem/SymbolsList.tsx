@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Avatar,
   Box, Button, ButtonGroup, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
@@ -123,20 +123,6 @@ const SymbolsList = () => {
 
     return newSuggestedSymbols;
   };
-
-  useEffect(() => {
-    const symbolIndex = suggestedSymbols.findIndex((symbol) => symbol.symbol === selectedSymbol);
-    if (symbolIndex !== -1 && symbolData) {
-      setSuggestedSymbols((prevSuggestedSymbols) => {
-        const newSuggestedSymbols = updatedSuggestedSymbols(prevSuggestedSymbols, symbolData, symbolIndex);
-
-        // dataGridRef.current.updateRows([{ ...newSuggestedSymbols[symbolIndex] }]);
-
-
-        return newSuggestedSymbols;
-      });
-    }
-  }, [symbolData]);
 
 
   const handleCheckedSymbols = (rowSelectionModel: GridRowSelectionModel) => {
@@ -391,119 +377,132 @@ const SymbolsList = () => {
     },
   ];
 
+  const AnalyzedCount = () => {
+    return <Box sx={{ width: '100%' }}>
+      <LinearProgress variant="determinate" value={analyzedCount / maxAnalyzedCount * 100} />
+    </Box>;
+  };
 
-  function CustomToolbar() {
+  const handleSearch = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(event.target.value);
+    },
+    [setSearchTerm], // dependencies array, setSearchTerm is stable and doesn't technically need to be included, but it's a good practice
+  );
+
+  const CustomToolbar = useCallback(() => {
     const [showAddWatchlist, setShowAddWatchlist] = useState<boolean>(false);
     const addWatchlistName = useRef<HTMLInputElement>(null);
 
-    return useMemo(() => <Box display="flex" gap={theme.spacing(1)} flexDirection="column">
+    return <Box display="flex" gap={theme.spacing(1)} flexDirection="column">
 
-        {/*<GridToolbarFilterButton />*/}
-        {/*<GridToolbarDensitySelector />*/}
+      {/*<GridToolbarFilterButton />*/}
+      {/*<GridToolbarDensitySelector />*/}
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-
-
-          <TextField
-            select
-            disabled={Object.keys(watchlist).length === 0}
-            fullWidth
-            label="Watchlist"
-            size="small"
-            value={currentWatchlistName}
-            onChange={(e) => setCurrentWatchlistName(e.target.value as string)}
-            sx={{ width: '70%' }}
-          >
-            {Object.keys(watchlist).map((watchlistName) => (
-              <MenuItem dense key={watchlistName}
-                        value={watchlistName}>{watchlistName} ({watchlist[watchlistName].length})</MenuItem>
-            ))}
-          </TextField>
-
-          <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
-            <Tooltip title="Filter watchlist">
-              <Button
-                disabled={!currentWatchlistName || watchlist[currentWatchlistName].length === 0}
-                size="large"
-                variant={showOnlyChecked ? 'contained' : 'outlined'}
-                onClick={() => setShowOnlyChecked(!showOnlyChecked)}
-              >
-                <FilterListRounded />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Add watchlist">
-              <Button size="large" onClick={() => setShowAddWatchlist(true)}>
-                <PlaylistAddRoundedIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Remove watchlist">
-              <Button size="large" onClick={() => removeWatchlist(currentWatchlistName)}>
-                <PlaylistRemoveOutlined />
-              </Button>
-            </Tooltip>
-
-          </ButtonGroup>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 
 
-          <Dialog open={showAddWatchlist} onClose={() => setShowAddWatchlist(false)} fullWidth>
-            <DialogTitle>Add watchlist</DialogTitle>
-            <DialogContent dividers>
-              <FormControl fullWidth>
-                <TextField label="Watchlist name" size="small" inputRef={addWatchlistName} />
-              </FormControl>
-            </DialogContent>
-            <DialogActions disableSpacing>
-              <Button onClick={() => setShowAddWatchlist(false)} autoFocus>
-                Cancel
-              </Button>
-              <Button onClick={() => {
-                const watchlistName = addWatchlistName.current?.value;
-                if (watchlistName) {
-                  setWatchlist((prevWatchlist) => {
-                    const modifiedWatchlist = { ...prevWatchlist, [watchlistName]: [] };
-                    localStorage.setItem('watchlist', JSON.stringify(modifiedWatchlist));
-                    return modifiedWatchlist;
-                  });
-                  setCurrentWatchlistName(addWatchlistName.current.value);
-                  setShowAddWatchlist(false);
-                }
-              }}>
-                Create
-              </Button>
-            </DialogActions>
-          </Dialog>
+        <TextField
+          select
+          disabled={Object.keys(watchlist).length === 0}
+          fullWidth
+          label="Watchlist"
+          size="small"
+          value={currentWatchlistName}
+          onChange={(e) => setCurrentWatchlistName(e.target.value as string)}
+          sx={{ width: '70%' }}
+        >
+          {Object.keys(watchlist).map((watchlistName) => (
+            <MenuItem dense key={watchlistName}
+                      value={watchlistName}>{watchlistName} ({watchlist[watchlistName].length})</MenuItem>
+          ))}
+        </TextField>
 
-        </Box>
+        <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
+          <Tooltip title="Filter watchlist">
+            <span>
+            <Button
+              disabled={!currentWatchlistName || watchlist[currentWatchlistName].length === 0}
+              size="large"
+              variant={showOnlyChecked ? 'contained' : 'outlined'}
+              onClick={() => setShowOnlyChecked(!showOnlyChecked)}
+            >
+              <FilterListRounded />
+            </Button>
+              </span>
+          </Tooltip>
+          <Tooltip title="Add watchlist">
+            <Button size="large" onClick={() => setShowAddWatchlist(true)}>
+              <PlaylistAddRoundedIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Remove watchlist">
+            <Button size="large" onClick={() => removeWatchlist(currentWatchlistName)}>
+              <PlaylistRemoveOutlined />
+            </Button>
+          </Tooltip>
+
+        </ButtonGroup>
 
 
-        <Box display="flex" width="100%" justifyContent="center" alignItems="center">
-          <TextField label="Search" fullWidth size="small" value={searchTerm}
-                     onChange={e => setSearchTerm(e.target.value)} />
-          <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
-            <Tooltip title={`Check next ${ANALYZE_SYMBOLS_LIMIT} symbols`}>
-              <Button onClick={checkSymbols} size="large">
-                <QueryStatsRoundedIcon />
-              </Button>
-            </Tooltip>
-            <Tooltip title="Clear recommendations">
+        <Dialog open={showAddWatchlist} onClose={() => setShowAddWatchlist(false)} fullWidth>
+          <DialogTitle>Add watchlist</DialogTitle>
+          <DialogContent dividers>
+            <FormControl fullWidth>
+              <TextField label="Watchlist name" size="small" inputRef={addWatchlistName} />
+            </FormControl>
+          </DialogContent>
+          <DialogActions disableSpacing>
+            <Button onClick={() => setShowAddWatchlist(false)} autoFocus>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              const watchlistName = addWatchlistName.current?.value;
+              if (watchlistName) {
+                setWatchlist((prevWatchlist) => {
+                  const modifiedWatchlist = { ...prevWatchlist, [watchlistName]: [] };
+                  localStorage.setItem('watchlist', JSON.stringify(modifiedWatchlist));
+                  return modifiedWatchlist;
+                });
+                setCurrentWatchlistName(addWatchlistName.current.value);
+                setShowAddWatchlist(false);
+              }
+            }}>
+              Create
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+      </Box>
+
+
+      <Box display="flex" width="100%" justifyContent="center" alignItems="center">
+        <TextField label="Search" fullWidth size="small"
+                   onChange={handleSearch} />
+        <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
+          <Tooltip title={`Check next ${ANALYZE_SYMBOLS_LIMIT} symbols`}>
+            <Button onClick={checkSymbols} size="large">
+              <QueryStatsRoundedIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Clear recommendations">
               <span>
               <Button size="large" onClick={clearSuggestions} disabled={checkSymbolsLoader}>
                 <ReplayRoundedIcon />
               </Button>
                 </span>
-            </Tooltip>
+          </Tooltip>
 
-          </ButtonGroup>
+        </ButtonGroup>
 
 
-          {/*<GridToolbarQuickFilter sx={{ width: '100%', height: 40 }} variant={'outlined'} InputProps={{*/}
-          {/*  size: 'small',*/}
-          {/*}} />*/}
-        </Box>
-        <AnalyzedCount />
-      </Box>, [showAddWatchlist],
-    );
-  }
+        {/*<GridToolbarQuickFilter sx={{ width: '100%', height: 40 }} variant={'outlined'} InputProps={{*/}
+        {/*  size: 'small',*/}
+        {/*}} />*/}
+      </Box>
+      <AnalyzedCount />
+    </Box>;
+  }, []);
 
 
   // const rowSelectionModel = useMemo(() => currentWatchlistName ? suggestedSymbols.filter((symbol) => watchlist[currentWatchlistName].includes(symbol.symbol)).map((symbol) => symbol.id) : [], [watchlist, suggestedSymbols, currentWatchlistName]);
@@ -520,83 +519,94 @@ const SymbolsList = () => {
     changeSuggestedSymbols();
   }, [byType]);
 
-  const AnalyzedCount = () => {
-    return useMemo(() => <Box sx={{ width: '100%' }}>
-      <LinearProgress variant="determinate" value={analyzedCount / maxAnalyzedCount * 100} />
-    </Box>, [analyzedCount, maxAnalyzedCount]);
-  };
+  useEffect(() => {
+    const symbolIndex = suggestedSymbols.findIndex((symbol) => symbol.symbol === selectedSymbol);
+    if (symbolIndex !== -1 && symbolData) {
+      const newSuggestedSymbols = updatedSuggestedSymbols(suggestedSymbols, symbolData, symbolIndex);
 
-  return useMemo(
-    () => (
-      <Box sx={{ height: 'calc(100dvh - 164px)' }}>
-        <CustomToolbar />
-        <DataGrid sx={{
-          '& .MuiDataGrid-row': { // Targeting the row class
-            cursor: 'pointer', // Set the cursor to pointer
-          },
-          '& .MuiDataGrid-cell:focus': {
-            outline: 'none',
-          },
-        }}
-                  apiRef={dataGridRef}
-          // checkboxSelection={currentWatchlistName !== ''}
-                  onRowClick={(row) => {
-                    const newInterval = row.row.intervals.includes(interval)
-                      ? interval
-                      : row.row.intervals[0];
-                    const newIntervals: Array<Interval> = [];
-                    const systemIntervals = Object.values(Interval);
+      dataGridRef.current.updateRows([{ ...newSuggestedSymbols[symbolIndex] }]);
+      // setSuggestedSymbols((prevSuggestedSymbols) => {
+      //   const newSuggestedSymbols = updatedSuggestedSymbols(prevSuggestedSymbols, symbolData, symbolIndex);
+      //
+      //   dataGridRef.current.updateRows([{ ...newSuggestedSymbols[symbolIndex] }]);
+      //
+      //
+      //   return newSuggestedSymbols;
+      // });
+    }
+  }, [symbolData]);
 
-                    systemIntervals.forEach((systemInterval) => {
-                      if (row.row.intervals.includes(systemInterval)) {
-                        newIntervals.push(systemInterval);
-                      }
-                    });
 
-                    setSymbolState((prevSymbolState) => ({
-                      ...prevSymbolState,
-                      selectedSymbol: row.row.symbol,
-                      settings: {
-                        ...prevSymbolState.settings,
-                        intervals: newIntervals,
-                        interval: newInterval,
-                      },
-                    }));
-                  }}
-          // rowSelectionModel={rowSelectionModel}
-                  disableColumnFilter
-                  disableColumnSelector
-                  disableDensitySelector
-                  disableColumnMenu
-          // disableRowSelectionOnClick
-                  density="standard"
-                  onRowSelectionModelChange={handleCheckedSymbols}
-                  rows={filteredSymbols}
-                  columns={columns} slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-          },
-        }}
-          // slots={{ toolbar: React.memo(CustomToolbar) }}
-                  columnVisibilityModel={{
-                    watchlist: currentWatchlistName !== '',
-                    name: false,
-                  }}
-                  initialState={{
-                    pagination: { paginationModel: { pageSize: 100 } },
-                    filter: {
-                      filterModel: {
-                        items: [],
-                        quickFilterExcludeHiddenColumns: true,
-                      },
-                    },
+  // return useMemo(
+  // () => (
+  return useMemo(() => <Box sx={{ height: 'calc(100dvh - 164px)' }}>
+    <CustomToolbar />
+    <DataGrid sx={{
+      '& .MuiDataGrid-row': { // Targeting the row class
+        cursor: 'pointer', // Set the cursor to pointer
+      },
+      '& .MuiDataGrid-cell:focus': {
+        outline: 'none',
+      },
+    }}
+              apiRef={dataGridRef}
+      // checkboxSelection={currentWatchlistName !== ''}
+              onRowClick={(row) => {
+                const newInterval = row.row.intervals.includes(interval)
+                  ? interval
+                  : row.row.intervals[0];
+                const newIntervals: Array<Interval> = [];
+                const systemIntervals = Object.values(Interval);
 
-                  }}
-        />
-      </Box>
-    ),
-    [filteredSymbols, selectedSymbol, checkSymbolsLoader, watchlist, showOnlyChecked, currentWatchlistName, analyzedCount],
-  );
+                systemIntervals.forEach((systemInterval) => {
+                  if (row.row.intervals.includes(systemInterval)) {
+                    newIntervals.push(systemInterval);
+                  }
+                });
+
+                setSymbolState((prevSymbolState) => ({
+                  ...prevSymbolState,
+                  selectedSymbol: row.row.symbol,
+                  settings: {
+                    ...prevSymbolState.settings,
+                    intervals: newIntervals,
+                    interval: newInterval,
+                  },
+                }));
+              }}
+      // rowSelectionModel={rowSelectionModel}
+              disableColumnFilter
+              disableColumnSelector
+              disableDensitySelector
+              disableColumnMenu
+      // disableRowSelectionOnClick
+              density="standard"
+              onRowSelectionModelChange={handleCheckedSymbols}
+              rows={filteredSymbols}
+              columns={columns}
+      //           slotProps={{
+      //   toolbar: {
+      //     showQuickFilter: true,
+      //   },
+      // }}
+      // slots={{ toolbar: React.memo(CustomToolbar) }}
+              columnVisibilityModel={{
+                watchlist: currentWatchlistName !== '',
+                name: false,
+              }}
+              initialState={{
+                pagination: { paginationModel: { pageSize: 100 } },
+                filter: {
+                  filterModel: {
+                    items: [],
+                    quickFilterExcludeHiddenColumns: true,
+                  },
+                },
+
+              }}
+    />
+  </Box>, [filteredSymbols]);
+
 };
 
 export default React.memo(SymbolsList);
