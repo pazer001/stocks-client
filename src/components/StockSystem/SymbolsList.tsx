@@ -584,8 +584,7 @@ const SymbolsList = () => {
   const Search = useCallback((props: SearchProps) => {
     return useMemo(() =>
       <Box display="flex" width="100%" justifyContent="center" alignItems="center" marginTop={theme.spacing(1)}>
-        <TextField label="Search" fullWidth size="small"
-                   onChange={e => setSearchTerm(e.target.value)} />
+        <TextField label="Search" fullWidth size="small" onChange={e => setSearchTerm(e.target.value)} />
         <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
           <Tooltip title={`Check next ${ANALYZE_SYMBOLS_LIMIT} symbols`}>
             <Button onClick={checkSymbols} size="large">
