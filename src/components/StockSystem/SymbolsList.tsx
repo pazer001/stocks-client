@@ -383,11 +383,16 @@ const SymbolsList = () => {
     },
   ];
 
-  const AnalyzedCount = useCallback(() => {
-    return <Box sx={{ width: '100%' }}>
-      <LinearProgress variant="determinate" value={analyzedCount / maxAnalyzedCount * 100} />
+  interface AnalyzedCountProps {
+    analyzedCount: number;
+    maxAnalyzedCount: number;
+  }
+
+  const AnalyzedCount = (props: AnalyzedCountProps) => {
+    return <Box width="100%" marginTop={theme.spacing(1)}>
+      <LinearProgress variant="determinate" value={props.analyzedCount / props.maxAnalyzedCount * 100} />
     </Box>;
-  }, [analyzedCount, maxAnalyzedCount]);
+  };
 
   // const handleSearch = useCallback(
   //   (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -396,15 +401,100 @@ const SymbolsList = () => {
   //   [setSearchTerm], // dependencies array, setSearchTerm is stable and doesn't technically need to be included, but it's a good practice
   // );
 
-  const CustomToolbar = useCallback(() => {
+  // const CustomToolbar = useCallback(() => {
+  //   const [showAddWatchlist, setShowAddWatchlist] = useState<boolean>(false);
+  //   const addWatchlistName = useRef<HTMLInputElement>(null);
+  //
+  //   return <Box display="flex" gap={theme.spacing(1)} flexDirection="column">
+  //
+  //     {/*<GridToolbarFilterButton />*/}
+  //     {/*<GridToolbarDensitySelector />*/}
+  //
+  //     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+  //
+  //
+  //       <TextField
+  //         select
+  //         disabled={Object.keys(watchlist).length === 0}
+  //         fullWidth
+  //         label="Watchlist"
+  //         size="small"
+  //         value={currentWatchlistName}
+  //         onChange={(e) => setCurrentWatchlistName(e.target.value as string)}
+  //         sx={{ width: '70%' }}
+  //       >
+  //         {Object.keys(watchlist).map((watchlistName) => (
+  //           <MenuItem dense key={watchlistName}
+  //                     value={watchlistName}>{watchlistName} ({watchlist[watchlistName].length})</MenuItem>
+  //         ))}
+  //       </TextField>
+  //
+  //       <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
+  //         <Tooltip title="Filter watchlist">
+  //           <span>
+  //           <Button
+  //             disabled={!currentWatchlistName || watchlist[currentWatchlistName].length === 0}
+  //             size="large"
+  //             variant={showOnlyChecked ? 'contained' : 'outlined'}
+  //             onClick={() => setShowOnlyChecked(!showOnlyChecked)}
+  //           >
+  //             <FilterListRounded />
+  //           </Button>
+  //             </span>
+  //         </Tooltip>
+  //         <Tooltip title="Add watchlist">
+  //           <Button size="large" onClick={() => setShowAddWatchlist(true)}>
+  //             <PlaylistAddRoundedIcon />
+  //           </Button>
+  //         </Tooltip>
+  //         <Tooltip title="Remove watchlist">
+  //           <Button size="large" onClick={() => removeWatchlist(currentWatchlistName)}>
+  //             <PlaylistRemoveOutlined />
+  //           </Button>
+  //         </Tooltip>
+  //
+  //       </ButtonGroup>
+  //
+  //
+  //       <Dialog open={showAddWatchlist} onClose={() => setShowAddWatchlist(false)} fullWidth>
+  //         <DialogTitle>Add watchlist</DialogTitle>
+  //         <DialogContent dividers>
+  //           <FormControl fullWidth>
+  //             <TextField label="Watchlist name" size="small" inputRef={addWatchlistName} />
+  //           </FormControl>
+  //         </DialogContent>
+  //         <DialogActions disableSpacing>
+  //           <Button onClick={() => setShowAddWatchlist(false)} autoFocus>
+  //             Cancel
+  //           </Button>
+  //           <Button onClick={() => {
+  //             const watchlistName = addWatchlistName.current?.value;
+  //             if (watchlistName) {
+  //               setWatchlist((prevWatchlist) => {
+  //                 const modifiedWatchlist = { ...prevWatchlist, [watchlistName]: [] };
+  //                 localStorage.setItem('watchlist', JSON.stringify(modifiedWatchlist));
+  //                 return modifiedWatchlist;
+  //               });
+  //               setCurrentWatchlistName(addWatchlistName.current.value);
+  //               setShowAddWatchlist(false);
+  //             }
+  //           }}>
+  //             Create
+  //           </Button>
+  //         </DialogActions>
+  //       </Dialog>
+  //
+  //     </Box>
+  //
+  //
+  //     <AnalyzedCount />
+  //   </Box>;
+  // }, [suggestedSymbols, watchlist, currentWatchlistName]);
+
+  const Filter = useCallback(() => {
     const [showAddWatchlist, setShowAddWatchlist] = useState<boolean>(false);
     const addWatchlistName = useRef<HTMLInputElement>(null);
-
-    return <Box display="flex" gap={theme.spacing(1)} flexDirection="column">
-
-      {/*<GridToolbarFilterButton />*/}
-      {/*<GridToolbarDensitySelector />*/}
-
+    return useMemo(() =>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 
 
@@ -479,10 +569,17 @@ const SymbolsList = () => {
           </DialogActions>
         </Dialog>
 
-      </Box>
+      </Box>, [watchlist, currentWatchlistName, showOnlyChecked, showAddWatchlist]);
+  }, [watchlist, currentWatchlistName, showOnlyChecked]);
 
 
-      <Box display="flex" width="100%" justifyContent="center" alignItems="center">
+  interface SearchProps {
+    checkSymbolsLoader: boolean;
+  }
+
+  const Search = useCallback((props: SearchProps) => {
+    return useMemo(() =>
+      <Box display="flex" width="100%" justifyContent="center" alignItems="center" marginTop={theme.spacing(1)}>
         <TextField label="Search" fullWidth size="small"
                    onChange={e => setSearchTerm(e.target.value)} />
         <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
@@ -493,7 +590,7 @@ const SymbolsList = () => {
           </Tooltip>
           <Tooltip title="Clear recommendations">
               <span>
-              <Button size="large" onClick={clearSuggestions} disabled={checkSymbolsLoader}>
+              <Button size="large" onClick={clearSuggestions} disabled={props.checkSymbolsLoader}>
                 <ReplayRoundedIcon />
               </Button>
                 </span>
@@ -501,14 +598,8 @@ const SymbolsList = () => {
 
         </ButtonGroup>
 
-
-        {/*<GridToolbarQuickFilter sx={{ width: '100%', height: 40 }} variant={'outlined'} InputProps={{*/}
-        {/*  size: 'small',*/}
-        {/*}} />*/}
-      </Box>
-      <AnalyzedCount />
-    </Box>;
-  }, [suggestedSymbols, watchlist, currentWatchlistName]);
+      </Box>, [props.checkSymbolsLoader]);
+  }, [suggestedSymbols]);
 
 
   // const rowSelectionModel = useMemo(() => currentWatchlistName ? suggestedSymbols.filter((symbol) => watchlist[currentWatchlistName].includes(symbol.symbol)).map((symbol) => symbol.id) : [], [watchlist, suggestedSymbols, currentWatchlistName]);
@@ -546,7 +637,9 @@ const SymbolsList = () => {
   // return useMemo(
   // () => (
   return useMemo(() => <Box sx={{ height: 'calc(100dvh - 164px)' }}>
-    <CustomToolbar />
+    <Filter />
+    <Search checkSymbolsLoader={checkSymbolsLoader} />
+    <AnalyzedCount analyzedCount={analyzedCount} maxAnalyzedCount={maxAnalyzedCount} />
     <DataGrid sx={{
       '& .MuiDataGrid-row': { // Targeting the row class
         cursor: 'pointer', // Set the cursor to pointer
@@ -585,7 +678,7 @@ const SymbolsList = () => {
               disableColumnSelector
               disableDensitySelector
               disableColumnMenu
-      // disableRowSelectionOnClick
+              disableRowSelectionOnClick
               density="standard"
               onRowSelectionModelChange={handleCheckedSymbols}
               rows={filteredSymbols}
