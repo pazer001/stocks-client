@@ -158,7 +158,6 @@ const SymbolsList = () => {
     [suggestedSymbols, showOnlyChecked, watchlist, currentWatchlistName, searchTerm],
   );
 
-
   const checkSymbols = async () => {
     setCheckSymbolsLoader(true);
     let count = 0;
@@ -262,10 +261,10 @@ const SymbolsList = () => {
 
   const renderWatchlistCheckbox = useCallback((symbol: string, watchlist: Record<string, Array<string>>, currentWatchlistName: string) => {
     if (watchlist && currentWatchlistName) {
-      const isChecked = watchlist[currentWatchlistName].includes(symbol);
+      const checked = watchlist[currentWatchlistName].includes(symbol);
       return useMemo(() =>
         <Checkbox
-          checked={isChecked}
+          checked={checked}
           onClick={(event) => {
             event.stopPropagation(); // Stop the click from propagating to the row
           }}
@@ -273,10 +272,10 @@ const SymbolsList = () => {
             event.stopPropagation(); // Also stop the change event from propagating
             checkWatchlistSymbols(symbol, currentWatchlistName, event.target.checked);
           }}
-        />, [isChecked, currentWatchlistName],
+        />, [checked],
       );
     }
-  }, []);
+  }, [currentWatchlistName, watchlist]);
 
 
   const checkWatchlistSymbols = (symbol: string, currentWatchlistName: string, isChecked: boolean) => {
@@ -310,7 +309,6 @@ const SymbolsList = () => {
       sortable: false,
       filterable: false,
       hideable: true,
-      // ...GRID_CHECKBOX_SELECTION_COL_DEF,
       renderCell: (params) => renderWatchlistCheckbox(params.row.symbol, watchlist, currentWatchlistName),
 
     },
@@ -385,11 +383,11 @@ const SymbolsList = () => {
     },
   ];
 
-  const AnalyzedCount = () => {
+  const AnalyzedCount = useCallback(() => {
     return <Box sx={{ width: '100%' }}>
       <LinearProgress variant="determinate" value={analyzedCount / maxAnalyzedCount * 100} />
     </Box>;
-  };
+  }, [analyzedCount, maxAnalyzedCount]);
 
   // const handleSearch = useCallback(
   //   (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -510,7 +508,7 @@ const SymbolsList = () => {
       </Box>
       <AnalyzedCount />
     </Box>;
-  }, []);
+  }, [suggestedSymbols, watchlist, currentWatchlistName]);
 
 
   // const rowSelectionModel = useMemo(() => currentWatchlistName ? suggestedSymbols.filter((symbol) => watchlist[currentWatchlistName].includes(symbol.symbol)).map((symbol) => symbol.id) : [], [watchlist, suggestedSymbols, currentWatchlistName]);
