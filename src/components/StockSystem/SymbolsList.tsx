@@ -150,13 +150,13 @@ const SymbolsList = () => {
     );
   };
 
-  const filteredSymbols = useMemo(
-    () => suggestedSymbols
-      .filter((supportedSymbol) => searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true)
-      .filter((symbol: ISymbol) => showOnlyChecked && currentWatchlistName ? watchlist[currentWatchlistName].includes(symbol.symbol) : true)
-    ,
-    [suggestedSymbols, showOnlyChecked, watchlist, currentWatchlistName, searchTerm],
-  );
+  const filterSymbolsBySearchTerm = useCallback((searchTerm: string): ISymbol[] => {
+    return suggestedSymbols
+    .filter((supportedSymbol) => searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true)
+    .filter((symbol: ISymbol) => showOnlyChecked && currentWatchlistName ? watchlist[currentWatchlistName].includes(symbol.symbol) : true)
+  }, [suggestedSymbols, showOnlyChecked, watchlist, currentWatchlistName]);
+  
+  const filteredSymbols = useMemo(() => filterSymbolsBySearchTerm(searchTerm),[suggestedSymbols, showOnlyChecked, watchlist, currentWatchlistName, searchTerm]);
 
   const checkSymbols = async () => {
     setCheckSymbolsLoader(true);
@@ -577,11 +577,45 @@ const SymbolsList = () => {
     checkSymbolsLoader: boolean;
   }
 
+  const triggerSymbolScan = (row: ISymbol) => {
+    const newInterval = row.intervals.includes(interval)
+    ? interval
+    : row.intervals[0];
+    const newIntervals: Array<Interval> = [];
+    const systemIntervals = Object.values(Interval);
+    systemIntervals.forEach((systemInterval) => {
+      if (row.intervals.includes(systemInterval)) {
+        newIntervals.push(systemInterval);
+      }
+    });
+
+    setSymbolState((prevSymbolState) => ({
+      ...prevSymbolState,
+      selectedSymbol: row.symbol,
+      settings: {
+        ...prevSymbolState.settings,
+        intervals: newIntervals,
+        interval: newInterval,
+      },
+    }));
+  }
+
   const Search = useCallback((props: SearchProps) => {
+    const onKeyUpHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+          
+      if (e.key === 'Enter') {
+        const searchValue = (e.target as HTMLInputElement).value;
+        const filteredSymbols = filterSymbolsBySearchTerm(searchValue);
+        const row = filteredSymbols[0];
+
+        triggerSymbolScan(row);
+      }
+    };
     return useMemo(() =>
       <Box display="flex" width="100%" justifyContent="center" alignItems="center" marginTop={theme.spacing(1)}>
-        <TextField label="Search" fullWidth size="small"
-                   onChange={e => setSearchTerm(e.target.value)} />
+        <TextField label="Search" fullWidth size="small" onChange={e => {
+          setSearchTerm(e.target.value)
+        }} onKeyUp={onKeyUpHandler}/>
         <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
           <Tooltip title={`Check next ${ANALYZE_SYMBOLS_LIMIT} symbols`}>
             <Button onClick={checkSymbols} size="large">
@@ -598,7 +632,7 @@ const SymbolsList = () => {
 
         </ButtonGroup>
 
-      </Box>, [props.checkSymbolsLoader]);
+      </Box>, [props.checkSymbolsLoader, onKeyUpHandler]);
   }, [suggestedSymbols]);
 
 
@@ -650,28 +684,7 @@ const SymbolsList = () => {
     }}
               apiRef={dataGridRef}
       // checkboxSelection={currentWatchlistName !== ''}
-              onRowClick={(row) => {
-                const newInterval = row.row.intervals.includes(interval)
-                  ? interval
-                  : row.row.intervals[0];
-                const newIntervals: Array<Interval> = [];
-                const systemIntervals = Object.values(Interval);
-                systemIntervals.forEach((systemInterval) => {
-                  if (row.row.intervals.includes(systemInterval)) {
-                    newIntervals.push(systemInterval);
-                  }
-                });
-
-                setSymbolState((prevSymbolState) => ({
-                  ...prevSymbolState,
-                  selectedSymbol: row.row.symbol,
-                  settings: {
-                    ...prevSymbolState.settings,
-                    intervals: newIntervals,
-                    interval: newInterval,
-                  },
-                }));
-              }}
+              onRowClick={(row) => triggerSymbolScan(row.row)}
       // checkboxSelection
       // rowSelectionModel={rowSelectionModel}
               disableColumnFilter
