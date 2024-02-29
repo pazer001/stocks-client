@@ -149,14 +149,10 @@ const SymbolsList = () => {
       })),
     );
   };
-
-  const filterSymbolsBySearchTerm = useCallback((searchTerm: string): ISymbol[] => {
-    return suggestedSymbols
-    .filter((supportedSymbol) => searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true)
-    .filter((symbol: ISymbol) => showOnlyChecked && currentWatchlistName ? watchlist[currentWatchlistName].includes(symbol.symbol) : true)
-  }, [suggestedSymbols, showOnlyChecked, watchlist, currentWatchlistName]);
   
-  const filteredSymbols = useMemo(() => filterSymbolsBySearchTerm(searchTerm),[suggestedSymbols, showOnlyChecked, watchlist, currentWatchlistName, searchTerm]);
+  const filteredSymbols = useMemo(() => suggestedSymbols
+  .filter((supportedSymbol) => searchTerm ? supportedSymbol.symbol.includes(searchTerm.toUpperCase()) : true)
+  .filter((symbol: ISymbol) => showOnlyChecked && currentWatchlistName ? watchlist[currentWatchlistName].includes(symbol.symbol) : true),[suggestedSymbols, showOnlyChecked, watchlist, currentWatchlistName, searchTerm]);
 
   const checkSymbols = async () => {
     setCheckSymbolsLoader(true);
@@ -604,10 +600,8 @@ const SymbolsList = () => {
     const onKeyUpHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
           
       if (e.key === 'Enter') {
-        const searchValue = (e.target as HTMLInputElement).value;
-        const filteredSymbols = filterSymbolsBySearchTerm(searchValue);
-        const row = filteredSymbols[0];
-
+        const firstRowId = dataGridRef.current.getSortedRowIds()[0];
+        const row = dataGridRef.current.getRow(firstRowId);
         triggerSymbolScan(row);
       }
     };
@@ -633,7 +627,7 @@ const SymbolsList = () => {
         </ButtonGroup>
 
       </Box>, [props.checkSymbolsLoader, onKeyUpHandler]);
-  }, [suggestedSymbols]);
+  }, [suggestedSymbols, dataGridRef]);
 
 
   // const rowSelectionModel = useMemo(() => currentWatchlistName ? suggestedSymbols.filter((symbol) => watchlist[currentWatchlistName].includes(symbol.symbol)).map((symbol) => symbol.id) : [], [watchlist, suggestedSymbols, currentWatchlistName]);
