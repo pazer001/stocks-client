@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Fragment, useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   getByType,
@@ -305,13 +305,13 @@ const SymbolInfo = () => {
                 <br />
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
                   {Object.values(sectionIcon).map((section, index) => (
-                    <>
+                    <Fragment key={section}>
                       <Avatar alt={sectionIcon[index]}
                               sx={{ width: 24, height: 24, bgcolor: sectionColor[index] }}>
                         {section[0].toUpperCase()}
                       </Avatar>
                       {sectionIcon[index]}
-                    </>
+                    </Fragment>
                   ))}
                 </Box>
                 <br />
