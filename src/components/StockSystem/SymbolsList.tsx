@@ -52,7 +52,7 @@ const FlickerAnimation = styled.div`
         }
     }
 
-    color: red;
+    color: red[A700];
     animation: flickerAnimation 1s infinite;
 
 `;
@@ -494,6 +494,19 @@ const SymbolsList = () => {
   const Filter = useCallback(() => {
     const [showAddWatchlist, setShowAddWatchlist] = useState<boolean>(false);
     const addWatchlistName = useRef<HTMLInputElement>(null);
+
+    const addWatchlist = () => {
+      const watchlistName = addWatchlistName.current?.value;
+                  if (watchlistName) {
+                    setWatchlist((prevWatchlist) => {
+                      const modifiedWatchlist = { ...prevWatchlist, [watchlistName]: [] };
+                      localStorage.setItem('watchlist', JSON.stringify(modifiedWatchlist));
+                      return modifiedWatchlist;
+                    });
+                    setCurrentWatchlistName(addWatchlistName.current.value);
+                    setShowAddWatchlist(false);
+                  }
+    };
     return useMemo(() =>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 
@@ -537,33 +550,24 @@ const SymbolsList = () => {
               <PlaylistRemoveOutlined />
             </Button>
           </Tooltip>
-
         </ButtonGroup>
-
 
         <Dialog open={showAddWatchlist} onClose={() => setShowAddWatchlist(false)} fullWidth>
           <DialogTitle>Add watchlist</DialogTitle>
           <DialogContent dividers>
             <FormControl fullWidth>
-              <TextField label="Watchlist name" size="small" inputRef={addWatchlistName} />
+              <TextField label="Watchlist name" size="small" onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  addWatchlist();
+                }
+              }} inputRef={addWatchlistName} />
             </FormControl>
           </DialogContent>
-          <DialogActions disableSpacing>
+          <DialogActions>
             <Button onClick={() => setShowAddWatchlist(false)} autoFocus>
               Cancel
             </Button>
-            <Button onClick={() => {
-              const watchlistName = addWatchlistName.current?.value;
-              if (watchlistName) {
-                setWatchlist((prevWatchlist) => {
-                  const modifiedWatchlist = { ...prevWatchlist, [watchlistName]: [] };
-                  localStorage.setItem('watchlist', JSON.stringify(modifiedWatchlist));
-                  return modifiedWatchlist;
-                });
-                setCurrentWatchlistName(addWatchlistName.current.value);
-                setShowAddWatchlist(false);
-              }
-            }}>
+            <Button variant='contained' onClick={addWatchlist}>
               Create
             </Button>
           </DialogActions>
