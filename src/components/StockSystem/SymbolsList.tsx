@@ -15,6 +15,7 @@ import TrendingFlatRoundedIcon from '@mui/icons-material/TrendingFlatRounded';
 import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
 import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 import {
   getByType,
@@ -72,6 +73,7 @@ export interface ISymbol {
   lastClose: number;
   name: string;
   stopLoss?: Array<number>;
+  newsSentiment?: 'positive' | 'negative' | 'neutral';
 }
 
 
@@ -300,6 +302,22 @@ const SymbolsList = () => {
     }
   };
 
+  const renderNewsSentiment = (sentiment: string) => {
+    switch (sentiment) {
+      case 'positive': {
+        return <NewspaperIcon sx={{ color: green[400] }} />;
+      }
+      case 'negative': {
+        return <NewspaperIcon sx={{ color: red[400] }} />;
+      }
+      case 'neutral': {
+        return null;
+      }
+      default: {
+        return null;
+      }
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -371,6 +389,16 @@ const SymbolsList = () => {
       renderCell: (params) => params.row.score !== undefined ? params.row.score.toFixed(0) : '-',
       sortable: true,
       filterable: false,
+    },
+
+    {
+      field: 'newsSentiment',
+      headerName: 'News Sentiment',
+      minWidth: 60,
+      hideable: true,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => renderNewsSentiment(params.row.newsSentiment || ''),
     },
 
     {

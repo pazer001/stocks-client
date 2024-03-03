@@ -96,6 +96,7 @@ export interface SymbolData {
   isPennyStock: boolean;
   logo: string;
   name: string;
+  newsSentiment: "positive" | "negative" | "neutral";
 }
 
 enum ByType {
