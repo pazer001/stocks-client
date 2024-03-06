@@ -53,7 +53,7 @@ const FlickerAnimation = styled.div`
         }
     }
 
-    color: red[A700];
+    color: red [A700];
     animation: flickerAnimation 1s infinite;
 
 `;
@@ -333,14 +333,14 @@ const SymbolsList = () => {
     {
       field: 'id',
       headerName: 'Priority',
-      width: 20,
+      width: 60,
       sortable: true,
       filterable: false,
     },
     {
       field: 'symbol',
       headerName: 'Symbol',
-      width: 85,
+      width: 110,
       sortable: false,
       filterable: true,
       renderCell: (params) => <Box display="flex"
@@ -525,15 +525,15 @@ const SymbolsList = () => {
 
     const addWatchlist = () => {
       const watchlistName = addWatchlistName.current?.value;
-                  if (watchlistName) {
-                    setWatchlist((prevWatchlist) => {
-                      const modifiedWatchlist = { ...prevWatchlist, [watchlistName]: [] };
-                      localStorage.setItem('watchlist', JSON.stringify(modifiedWatchlist));
-                      return modifiedWatchlist;
-                    });
-                    setCurrentWatchlistName(addWatchlistName.current.value);
-                    setShowAddWatchlist(false);
-                  }
+      if (watchlistName) {
+        setWatchlist((prevWatchlist) => {
+          const modifiedWatchlist = { ...prevWatchlist, [watchlistName]: [] };
+          localStorage.setItem('watchlist', JSON.stringify(modifiedWatchlist));
+          return modifiedWatchlist;
+        });
+        setCurrentWatchlistName(addWatchlistName.current.value);
+        setShowAddWatchlist(false);
+      }
     };
     return useMemo(() =>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
@@ -595,7 +595,7 @@ const SymbolsList = () => {
             <Button onClick={() => setShowAddWatchlist(false)} autoFocus>
               Cancel
             </Button>
-            <Button variant='contained' onClick={addWatchlist}>
+            <Button variant="contained" onClick={addWatchlist}>
               Create
             </Button>
           </DialogActions>
@@ -735,7 +735,7 @@ const SymbolsList = () => {
 
               }}
     />
-  </Box>, [filteredSymbols]);
+  </Box>, [filteredSymbols, analyzedCount]);
 
 };
 
