@@ -16,6 +16,8 @@ interface Recommendation {
   buyThresholdsReasons: Array<string>;
 }
 
+export type TRiskLevel = 'Low' | 'Medium' | 'High';
+
 export interface SymbolData {
   prices: Array<{
     point: {
@@ -97,6 +99,7 @@ export interface SymbolData {
   logo: string;
   name: string;
   newsSentiment: "positive" | "negative" | "neutral";
+  riskLevel: TRiskLevel;
 }
 
 enum ByType {

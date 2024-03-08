@@ -6,7 +6,7 @@ import {
 
   Tooltip, Typography, useTheme,
 } from '@mui/material';
-import { green, red, grey, blue } from '@mui/material/colors';
+import { green, red, grey, blue, yellow } from '@mui/material/colors';
 
 import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
@@ -15,13 +15,13 @@ import TrendingFlatRoundedIcon from '@mui/icons-material/TrendingFlatRounded';
 import PlaylistAddRoundedIcon from '@mui/icons-material/PlaylistAddRounded';
 import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
-import NewspaperIcon from '@mui/icons-material/Newspaper';
-
+// import NewspaperIcon from '@mui/icons-material/Newspaper';
+import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
 import {
   getByType,
   getInterval,
   getSelectedSymbol, getSymbolData,
-  symbolAtom, SymbolData,
+  symbolAtom, SymbolData, TRiskLevel,
   useSymbol,
 } from '../../atoms/symbol';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -53,7 +53,7 @@ const FlickerAnimation = styled.div`
         }
     }
 
-    color: red [A700];
+    color: ${red.A700};
     animation: flickerAnimation 1s infinite;
 
 `;
@@ -74,6 +74,7 @@ export interface ISymbol {
   name: string;
   stopLoss?: Array<number>;
   newsSentiment?: 'positive' | 'negative' | 'neutral';
+  riskLevel: TRiskLevel;
 }
 
 
@@ -121,6 +122,7 @@ const SymbolsList = () => {
       newSuggestedSymbols[index].name = symbolData.name;
       newSuggestedSymbols[index].stopLoss = symbolData.stopLoss;
       newSuggestedSymbols[index].score = score;
+      newSuggestedSymbols[index].riskLevel = symbolData.riskLevel;
     }
 
     return newSuggestedSymbols;
@@ -302,16 +304,33 @@ const SymbolsList = () => {
     }
   };
 
-  const renderNewsSentiment = (sentiment: string) => {
-    switch (sentiment) {
-      case 'positive': {
-        return <NewspaperIcon sx={{ color: green[400] }} />;
+  // const renderNewsSentiment = (sentiment: string) => {
+  //   switch (sentiment) {
+  //     case 'positive': {
+  //       return <NewspaperIcon sx={{ color: green[400] }} />;
+  //     }
+  //     case 'negative': {
+  //       return <NewspaperIcon sx={{ color: red[400] }} />;
+  //     }
+  //     case 'neutral': {
+  //       return null;
+  //     }
+  //     default: {
+  //       return null;
+  //     }
+  //   }
+  // };
+
+  const renderRiskLevel = (riskLevel: TRiskLevel) => {
+    switch (riskLevel) {
+      case 'Low': {
+        return <SignalCellularAltIcon sx={{ color: green[400] }} />;
       }
-      case 'negative': {
-        return <NewspaperIcon sx={{ color: red[400] }} />;
+      case 'Medium': {
+        return <SignalCellularAltIcon sx={{ color: yellow[400] }} />;
       }
-      case 'neutral': {
-        return null;
+      case 'High': {
+        return <SignalCellularAltIcon sx={{ color: red[400] }} />;
       }
       default: {
         return null;
@@ -391,14 +410,23 @@ const SymbolsList = () => {
       filterable: false,
     },
 
+    // {
+    //   field: 'newsSentiment',
+    //   headerName: 'News Sentiment',
+    //   minWidth: 60,
+    //   hideable: true,
+    //   sortable: false,
+    //   filterable: false,
+    //   renderCell: (params) => renderNewsSentiment(params.row.newsSentiment || ''),
+    // },
     {
-      field: 'newsSentiment',
-      headerName: 'News Sentiment',
+      field: 'riskLevel',
+      headerName: 'Risk',
       minWidth: 60,
       hideable: true,
       sortable: false,
       filterable: false,
-      renderCell: (params) => renderNewsSentiment(params.row.newsSentiment || ''),
+      renderCell: (params) => renderRiskLevel(params.row.riskLevel),
     },
 
     {
