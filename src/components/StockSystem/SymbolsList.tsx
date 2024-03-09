@@ -333,7 +333,7 @@ const SymbolsList = () => {
         return <SignalCellularAltIcon sx={{ color: red[400] }} />;
       }
       default: {
-        return null;
+        return '-';
       }
     }
   };
@@ -359,7 +359,7 @@ const SymbolsList = () => {
     {
       field: 'symbol',
       headerName: 'Symbol',
-      width: 110,
+      width: 120,
       sortable: false,
       filterable: true,
       renderCell: (params) => <Box display="flex"
@@ -376,9 +376,9 @@ const SymbolsList = () => {
 
     {
       field: 'stopLoss',
-      headerName: 'Stop Loss',
+      headerName: 'SL',
       // valueGetter: (params) => `${params.row.stopLoss ? `${params.row.stopLoss.toFixed(2)}%` : '-'}`,
-      width: 80,
+      width: 70,
       sortable: false,
       filterable: false,
       renderCell: (params) => renderStopLoss(params.row.stopLoss || []),
@@ -395,20 +395,20 @@ const SymbolsList = () => {
     {
       field: 'lastClose',
       headerName: 'Price',
-      minWidth: 70,
+      width: 60,
       sortable: false,
       filterable: false,
       renderCell: (params) => params.row.lastClose ? renderPrice(params.row.lastClose, params.row.isPennyStock) : '-',
 
     },
-    {
-      field: 'score',
-      headerName: 'Score',
-      width: 20,
-      renderCell: (params) => params.row.score !== undefined ? params.row.score.toFixed(0) : '-',
-      sortable: true,
-      filterable: false,
-    },
+    // {
+    //   field: 'score',
+    //   headerName: 'Score',
+    //   width: 20,
+    //   renderCell: (params) => params.row.score !== undefined ? params.row.score.toFixed(0) : '-',
+    //   sortable: true,
+    //   filterable: false,
+    // },
 
     // {
     //   field: 'newsSentiment',
@@ -422,7 +422,7 @@ const SymbolsList = () => {
     {
       field: 'riskLevel',
       headerName: 'Risk',
-      minWidth: 60,
+      minWidth: 30,
       hideable: true,
       sortable: false,
       filterable: false,
@@ -432,7 +432,7 @@ const SymbolsList = () => {
     {
       field: 'name',
       headerName: 'Company Name',
-      minWidth: 60,
+      // minWidth: 60,
       hideable: true,
       sortable: false,
       filterable: false,
