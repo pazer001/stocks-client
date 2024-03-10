@@ -198,13 +198,13 @@ const SymbolsList = () => {
   const getRecommendationSymbol = (recommendation: string) => {
     switch (recommendation) {
       case 'Buy': {
-        return <TrendingUpRoundedIcon sx={{ color: green[400] }} />;
+        return <TrendingUpRoundedIcon fontSize="small" sx={{ color: green[400] }} />;
       }
       case 'Sell': {
-        return <TrendingDownRoundedIcon sx={{ color: red[400] }} />;
+        return <TrendingDownRoundedIcon fontSize="small" sx={{ color: red[400] }} />;
       }
       case 'Hold': {
-        return <TrendingFlatRoundedIcon sx={{ color: grey[400] }} />;
+        return <TrendingFlatRoundedIcon fontSize="small" sx={{ color: grey[400] }} />;
       }
       default: {
         return <ShowChartRoundedIcon />;
@@ -324,13 +324,13 @@ const SymbolsList = () => {
   const renderRiskLevel = (riskLevel: TRiskLevel) => {
     switch (riskLevel) {
       case 'Low': {
-        return <SignalCellularAltIcon sx={{ color: green[400] }} />;
+        return <SignalCellularAltIcon fontSize="small" sx={{ color: green[400] }} />;
       }
       case 'Medium': {
-        return <SignalCellularAltIcon sx={{ color: yellow[400] }} />;
+        return <SignalCellularAltIcon fontSize="small" sx={{ color: yellow[400] }} />;
       }
       case 'High': {
-        return <SignalCellularAltIcon sx={{ color: red[400] }} />;
+        return <SignalCellularAltIcon fontSize="small" sx={{ color: red[400] }} />;
       }
       default: {
         return '-';
@@ -395,7 +395,7 @@ const SymbolsList = () => {
     {
       field: 'lastClose',
       headerName: 'Price',
-      width: 60,
+      width: 70,
       sortable: false,
       filterable: false,
       renderCell: (params) => params.row.lastClose ? renderPrice(params.row.lastClose, params.row.isPennyStock) : '-',
