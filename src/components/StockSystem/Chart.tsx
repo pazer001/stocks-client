@@ -8,9 +8,9 @@ import {
   blue,
   green,
   red,
-  deepOrange,
-  lightBlue,
-  lime,
+  // deepOrange,
+  // lightBlue,
+  // lime,
   grey,
 } from '@mui/material/colors';
 
@@ -183,117 +183,117 @@ const Chart = () => {
               Number(data.point.high.toFixed(3)),
             ]),
           },
-          symbolState.symbolData?.buyThresholdData.closeAboveSMA100
-            ? {
-              name: 'SMA 100',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData.closeAboveSMA100,
-              smooth: true,
-              lineStyle: {
-                color: deepOrange.A200,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
-          symbolState.symbolData?.buyThresholdData.closeAboveSMA150
-            ? {
-              name: 'SMA000 150',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData.closeAboveSMA150,
-              smooth: true,
-              lineStyle: {
-                color: deepOrange.A400,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
-          symbolState.symbolData?.buyThresholdData.closeAboveSMA200
-            ? {
-              name: 'SMA 200',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData.closeAboveSMA200,
-              smooth: true,
-              lineStyle: {
-                color: deepOrange.A700,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
-          symbolState.symbolData?.buyThresholdData.closeAboveEMA100
-            ? {
-              name: 'EMA 100',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData.closeAboveEMA100,
-              smooth: true,
-              lineStyle: {
-                color: lightBlue.A200,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
-          symbolState.symbolData?.buyThresholdData.closeAboveEMA150
-            ? {
-              name: 'EMA 150',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData.closeAboveEMA150,
-              smooth: true,
-              lineStyle: {
-                color: lightBlue.A400,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
-          symbolState.symbolData?.buyThresholdData.closeAboveEMA200
-            ? {
-              name: 'EMA 200',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData.closeAboveEMA200,
-              smooth: true,
-              lineStyle: {
-                color: lightBlue.A700,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
-          symbolState.symbolData?.buyThresholdData.closeAboveDEMA100
-            ? {
-              name: 'DEMA 100',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData
-                .closeAboveDEMA100,
-              smooth: true,
-              lineStyle: {
-                color: lime.A200,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
-          symbolState.symbolData?.buyThresholdData.closeAboveDEMA150
-            ? {
-              name: 'DEMA 150',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData
-                .closeAboveDEMA150,
-              smooth: true,
-              lineStyle: {
-                color: lime.A400,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
-          symbolState.symbolData?.buyThresholdData.closeAboveDEMA200
-            ? {
-              name: 'DEMA 200',
-              type: 'line',
-              data: symbolState.symbolData?.buyThresholdData
-                .closeAboveDEMA200,
-              smooth: true,
-              lineStyle: {
-                color: lime.A700,
-                opacity: 0.5,
-              },
-            }
-            : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveSMA100
+          //   ? {
+          //     name: 'SMA 100',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData.closeAboveSMA100,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: deepOrange.A200,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveSMA150
+          //   ? {
+          //     name: 'SMA000 150',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData.closeAboveSMA150,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: deepOrange.A400,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveSMA200
+          //   ? {
+          //     name: 'SMA 200',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData.closeAboveSMA200,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: deepOrange.A700,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveEMA100
+          //   ? {
+          //     name: 'EMA 100',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData.closeAboveEMA100,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: lightBlue.A200,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveEMA150
+          //   ? {
+          //     name: 'EMA 150',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData.closeAboveEMA150,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: lightBlue.A400,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveEMA200
+          //   ? {
+          //     name: 'EMA 200',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData.closeAboveEMA200,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: lightBlue.A700,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveDEMA100
+          //   ? {
+          //     name: 'DEMA 100',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData
+          //       .closeAboveDEMA100,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: lime.A200,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveDEMA150
+          //   ? {
+          //     name: 'DEMA 150',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData
+          //       .closeAboveDEMA150,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: lime.A400,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
+          // symbolState.symbolData?.buyThresholdData.closeAboveDEMA200
+          //   ? {
+          //     name: 'DEMA 200',
+          //     type: 'line',
+          //     data: symbolState.symbolData?.buyThresholdData
+          //       .closeAboveDEMA200,
+          //     smooth: true,
+          //     lineStyle: {
+          //       color: lime.A700,
+          //       opacity: 0.5,
+          //     },
+          //   }
+          //   : undefined,
           // symbolState.symbolData?.buyThresholdData.supertrend40
           //   ? {
           //       name: "Supertrend (40)",
