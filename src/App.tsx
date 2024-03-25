@@ -88,6 +88,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
+
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -95,6 +96,7 @@ function App() {
   const [showConsent, setShowConsent] = useState<boolean>(
     localStorage.getItem('consent') !== 'false',
   );
+
 
   return (
     <>

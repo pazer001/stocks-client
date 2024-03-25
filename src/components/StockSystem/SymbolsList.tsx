@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Alert,
   Avatar,
   Box, Button, ButtonGroup, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
   MenuItem, TextField,
@@ -35,6 +36,7 @@ import { DateTime } from 'luxon';
 import styled from '@emotion/styled';
 import LinearProgress from '@mui/material/LinearProgress';
 import { FilterListRounded, PlaylistRemoveOutlined } from '@mui/icons-material';
+import { useExtraData } from '../../atoms/extraData';
 
 const ANALYZE_SYMBOLS_LIMIT = 200;
 
@@ -95,6 +97,44 @@ const SymbolsList = () => {
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
   const dataGridRef = useGridApiRef();
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const { getEconomicEventsData } = useExtraData();
+  const [informativeEvent, setInformativeEvent] = useState<string>('');
+
+  const handleInformativeEvent = async () => {
+    const currentDate = DateTime.now();
+    let date;
+    switch (currentDate.weekday) {
+      case 5:
+        date = DateTime.now().plus({ days: 3 }).toISODate();
+        break;
+      case 6:
+        date = DateTime.now().plus({ days: 2 }).toISODate();
+        break;
+      default:
+        date = DateTime.now().plus({ days: 1 }).toISODate();
+        break;
+    }
+
+
+    const possibleAlertsStrings = ['PPI', 'CPI', 'Core CPI', 'Core PPI'];
+
+
+    const getEconomicEventsDataResponse = await getEconomicEventsData('United States', date);
+    if (getEconomicEventsDataResponse !== undefined) {
+      getEconomicEventsDataResponse.forEach((event) => {
+        if (possibleAlertsStrings.includes(event.eventName)) {
+          setInformativeEvent(`Next trading day: ${event.eventName} report.`);
+          return;
+        }
+      });
+
+    }
+
+  };
+
+  useEffect(() => {
+    handleInformativeEvent();
+  }, []);
 
   const updatedSuggestedSymbols = (suggestedSymbols: ISymbol[], symbolData: SymbolData | undefined, index: number): ISymbol[] => {
     const newSuggestedSymbols = [...suggestedSymbols];
@@ -445,7 +485,7 @@ const SymbolsList = () => {
   }
 
   const AnalyzedCount = (props: AnalyzedCountProps) => {
-    return <Box width="100%" marginTop={theme.spacing(1)}>
+    return <Box width="100%">
       <LinearProgress variant="determinate" value={props.analyzedCount / props.maxAnalyzedCount * 100} />
     </Box>;
   };
@@ -639,7 +679,7 @@ const SymbolsList = () => {
 
   const Search = useCallback((props: SearchProps) => {
     return useMemo(() =>
-      <Box display="flex" width="100%" justifyContent="center" alignItems="center" marginTop={theme.spacing(1)}>
+      <Box display="flex" width="100%" justifyContent="center" alignItems="center">
         <TextField label="Search" fullWidth size="small" onChange={e => setSearchTerm(e.target.value)} />
         <ButtonGroup sx={{ marginInlineStart: theme.spacing(1) }}>
           <Tooltip title={`Check next ${ANALYZE_SYMBOLS_LIMIT} symbols`}>
@@ -695,7 +735,9 @@ const SymbolsList = () => {
 
   // return useMemo(
   // () => (
-  return useMemo(() => <Box sx={{ height: 'calc(100dvh - 164px)' }}>
+  return useMemo(() => <Box
+    sx={{ height: 'calc(100dvh - 63px)', display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}>
+    {Boolean(informativeEvent) && <Alert severity="info" variant="outlined">{informativeEvent}</Alert>}
     <Filter />
     <Search checkSymbolsLoader={checkSymbolsLoader} />
     <AnalyzedCount analyzedCount={analyzedCount} maxAnalyzedCount={maxAnalyzedCount} />
@@ -763,7 +805,8 @@ const SymbolsList = () => {
 
               }}
     />
-  </Box>, [filteredSymbols, analyzedCount]);
+
+  </Box>, [filteredSymbols, analyzedCount, informativeEvent]);
 
 };
 
