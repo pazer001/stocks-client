@@ -209,6 +209,7 @@ export const useSymbol = () => {
   const [symbolState, setSymbolState] = useRecoilState(symbolAtom);
   const { mainLoaderShow, setAlert } = useViewActions();
   const { interval, byType } = symbolState.settings;
+  const selectedSignal = symbolState.selectedSignal;
 
   useEffect(() => {
     if (symbolState.selectedSymbol) {
@@ -219,6 +220,13 @@ export const useSymbol = () => {
     symbolState.settings.byType,
     symbolState.settings.interval,
   ]);
+
+  const setSelectSignal = (signal: number) => {
+    setSymbolState((prevSymbolState) => ({
+      ...prevSymbolState,
+      selectedSignal: signal,
+    }));
+  }
 
   const getWatchlistSymbols = (): Promise<AxiosResponse<Array<ISymbol>>> => {
     const symbols =
@@ -268,6 +276,7 @@ export const useSymbol = () => {
       setSymbolState((prevSymbolState) => ({
         ...prevSymbolState,
         symbolData: analyzedSymbol.data,
+        selectedSignal: analyzedSymbol.data.prices.length - 1,
         selectedSymbol: symbol,
         settings: {
           ...prevSymbolState.settings,
@@ -297,5 +306,7 @@ export const useSymbol = () => {
     analyzeSymbol,
     getWatchlistSymbols,
     addWatchlistSymbols,
+    setSelectSignal,
+    selectedSignal
   };
 };

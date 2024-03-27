@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { getInterval, symbolAtom } from '../../atoms/symbol';
+import { getInterval, symbolAtom, useSymbol } from '../../atoms/symbol';
 import { useRecoilState, useRecoilValue } from 'recoil';
 // import { Button } from '@mui/material';
 import ReactECharts from 'echarts-for-react';
@@ -17,6 +17,7 @@ import {
 const Chart = () => {
   // const selectedSymbol = useRecoilValue(getSelectedSymbol);
   const [symbolState] = useRecoilState(symbolAtom);
+  const { setSelectSignal } = useSymbol();
   // const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
   // const pricesMode = useRecoilValue(getPricesMode);
@@ -183,6 +184,7 @@ const Chart = () => {
               Number(data.point.high.toFixed(3)),
             ]),
           },
+
           // symbolState.symbolData?.buyThresholdData.closeAboveSMA100
           //   ? {
           //     name: 'SMA 100',
@@ -392,6 +394,12 @@ const Chart = () => {
       <>
         {/* <Button onClick={() => setChart()}>Refresh</Button> */}
         <ReactECharts
+          onEvents={{
+            mouseover: (e: { dataIndex: number; }) => {
+              setSelectSignal(e.dataIndex);
+            },
+
+          }}
           option={stockChartOptions}
           notMerge={true}
           lazyUpdate={true}

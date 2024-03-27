@@ -115,12 +115,13 @@ const SymbolInfo = () => {
     return (value - min) / (max - min);
   };
 
-  const symbolBuy = symbolData?.prices[symbolData.prices.length - 1].reasons.buy.symbol;
-  const indexBuy = symbolData?.prices[symbolData.prices.length - 1].reasons.buy.index;
-  const sectorBuy = symbolData?.prices[symbolData.prices.length - 1].reasons.buy.sector;
-  const symbolSell = symbolData?.prices[symbolData.prices.length - 1].reasons.sell.symbol;
-  const indexSell = symbolData?.prices[symbolData.prices.length - 1].reasons.sell.index;
-  const sectorSell = symbolData?.prices[symbolData.prices.length - 1].reasons.sell.sector;
+
+  const symbolBuy = symbolData?.prices[selectedSignal].reasons.buy.symbol;
+  const indexBuy = symbolData?.prices[selectedSignal].reasons.buy.index;
+  const sectorBuy = symbolData?.prices[selectedSignal].reasons.buy.sector;
+  const symbolSell = symbolData?.prices[selectedSignal].reasons.sell.symbol;
+  const indexSell = symbolData?.prices[selectedSignal].reasons.sell.index;
+  const sectorSell = symbolData?.prices[selectedSignal].reasons.sell.sector;
   const sectionIcon: Record<number, string> = {
     0: 'Symbol',
     1: 'Index',
@@ -271,7 +272,7 @@ const SymbolInfo = () => {
                       data: [
                         {
                           value:
-                          symbolData.prices[symbolData.prices.length - 1]
+                          symbolData.prices[selectedSignal]
                             .recommendation.score,
                           name: getRecommendation(),
                         },
@@ -320,14 +321,14 @@ const SymbolInfo = () => {
                 {selectedSignal !== undefined && (
                   <>
                     {Boolean(
-                      symbolData?.prices[symbolData.prices.length - 1]
+                      symbolData?.prices[selectedSignal]
                         .recommendation.buyThresholdsReasons.length,
                     ) && (
                       <>
                         <b>Minimum Thresholds:</b>{' '}
                         <List dense disablePadding>
                           {symbolData?.prices[
-                          symbolData.prices.length - 1
+                            selectedSignal
                             ].recommendation.buyThresholdsReasons.map(
                             (reason: string) => (
                               <ListItem key={reason} dense disablePadding secondaryAction={
