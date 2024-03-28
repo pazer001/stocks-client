@@ -74,11 +74,11 @@ const SymbolInfo = () => {
   };
   const getRecommendation = () => {
     if (!symbolData) return null;
-    if (symbolData.recommendationsLinesModified) {
+    if (symbolData.recommendationsLines) {
       const { minBuy, minSell } =
-        symbolData.recommendationsLinesModified.bestPermutation;
+        symbolData.recommendationsLines.bestPermutation;
       const currentRecommendation =
-        symbolData.prices[symbolData.prices.length - 1].recommendation;
+        symbolData.recommendations[symbolData.recommendations.length - 1].recommendation;
 
       if (currentRecommendation.score >= minBuy) {
         return 'Buy';
@@ -116,12 +116,12 @@ const SymbolInfo = () => {
   };
 
 
-  const symbolBuy = symbolData?.prices[selectedSignal].reasons.buy.symbol;
-  const indexBuy = symbolData?.prices[selectedSignal].reasons.buy.index;
-  const sectorBuy = symbolData?.prices[selectedSignal].reasons.buy.sector;
-  const symbolSell = symbolData?.prices[selectedSignal].reasons.sell.symbol;
-  const indexSell = symbolData?.prices[selectedSignal].reasons.sell.index;
-  const sectorSell = symbolData?.prices[selectedSignal].reasons.sell.sector;
+  const symbolBuy = symbolData?.recommendations[selectedSignal].reasons.buy.symbol;
+  const indexBuy = symbolData?.recommendations[selectedSignal].reasons.buy.index;
+  const sectorBuy = symbolData?.recommendations[selectedSignal].reasons.buy.sector;
+  const symbolSell = symbolData?.recommendations[selectedSignal].reasons.sell.symbol;
+  const indexSell = symbolData?.recommendations[selectedSignal].reasons.sell.index;
+  const sectorSell = symbolData?.recommendations[selectedSignal].reasons.sell.sector;
   const sectionIcon: Record<number, string> = {
     0: 'Symbol',
     1: 'Index',
@@ -213,14 +213,14 @@ const SymbolInfo = () => {
                           color: [
                             [
                               mapNumber(
-                                symbolData.recommendationsLinesModified
+                                symbolData.recommendationsLines
                                   .bestPermutation.minSell,
                               ),
                               red[400],
                             ],
                             [
                               mapNumber(
-                                symbolData.recommendationsLinesModified
+                                symbolData.recommendationsLines
                                   .bestPermutation.minBuy,
                               ),
                               grey[400],
@@ -272,7 +272,7 @@ const SymbolInfo = () => {
                       data: [
                         {
                           value:
-                          symbolData.prices[selectedSignal]
+                          symbolData.recommendations[selectedSignal]
                             .recommendation.score,
                           name: getRecommendation(),
                         },
@@ -321,13 +321,13 @@ const SymbolInfo = () => {
                 {selectedSignal !== undefined && (
                   <>
                     {Boolean(
-                      symbolData?.prices[selectedSignal]
+                      symbolData?.recommendations[selectedSignal]
                         .recommendation.buyThresholdsReasons.length,
                     ) && (
                       <>
                         <b>Minimum Thresholds:</b>{' '}
                         <List dense disablePadding>
-                          {symbolData?.prices[
+                          {symbolData?.recommendations[
                             selectedSignal
                             ].recommendation.buyThresholdsReasons.map(
                             (reason: string, index) => (

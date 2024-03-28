@@ -138,8 +138,8 @@ const SymbolsList = () => {
   const updatedSuggestedSymbols = (suggestedSymbols: ISymbol[], symbolData: SymbolData | undefined, index: number): ISymbol[] => {
     const newSuggestedSymbols = [...suggestedSymbols];
     if (symbolData) {
-      const { minBuy, minSell } = symbolData.recommendationsLinesModified.bestPermutation;
-      const score = symbolData.prices[symbolData.prices.length - 1].recommendation.score;
+      const { minBuy, minSell } = symbolData.recommendationsLines.bestPermutation;
+      const score = symbolData.recommendations[symbolData.recommendations.length - 1].recommendation.score;
       if (score >= minBuy) {
         suggestedSymbols[index].recommendation = 'Buy';
       } else if (score <= minSell) {
@@ -157,7 +157,7 @@ const SymbolsList = () => {
       }
 
       newSuggestedSymbols[index].isPennyStock = symbolData.isPennyStock;
-      newSuggestedSymbols[index].lastClose = symbolData.prices[symbolData.prices.length - 1].point.close;
+      newSuggestedSymbols[index].lastClose = symbolData.recommendations[symbolData.recommendations.length - 1].point.close;
       newSuggestedSymbols[index].symbol = symbolData.symbol;
       newSuggestedSymbols[index].stopLoss = symbolData.stopLoss;
       newSuggestedSymbols[index].score = score;

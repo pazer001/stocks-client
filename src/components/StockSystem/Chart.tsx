@@ -77,7 +77,7 @@ const Chart = () => {
         xAxis: [
           {
             type: 'category',
-            data: symbolState.symbolData?.prices.map((price) =>
+            data: symbolState.symbolData?.recommendations.map((price) =>
               interval === '1d'
                 ? DateTime.fromMillis(price.point.timestamp).toISODate()
                 : DateTime.fromMillis(price.point.timestamp).toISOTime(),
@@ -96,7 +96,7 @@ const Chart = () => {
             gridIndex: 1,
             name: 'Volume',
             nameLocation: 'start',
-            data: symbolState.symbolData?.prices.map(
+            data: symbolState.symbolData?.recommendations.map(
               (data) => data.point.volume,
             ),
             boundaryGap: false,
@@ -112,7 +112,7 @@ const Chart = () => {
             gridIndex: 2,
             name: 'Score',
             nameLocation: 'start',
-            data: symbolState.symbolData?.prices.map(
+            data: symbolState.symbolData?.recommendations.map(
               (data) => data.recommendation.score,
             ),
             boundaryGap: false,
@@ -177,7 +177,7 @@ const Chart = () => {
               borderColor: green[400],
               borderColor0: red[400],
             },
-            data: symbolState.symbolData?.prices.map((data) => [
+            data: symbolState.symbolData?.recommendations.map((data) => [
               Number(data.point.open.toFixed(3)),
               Number(data.point.close.toFixed(3)),
               Number(data.point.low.toFixed(3)),
@@ -330,13 +330,13 @@ const Chart = () => {
             xAxisIndex: 1,
             yAxisIndex: 1,
 
-            data: symbolState.symbolData?.prices.map((data, index) => ({
+            data: symbolState.symbolData?.recommendations.map((data, index) => ({
               value: data.point.volume,
               itemStyle: {
                 color:
-                  symbolState.symbolData?.prices[index - 1] &&
+                  symbolState.symbolData?.recommendations[index - 1] &&
                   data.point.volume >
-                  symbolState.symbolData?.prices[index - 1].point.volume
+                  symbolState.symbolData?.recommendations[index - 1].point.volume
                     ? green[400]
                     : red[400],
               },
@@ -347,7 +347,7 @@ const Chart = () => {
             type: 'line',
             xAxisIndex: 2,
             yAxisIndex: 2,
-            data: symbolState.symbolData?.prices.map(
+            data: symbolState.symbolData?.recommendations.map(
               (data) => data.recommendation.score,
             ),
             lineStyle: {
@@ -362,7 +362,7 @@ const Chart = () => {
                     color: green[400],
                   },
                   yAxis:
-                    symbolState.symbolData?.recommendationsLinesModified.bestPermutation.minBuy.toFixed(
+                    symbolState.symbolData?.recommendationsLines.bestPermutation.minBuy.toFixed(
                       0,
                     ),
                 },
@@ -371,7 +371,7 @@ const Chart = () => {
                     color: red[400],
                   },
                   yAxis:
-                    symbolState.symbolData?.recommendationsLinesModified.bestPermutation.minSell.toFixed(
+                    symbolState.symbolData?.recommendationsLines.bestPermutation.minSell.toFixed(
                       0,
                     ),
                 },

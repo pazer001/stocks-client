@@ -19,7 +19,7 @@ interface Recommendation {
 export type TRiskLevel = 'Low' | 'Medium' | 'High';
 
 export interface SymbolData {
-  prices: Array<{
+  recommendations: Array<{
     point: {
       adjClose: number;
       close: number;
@@ -82,7 +82,7 @@ export interface SymbolData {
     };
   };
   nextEarning: number;
-  recommendationsLinesModified: {
+  recommendationsLines: {
     bestPermutation: {
       minBuy: number;
       minSell: number;
@@ -265,7 +265,7 @@ export const useSymbol = () => {
         symbol,
       );
 
-      if (!analyzedSymbol.data.prices.length) {
+      if (!analyzedSymbol.data.recommendations.length) {
         setSymbolState((prevSymbolState) => ({
           ...prevSymbolState,
           symbolData: undefined,
@@ -281,7 +281,7 @@ export const useSymbol = () => {
       setSymbolState((prevSymbolState) => ({
         ...prevSymbolState,
         symbolData: analyzedSymbol.data,
-        selectedSignal: analyzedSymbol.data.prices.length - 1,
+        selectedSignal: analyzedSymbol.data.recommendations.length - 1,
         selectedSymbol: symbol,
         settings: {
           ...prevSymbolState.settings,
