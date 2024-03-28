@@ -307,7 +307,7 @@ const SymbolInfo = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
                   {Object.values(sectionIcon).map((section, index) => (
                     <>
-                      <Avatar alt={sectionIcon[index]}
+                      <Avatar alt={sectionIcon[index]} key={index}
                               sx={{ width: 24, height: 24, bgcolor: sectionColor[index] }}>
                         {section[0].toUpperCase()}
                       </Avatar>
@@ -330,8 +330,8 @@ const SymbolInfo = () => {
                           {symbolData?.prices[
                             selectedSignal
                             ].recommendation.buyThresholdsReasons.map(
-                            (reason: string) => (
-                              <ListItem key={reason} dense disablePadding secondaryAction={
+                            (reason: string, index) => (
+                              <ListItem key={index} dense disablePadding secondaryAction={
                                 <IconButton onClick={() => showStrategyModal(reason)}>
                                   <InfoIcon />
                                 </IconButton>
@@ -358,8 +358,8 @@ const SymbolInfo = () => {
                     <List dense disablePadding>
                       {[symbolBuy, indexBuy, sectorBuy].map((section, index) => (
                         section && section.map(
-                          (strategyName: string) => (
-                            <ListItem key={strategyName} dense disablePadding secondaryAction={
+                          (strategyName: string, strategyNameIndex) => (
+                            <ListItem key={strategyNameIndex} dense disablePadding secondaryAction={
 
                               <IconButton onClick={() =>
                                 showStrategyModal(strategyName)
@@ -386,8 +386,8 @@ const SymbolInfo = () => {
                     <List dense disablePadding>
                       {[symbolSell, indexSell, sectorSell].map((section, index) => (
                         section && section.map(
-                          (strategyName: string) => (
-                            <ListItem key={strategyName} dense disablePadding secondaryAction={
+                          (strategyName: string, strategyNameIndex) => (
+                            <ListItem key={strategyNameIndex} dense disablePadding secondaryAction={
 
                               <IconButton onClick={() =>
                                 showStrategyModal(strategyName)
@@ -410,36 +410,6 @@ const SymbolInfo = () => {
                         )))}
                     </List>
 
-                    {/*{Boolean(*/}
-                    {/*  symbolData?.prices[symbolData.prices.length - 1]*/}
-                    {/*    .recommendation.sellReasons.length,*/}
-                    {/*) && (*/}
-                    {/*  <>*/}
-                    {/*    <b>Reasons to sell:</b>{' '}*/}
-                    {/*    <List dense disablePadding>*/}
-                    {/*      {symbolData?.prices[*/}
-                    {/*      symbolData.prices.length - 1*/}
-                    {/*        ].recommendation.sellReasons.map(*/}
-                    {/*        (strategyName: string) => (*/}
-                    {/*          <ListItem key={strategyName} dense disablePadding>*/}
-                    {/*            <ListItemIcon*/}
-                    {/*              onClick={() =>*/}
-                    {/*                showStrategyModal(strategyName)*/}
-                    {/*              }*/}
-                    {/*            >*/}
-                    {/*              <IconButton>*/}
-                    {/*                <InfoIcon />*/}
-                    {/*              </IconButton>*/}
-                    {/*            </ListItemIcon>*/}
-                    {/*            <ListItemText*/}
-                    {/*              primary={startCase(strategyName)}*/}
-                    {/*            ></ListItemText>*/}
-                    {/*          </ListItem>*/}
-                    {/*        ),*/}
-                    {/*      )}*/}
-                    {/*    </List>*/}
-                    {/*  </>*/}
-                    {/*)}*/}
                   </>
                 )}
               </div>
