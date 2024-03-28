@@ -73,7 +73,6 @@ export interface ISymbol {
   isPennyStock: boolean;
   logo: string;
   lastClose: number;
-  name: string;
   stopLoss?: Array<number>;
   newsSentiment?: 'positive' | 'negative' | 'neutral';
   riskLevel: TRiskLevel;
@@ -159,7 +158,7 @@ const SymbolsList = () => {
 
       newSuggestedSymbols[index].isPennyStock = symbolData.isPennyStock;
       newSuggestedSymbols[index].lastClose = symbolData.prices[symbolData.prices.length - 1].point.close;
-      newSuggestedSymbols[index].name = symbolData.name;
+      newSuggestedSymbols[index].symbol = symbolData.symbol;
       newSuggestedSymbols[index].stopLoss = symbolData.stopLoss;
       newSuggestedSymbols[index].score = score;
       newSuggestedSymbols[index].riskLevel = symbolData.riskLevel;
@@ -721,14 +720,6 @@ const SymbolsList = () => {
       const newSuggestedSymbols = updatedSuggestedSymbols(suggestedSymbols, symbolData, symbolIndex);
 
       dataGridRef.current.updateRows([{ ...newSuggestedSymbols[symbolIndex] }]);
-      // setSuggestedSymbols((prevSuggestedSymbols) => {
-      //   const newSuggestedSymbols = updatedSuggestedSymbols(prevSuggestedSymbols, symbolData, symbolIndex);
-      //
-      //   dataGridRef.current.updateRows([{ ...newSuggestedSymbols[symbolIndex] }]);
-      //
-      //
-      //   return newSuggestedSymbols;
-      // });
     }
   }, [symbolData]);
 

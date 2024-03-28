@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { getInterval, symbolAtom, useSymbol } from '../../atoms/symbol';
 import { useRecoilState, useRecoilValue } from 'recoil';
 // import { Button } from '@mui/material';
@@ -385,29 +385,35 @@ const Chart = () => {
     return symbolState.symbolData;
   };
 
+
   useEffect(() => {
     setChart();
   }, [symbolState.symbolData]);
 
-  return useMemo(
-    () => (
-      <>
-        {/* <Button onClick={() => setChart()}>Refresh</Button> */}
-        <ReactECharts
-          onEvents={{
-            mouseover: (e: { dataIndex: number; }) => {
-              setSelectSignal(e.dataIndex);
-            },
 
-          }}
-          option={stockChartOptions}
-          notMerge={true}
-          lazyUpdate={true}
-          style={{ height: '100%' }}
-        />
-      </>
-    ),
-    [stockChartOptions],
+  const mouseover = useCallback((e: { dataIndex: number }) => {
+    setSelectSignal(e.dataIndex);
+  }, []);  // ensure all dependencies are correctly listed
+
+  const onEvents = useMemo(() => ({
+    'mouseover': mouseover,
+  }), []); // dependencies array is empty, indicating this callback does not depend on any props or state
+
+  return useMemo(
+    () => {
+      return (
+        <>
+          <ReactECharts
+            onEvents={onEvents}
+            option={stockChartOptions}
+            notMerge={true}
+            lazyUpdate={true}
+            style={{ height: '100%' }}
+          />
+        </>
+      );
+    },
+    [stockChartOptions],  // include mouseover in the dependency array
   );
 };
 

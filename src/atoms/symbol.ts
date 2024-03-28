@@ -96,10 +96,9 @@ export interface SymbolData {
   buyThresholdData: Record<string, Array<number>>;
   stopLoss: Array<number>;
   isPennyStock: boolean;
-  logo: string;
-  name: string;
   newsSentiment: "positive" | "negative" | "neutral";
   riskLevel: TRiskLevel;
+  symbol: string;
 }
 
 enum ByType {
@@ -205,14 +204,19 @@ export const getNextEarning = selector({
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
+let loadingSymbol = false
+
 export const useSymbol = () => {
   const [symbolState, setSymbolState] = useRecoilState(symbolAtom);
   const { mainLoaderShow, setAlert } = useViewActions();
   const { interval, byType } = symbolState.settings;
   const selectedSignal = symbolState.selectedSignal;
 
+
   useEffect(() => {
-    if (symbolState.selectedSymbol) {
+
+    if (symbolState.selectedSymbol && !loadingSymbol) {
+
       changeSymbol(symbolState.selectedSymbol);
     }
   }, [
@@ -253,6 +257,7 @@ export const useSymbol = () => {
   };
 
   const changeSymbol = async (symbol: string) => {
+    loadingSymbol = true
     mainLoaderShow(true);
     setAlert(false);
     try {
@@ -290,6 +295,7 @@ export const useSymbol = () => {
         "Error occurred while trying to load data for this symbol. This can happen if there is no analysis for this symbol.",
       );
     }
+    loadingSymbol = false
   };
 
   const analyzeSymbol = async (
