@@ -286,7 +286,7 @@ const SymbolsList = () => {
 
   const renderStopLoss = (values: Array<number>) => {
     if (!values || values.length === 0) return '-';
-    return <Box sx={{ lineHeight: 0.5 }}>
+    return <Box sx={{ lineHeight: 0.5 }} display="flex" justifyContent="center" height="100%" flexDirection="column">
       {values.map((value, index) => {
         return <Box key={index}><Typography sx={{ lineHeight: 1.2 }}
                                             variant="caption">SL{index + 1}: {value.toFixed(1)}%</Typography></Box>;

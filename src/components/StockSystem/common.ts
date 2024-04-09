@@ -1,6 +1,7 @@
-import { Currency } from "./interfaces";
-import { GridColDef, GridValueFormatterParams } from "@mui/x-data-grid";
-import { get } from "lodash";
+import { Currency } from './interfaces';
+import { GridColDef } from '@mui/x-data-grid';
+import { get } from 'lodash';
+import { GridValueFormatter } from '@mui/x-data-grid/models/colDef/gridColDef';
 
 export const currencies: Currency = {
   usd: "$",
@@ -70,12 +71,12 @@ export const columnDefinition: Array<GridColDef> = [
     flex: 1,
     pinnable: true,
     type: "number",
-    valueFormatter: (params: GridValueFormatterParams<number>) => {
-      if (params.value == null) {
+    valueFormatter: (value: GridValueFormatter) => {
+      if (value == null) {
         return "";
       }
 
-      const valueFormatted = Number(params.value / 1000 / 1000)
+      const valueFormatted = Number(Number(value) / 1000 / 1000)
         .toFixed(0)
         .toLocaleString();
       return `${valueFormatted} bn.`;
@@ -87,12 +88,12 @@ export const columnDefinition: Array<GridColDef> = [
     description: "Currency",
     type: "string",
     flex: 1,
-    valueFormatter: (params: GridValueFormatterParams<string>) => {
-      if (params.value == null) {
+    valueFormatter: (value: GridValueFormatter) => {
+      if (value == null) {
         return "";
       }
 
-      const currencyName = params.value.toLowerCase();
+      const currencyName = String(value).toLowerCase();
       return currencies[currencyName];
     },
   },
@@ -116,8 +117,8 @@ export const columnDefinition: Array<GridColDef> = [
     description: "Quote Type",
     type: "string",
     flex: 1,
-    valueGetter: (params) => {
-      return get(params.row, "quoteType.quoteType");
+    valueGetter: (value, row, column, apiRef) => {
+      return get(row, "quoteType.quoteType");
     },
   },
 ];
