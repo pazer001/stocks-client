@@ -401,14 +401,15 @@ const SymbolsList = () => {
       width: 120,
       sortable: false,
       filterable: true,
-      renderCell: (params) => <Box display="flex"
+      renderCell: (params) => <Box display="flex" alignItems="center"
                                    gap={theme => theme.spacing(1)}>{renderLogo(params.row.logo, params.row.symbol)} {params.row.symbol}</Box>,
     },
     {
       field: 'recommendation',
       headerName: 'Recommendation',
       width: 20,
-      renderCell: (params) => getRecommendationSymbol(params.row.recommendation),
+      renderCell: (params) => <Box display="flex" alignItems="center"
+                                   height="100%">{getRecommendationSymbol(params.row.recommendation)}</Box>,
       sortable: false,
       filterable: false,
     },
