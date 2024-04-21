@@ -115,7 +115,7 @@ const SymbolsList = () => {
     }
 
 
-    const possibleAlertsStrings = ['PPI', 'CPI', 'Core CPI', 'Core PPI', 'Core PCE Price Index', 'PCE Price index'];
+    const possibleAlertsStrings = ['Fed Interest Rate Decision', 'PPI', 'CPI', 'Core CPI', 'Core PPI', 'Core PCE Price Index', 'PCE Price index'];
 
 
     const getEconomicEventsDataResponse = await getEconomicEventsData('United States', date);
