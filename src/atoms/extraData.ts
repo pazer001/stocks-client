@@ -36,20 +36,20 @@ export const useExtraData = () => {
   const [extraData] = useRecoilState(extraDataAtom);
   // const economicEvents = useRecoilValue(getEconomicEvents)
 
-  const getEconomicEventsData = async (country: string, date: string): Promise<Array<EconomicEvent> | undefined>  => {
-    try {
-    const economicEventsResponse   = await axios.get(`${API_HOST}/stocks-adapter/economicEvents/${country}/${date}`);
-
-      return economicEventsResponse.data
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  // const getEconomicEventsData = async (country: string, date: string): Promise<Array<EconomicEvent> | undefined>  => {
+  //   try {
+  //   const economicEventsResponse   = await axios.get(`${API_HOST}/stocks-adapter/economicEvents/${country}/${date}`);
+  //
+  //     return economicEventsResponse.data
+  //
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   return {
     extraData,
-    getEconomicEventsData,
+    // getEconomicEventsData,
     // economicEvents,
   }
 }
