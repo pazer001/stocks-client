@@ -96,7 +96,7 @@ const SymbolsList = () => {
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
   const dataGridRef = useGridApiRef();
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { getEconomicEventsData } = useExtraData();
+  // const { getEconomicEventsData } = useExtraData();
   const [informativeEvent, setInformativeEvent] = useState<string>('');
 
   const handleInformativeEvent = async () => {
@@ -118,16 +118,16 @@ const SymbolsList = () => {
     const possibleAlertsStrings = ['Fed Interest Rate Decision', 'PPI', 'CPI', 'Core CPI', 'Core PPI', 'Core PCE Price Index', 'PCE Price index'];
 
 
-    const getEconomicEventsDataResponse = await getEconomicEventsData('United States', date);
-    if (getEconomicEventsDataResponse !== undefined) {
-      getEconomicEventsDataResponse.forEach((event) => {
-        if (possibleAlertsStrings.includes(event.eventName)) {
-          setInformativeEvent(`Next trading day: ${event.eventName} report.`);
-          return;
-        }
-      });
-
-    }
+    // const getEconomicEventsDataResponse = await getEconomicEventsData('United States', date);
+    // if (getEconomicEventsDataResponse !== undefined) {
+    //   getEconomicEventsDataResponse.forEach((event) => {
+    //     if (possibleAlertsStrings.includes(event.eventName)) {
+    //       setInformativeEvent(`Next trading day: ${event.eventName} report.`);
+    //       return;
+    //     }
+    //   });
+    //
+    // }
 
   };
 
