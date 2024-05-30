@@ -5,7 +5,7 @@ import {
   getNextEarning,
   getPricesMode,
   getSelectedSignal,
-  getSymbolData,
+  getSymbolData, TDataSourceType,
 } from '../../atoms/symbol';
 import axios from 'axios';
 
@@ -115,23 +115,24 @@ const SymbolInfo = () => {
     return (value - min) / (max - min);
   };
 
-
+  const buyReasons = symbolData?.recommendations[selectedSignal].reasons.buy;
+  const sellReasons = symbolData?.recommendations[selectedSignal].reasons.sell;
   const symbolBuy = symbolData?.recommendations[selectedSignal].reasons.buy.symbol;
   const indexBuy = symbolData?.recommendations[selectedSignal].reasons.buy.index;
   const sectorBuy = symbolData?.recommendations[selectedSignal].reasons.buy.sector;
   const symbolSell = symbolData?.recommendations[selectedSignal].reasons.sell.symbol;
   const indexSell = symbolData?.recommendations[selectedSignal].reasons.sell.index;
   const sectorSell = symbolData?.recommendations[selectedSignal].reasons.sell.sector;
-  const sectionIcon: Record<number, string> = {
-    0: 'Symbol',
-    1: 'Index',
-    2: 'Sector',
+  const sectionIcon: Record<TDataSourceType, string> = {
+    symbol: 'Symbol',
+    sector: 'Sector',
+    index: 'Index',
   };
 
-  const sectionColor: Record<number, string> = {
-    0: deepOrange[500],
-    1: deepPurple[500],
-    2: pink[500],
+  const sectionColor: Record<TDataSourceType, string> = {
+    symbol: deepOrange[500],
+    sector: pink[500],
+    index: deepPurple[500],
   };
 
 
@@ -305,14 +306,13 @@ const SymbolInfo = () => {
                   Loss:</b> {symbolData?.stopLoss[0].toFixed(1)}%</Typography>
                 <br />
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
-                  {Object.values(sectionIcon).map((section, index) => (
-                    <>
-                      <Avatar alt={sectionIcon[index]} key={index}
-                              sx={{ width: 24, height: 24, bgcolor: sectionColor[index] }}>
-                        {section[0].toUpperCase()}
+                  {(Object.keys(sectionIcon) as TDataSourceType[]).map((key) => (
+                    <React.Fragment key={key}>
+                      <Avatar alt={sectionIcon[key]} sx={{ width: 24, height: 24, bgcolor: sectionColor[key] }}>
+                        {sectionIcon[key][0].toUpperCase()}
                       </Avatar>
-                      {sectionIcon[index]}
-                    </>
+                      {sectionIcon[key]}
+                    </React.Fragment>
                   ))}
                 </Box>
                 <br />
@@ -321,93 +321,75 @@ const SymbolInfo = () => {
                 {selectedSignal !== undefined && (
                   <>
                     {Boolean(
-                      symbolData?.recommendations[selectedSignal]
-                        .recommendation.buyThresholdsReasons.length,
+                      Object.keys(symbolData?.recommendations[selectedSignal]
+                        .recommendation.buyThresholdsReasons).length,
                     ) && (
                       <>
                         <b>Minimum Thresholds:</b>{' '}
                         <List dense disablePadding>
-                          {symbolData?.recommendations[
-                            selectedSignal
-                            ].recommendation.buyThresholdsReasons.map(
-                            (reason: string, index) => (
-                              <ListItem key={index} dense disablePadding secondaryAction={
-                                <IconButton onClick={() => showStrategyModal(reason)}>
-                                  <InfoIcon />
-                                </IconButton>
-                              }>
-                                <ListItemAvatar>
-                                  <Avatar
-                                    sx={{ width: 24, height: 24, bgcolor: sectionColor[0] }}>
-                                    {sectionIcon[0][0].toUpperCase()}
-                                  </Avatar>
-                                </ListItemAvatar>
-
-                                <ListItemText
-                                  primary={startCase(reason)}
-                                ></ListItemText>
-                              </ListItem>
-                            ),
+                          {(Object.keys(symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons) as TDataSourceType[]).map(
+                            (dataSource: TDataSourceType, index) => (
+                              symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons[dataSource]?.map(
+                                (reason, reasonIndex) => (
+                                  <ListItem key={reasonIndex} dense disablePadding >
+                                    <ListItemAvatar>
+                                      <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
+                                        {sectionIcon[dataSource][0].toUpperCase()}
+                                      </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={startCase(reason)} />
+                                  </ListItem>
+                                )
+                              ) || null  // Add this to handle null or undefined
+                            )
                           )}
                         </List>
+
+
                       </>
                     )}
                     <br />
 
                     <b>Reasons to buy:</b>{' '}
                     <List dense disablePadding>
-                      {[symbolBuy, indexBuy, sectorBuy].map((section, index) => (
-                        section && section.map(
-                          (strategyName: string, strategyNameIndex) => (
-                            <ListItem key={strategyNameIndex} dense disablePadding secondaryAction={
-
-                              <IconButton onClick={() =>
-                                showStrategyModal(strategyName)
-                              }>
-                                <InfoIcon />
-                              </IconButton>
-
-                            }>
-                              <ListItemAvatar>
-                                <Avatar alt={sectionIcon[index]}
-                                        sx={{ width: 24, height: 24, bgcolor: sectionColor[index] }}>
-                                  {sectionIcon[index][0].toUpperCase()}
-                                </Avatar>
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={`${startCase(strategyName)}`}
-                              ></ListItemText>
-                            </ListItem>
-                          ),
-                        )))}
+                      {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.buy) as TDataSourceType[]).map(
+                        (dataSource: TDataSourceType, index) => (
+                          (symbolData?.recommendations[selectedSignal].reasons.buy[dataSource] || []).map(
+                            (reason, reasonIndex) => (
+                              <ListItem key={reasonIndex} dense disablePadding >
+                                <ListItemAvatar>
+                                  <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
+                                    {sectionIcon[dataSource][0].toUpperCase()}
+                                  </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={startCase(reason)} />
+                              </ListItem>
+                            ),
+                          )
+                        ),
+                      )}
                     </List>
+
+
                     <br />
                     <b>Reasons to sell:</b>{' '}
                     <List dense disablePadding>
-                      {[symbolSell, indexSell, sectorSell].map((section, index) => (
-                        section && section.map(
-                          (strategyName: string, strategyNameIndex) => (
-                            <ListItem key={strategyNameIndex} dense disablePadding secondaryAction={
-
-                              <IconButton onClick={() =>
-                                showStrategyModal(strategyName)
-                              }>
-                                <InfoIcon />
-                              </IconButton>
-
-                            }>
-                              <ListItemAvatar>
-                                <Avatar alt={sectionIcon[index]}
-                                        sx={{ width: 24, height: 24, bgcolor: sectionColor[index] }}>
-                                  {sectionIcon[index][0].toUpperCase()}
-                                </Avatar>
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={`${startCase(strategyName)}`}
-                              ></ListItemText>
-                            </ListItem>
-                          ),
-                        )))}
+                      {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.sell) as TDataSourceType[]).map(
+                        (dataSource: TDataSourceType, index) => (
+                          (symbolData?.recommendations[selectedSignal].reasons.sell[dataSource] || []).map(
+                            (reason, reasonIndex) => (
+                              <ListItem key={reasonIndex} dense disablePadding >
+                                <ListItemAvatar>
+                                  <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
+                                    {sectionIcon[dataSource][0].toUpperCase()}
+                                  </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={startCase(reason)} />
+                              </ListItem>
+                            ),
+                          )
+                        ),
+                      )}
                     </List>
 
                   </>

@@ -13,10 +13,11 @@ interface Recommendation {
   buySellSum: number;
   score: number;
   stopLoss: number;
-  buyThresholdsReasons: Array<string>;
+  buyThresholdsReasons: Record<TDataSourceType, string[]>
 }
 
 export type TRiskLevel = 'Low' | 'Medium' | 'High';
+export type TDataSourceType = 'symbol' | 'index' | 'sector';
 
 export interface SymbolData {
   recommendations: Array<{
@@ -30,8 +31,8 @@ export interface SymbolData {
       volume: number;
     };
     reasons: {
-      buy: Record<"symbol" | "index" | "sector", string[]>
-      sell: Record<"symbol" | "index" | "sector", string[]>
+      buy: Record<TDataSourceType, string[]>
+      sell: Record<TDataSourceType, string[]>
     }
     recommendation: Recommendation;
   }>;
