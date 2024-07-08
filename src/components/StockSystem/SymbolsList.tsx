@@ -76,6 +76,7 @@ export interface ISymbol {
   stopLoss?: Array<number>;
   newsSentiment?: 'positive' | 'negative' | 'neutral';
   riskLevel: TRiskLevel;
+  lastRelativeStrength: number;
 }
 
 
@@ -162,6 +163,7 @@ const SymbolsList = () => {
       newSuggestedSymbols[index].stopLoss = symbolData.stopLoss;
       newSuggestedSymbols[index].score = score;
       newSuggestedSymbols[index].riskLevel = symbolData.riskLevel;
+      newSuggestedSymbols[index].lastRelativeStrength = symbolData.lastRelativeStrength;
     }
 
     return newSuggestedSymbols;
@@ -439,16 +441,25 @@ const SymbolsList = () => {
       sortable: false,
       filterable: false,
       renderCell: (params) => params.row.lastClose ? renderPrice(params.row.lastClose, params.row.isPennyStock) : '-',
-
     },
-    // {
-    //   field: 'score',
-    //   headerName: 'Score',
-    //   width: 20,
-    //   renderCell: (params) => params.row.score !== undefined ? params.row.score.toFixed(0) : '-',
-    //   sortable: true,
-    //   filterable: false,
-    // },
+    {
+      field: 'lastRelativeStrength',
+      headerName: 'Relative Strength',
+      width: 60,
+      sortable: true,
+      filterable: false,
+      valueGetter: (value) => value !== undefined ? Number(value).toFixed(0) : '-',
+      sortComparator: (v1, v2) => Number(v1) - Number(v2),
+    },
+    {
+      field: 'score',
+      headerName: 'Score',
+      width: 20,
+      valueGetter: (value) => value !== undefined ? Number(value).toFixed(0) : '-',
+      sortComparator: (v1, v2) => Number(v1) - Number(v2),
+      sortable: true,
+      filterable: false,
+    },
 
     // {
     //   field: 'newsSentiment',
@@ -462,7 +473,7 @@ const SymbolsList = () => {
     {
       field: 'riskLevel',
       headerName: 'Risk',
-      minWidth: 30,
+      minWidth: 20,
       hideable: true,
       sortable: false,
       filterable: false,
@@ -477,6 +488,7 @@ const SymbolsList = () => {
       sortable: false,
       filterable: false,
     },
+
   ];
 
   interface AnalyzedCountProps {

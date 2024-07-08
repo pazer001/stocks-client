@@ -100,6 +100,7 @@ export interface SymbolData {
   newsSentiment: "positive" | "negative" | "neutral";
   riskLevel: TRiskLevel;
   symbol: string;
+  lastRelativeStrength: number;
 }
 
 enum ByType {
