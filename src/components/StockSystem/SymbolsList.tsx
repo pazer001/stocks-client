@@ -420,7 +420,7 @@ const SymbolsList = () => {
       field: 'stopLoss',
       headerName: 'SL',
       // valueGetter: (params) => `${params.row.stopLoss ? `${params.row.stopLoss.toFixed(2)}%` : '-'}`,
-      width: 70,
+      width: 80,
       sortable: false,
       filterable: false,
       renderCell: (params) => renderStopLoss(params.row.stopLoss || []),
@@ -794,6 +794,12 @@ const SymbolsList = () => {
       //   },
       // }}
       // slots={{ toolbar: React.memo(CustomToolbar) }}
+              sortModel={[
+                {
+                  field: 'lastRelativeStrength',
+                  sort: 'desc',
+                },
+              ]}
               columnVisibilityModel={{
                 watchlist: currentWatchlistName !== '',
                 name: false,
