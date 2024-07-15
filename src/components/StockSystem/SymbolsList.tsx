@@ -76,7 +76,7 @@ export interface ISymbol {
   stopLoss?: Array<number>;
   newsSentiment?: 'positive' | 'negative' | 'neutral';
   riskLevel: TRiskLevel;
-  lastRelativeStrength: number;
+  priorityScore: number;
 }
 
 
@@ -163,7 +163,7 @@ const SymbolsList = () => {
       newSuggestedSymbols[index].stopLoss = symbolData.stopLoss;
       newSuggestedSymbols[index].score = score;
       newSuggestedSymbols[index].riskLevel = symbolData.riskLevel;
-      newSuggestedSymbols[index].lastRelativeStrength = symbolData.lastRelativeStrength;
+      newSuggestedSymbols[index].priorityScore = symbolData.priorityScore;
     }
 
     return newSuggestedSymbols;
@@ -443,8 +443,8 @@ const SymbolsList = () => {
       renderCell: (params) => params.row.lastClose ? renderPrice(params.row.lastClose, params.row.isPennyStock) : '-',
     },
     {
-      field: 'lastRelativeStrength',
-      headerName: 'Relative Strength',
+      field: 'priorityScore',
+      headerName: 'Priority Score',
       width: 60,
       sortable: true,
       filterable: false,
@@ -794,18 +794,26 @@ const SymbolsList = () => {
       //   },
       // }}
       // slots={{ toolbar: React.memo(CustomToolbar) }}
-              sortModel={[
-                {
-                  field: 'lastRelativeStrength',
-                  sort: 'desc',
-                },
-              ]}
+      //         sortModel={[
+      //           {
+      //             field: 'priorityScore',
+      //             sort: 'desc',
+      //           },
+      //         ]}
               columnVisibilityModel={{
                 watchlist: currentWatchlistName !== '',
                 name: false,
               }}
               initialState={{
                 pagination: { paginationModel: { pageSize: 100 } },
+                sorting: {
+                  sortModel: [
+                    {
+                      field: 'priorityScore',
+                      sort: 'desc',
+                    },
+                  ],
+                },
                 filter: {
                   filterModel: {
                     items: [],
