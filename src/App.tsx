@@ -24,6 +24,8 @@ import Toolbox from './components/StockSystem/Toolbox';
 import { getAlertMessage, getAlertShow, getMainLoaderShow } from './atoms/view';
 import { useRecoilValue } from 'recoil';
 import './App.css';
+import { useAuth0 } from '@auth0/auth0-react';
+
 
 interface IConsentProps {
   open: boolean;
@@ -88,7 +90,8 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } =
+    useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -97,85 +100,100 @@ function App() {
     localStorage.getItem('consent') !== 'false',
   );
 
+  if(user) {
+    console.log(user);
+  }
 
-  return (
-    <>
-      {mainLoaderShow && (
-        <LinearProgress sx={{ position: 'fixed', width: '100%' }} />
-      )}
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Oops... {error.message}</div>;
+  }
 
-      <Snackbar open={alertShow}>
-        <Alert severity="error">{alertMessage}</Alert>
-      </Snackbar>
-      <Consent
-        open={showConsent}
-        handleClose={() => {
-          localStorage.setItem('consent', String(false));
-          setShowConsent(false);
-        }}
-      />
-      <Grid
-        container
-        direction="column"
-        rowSpacing={1}
-        paddingBottom={theme.spacing(1)}
-        sx={{
-          // minHeight: '100dvh', // Adjust to 'minHeight' to ensure content covers the viewport height
-          // paddingBottom: '0', // Add padding at the bottom
-        }}
-      >
-        <Grid item>
-          <Toolbox />
-        </Grid>
+  if (isAuthenticated) {
+    return (
+      <>
+        {mainLoaderShow && (
+          <LinearProgress sx={{ position: 'fixed', width: '100%' }} />
+        )}
 
-        <Grid item
-              paddingLeft={theme.spacing(1)}
-              paddingRight={theme.spacing(1)}
-              flex={1}
-              width="100%"
+        <Snackbar open={alertShow}>
+          <Alert severity="error">{alertMessage}</Alert>
+        </Snackbar>
+        <Consent
+          open={showConsent}
+          handleClose={() => {
+            localStorage.setItem('consent', String(false));
+            setShowConsent(false);
+          }}
+        />
+        <Grid
+          container
+          direction="column"
+          rowSpacing={1}
+          paddingBottom={theme.spacing(1)}
+          sx={{
+            // minHeight: '100dvh', // Adjust to 'minHeight' to ensure content covers the viewport height
+            // paddingBottom: '0', // Add padding at the bottom
+          }}
         >
-          <Grid container
-                height="100%"
-                columnSpacing={1}
-          >
-            <Grid item
-                  xl={7}
-                  md={7}
-                  sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
-            >
-              <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
-                <Chart />
-              </Paper>
-            </Grid>
-            <Grid
-              item
-              xl={2}
-              md={5}
-              sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
-            >
-              <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
-                <SymbolInfo />
-              </Paper>
-            </Grid>
-            <Grid
-              item
-              xl={3}
-              md={5}
-              xs={12}
-            >
-              <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
-                <SymbolsList />
-              </Paper>
-
-            </Grid>
-
+          <Grid item>
+            <Toolbox  />
           </Grid>
 
+          <Grid item
+                paddingLeft={theme.spacing(1)}
+                paddingRight={theme.spacing(1)}
+                flex={1}
+                width="100%"
+          >
+            <Grid container
+                  height="100%"
+                  columnSpacing={1}
+            >
+              <Grid item
+                    xl={7}
+                    md={7}
+                    sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
+              >
+                <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
+                  <Chart />
+                </Paper>
+              </Grid>
+              <Grid
+                item
+                xl={2}
+                md={5}
+                sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
+              >
+                <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
+                  <SymbolInfo />
+                </Paper>
+              </Grid>
+              <Grid
+                item
+                xl={3}
+                md={5}
+                xs={12}
+              >
+                <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
+                  <SymbolsList />
+                </Paper>
 
+              </Grid>
+
+            </Grid>
+
+
+          </Grid>
         </Grid>
-      </Grid>
-    </>
-  );
+      </>
+    );
+  } else {
+    loginWithRedirect();
+    return <div>Redirecting to login...</div>;
+  }
 }
 
 export default App;

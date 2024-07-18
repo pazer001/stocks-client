@@ -9,6 +9,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { RecoilRoot } from 'recoil';
 import './index.css';
+import { Auth0Provider } from '@auth0/auth0-react';
+
 
 export const darkTheme = createTheme({
   palette: {
@@ -18,9 +20,19 @@ export const darkTheme = createTheme({
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <RecoilRoot>
+    <Auth0Provider
+      domain="dev-ofhanyx8di2v3oby.us.auth0.com"
+      clientId="DstaEG8iVYZOx7xXMfli513mlvwSXa1Z"
+
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+
+      }}
+    >
     <ThemeProvider theme={darkTheme}>
       <CssBaseline enableColorScheme />
       <App />
     </ThemeProvider>
+    </Auth0Provider>
   </RecoilRoot>,
 );

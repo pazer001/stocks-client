@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  AppBar,
+  AppBar, Avatar,
   Box,
   Dialog,
   DialogContent,
@@ -24,8 +24,15 @@ import {
 } from '../../atoms/symbol';
 import Logo from '../../assets/symbata-high-resolution-logo-color-on-transparent-background.svg';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import { useAuth0 } from '@auth0/auth0-react';
 
-const Toolbox = () => {
+interface IToolboxProps {
+
+}
+
+const Toolbox = (props: IToolboxProps) => {
+  const {user } =
+    useAuth0();
   const [, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
@@ -193,6 +200,15 @@ const Toolbox = () => {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Box>
+            <Divider orientation="vertical" flexItem variant="middle" />
+            {user !== undefined && <Box>
+              <Avatar
+                alt={user.name}
+                src={user.picture}
+                sx={{ width: 32, height: 32 }}
+                />
+            </Box>}
+
           </Hidden>
         </Toolbar>
         {/*</Grid>*/}
