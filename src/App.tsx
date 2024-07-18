@@ -100,18 +100,16 @@ function App() {
     localStorage.getItem('consent') !== 'false',
   );
 
-  if(user) {
-    console.log(user);
-  }
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Oops... {error.message}</div>;
-  }
 
-  if (isAuthenticated) {
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
+  // if (error) {
+  //   return <div>Oops... {error.message}</div>;
+  // }
+
+  if (true) {
     return (
       <>
         {mainLoaderShow && (
