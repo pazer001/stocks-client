@@ -443,6 +443,16 @@ const SymbolsList = () => {
       renderCell: (params) => params.row.lastClose ? renderPrice(params.row.lastClose, params.row.isPennyStock) : '-',
     },
     {
+      field: 'averageVolume',
+      headerName: 'Average Volume',
+      width: 100,
+      valueGetter: (value) => value !== undefined ? Number(Number(value).toFixed(0)) : '-',
+      sortComparator: (v1, v2) => Number(v1) - Number(v2),
+      sortable: true,
+      filterable: true,
+      type: 'number',
+    },
+    {
       field: 'priorityScore',
       headerName: 'Priority Score',
       width: 60,
@@ -461,6 +471,7 @@ const SymbolsList = () => {
       filterable: false,
     },
 
+
     // {
     //   field: 'newsSentiment',
     //   headerName: 'News Sentiment',
@@ -470,15 +481,15 @@ const SymbolsList = () => {
     //   filterable: false,
     //   renderCell: (params) => renderNewsSentiment(params.row.newsSentiment || ''),
     // },
-    {
-      field: 'riskLevel',
-      headerName: 'Risk',
-      minWidth: 20,
-      hideable: true,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => renderRiskLevel(params.row.riskLevel),
-    },
+    // {
+    //   field: 'riskLevel',
+    //   headerName: 'Risk',
+    //   minWidth: 20,
+    //   hideable: true,
+    //   sortable: false,
+    //   filterable: false,
+    //   renderCell: (params) => renderRiskLevel(params.row.riskLevel),
+    // },
 
     {
       field: 'name',
@@ -779,10 +790,10 @@ const SymbolsList = () => {
               }}
       // checkboxSelection
       // rowSelectionModel={rowSelectionModel}
-              disableColumnFilter
+      //         disableColumnFilter
               disableColumnSelector
               disableDensitySelector
-              disableColumnMenu
+              // disableColumnMenu
               disableRowSelectionOnClick
               density="standard"
               onRowSelectionModelChange={handleCheckedSymbols}
@@ -804,20 +815,27 @@ const SymbolsList = () => {
                 watchlist: currentWatchlistName !== '',
                 name: false,
               }}
+              filterModel={{
+                items: [
+                  { field: 'averageVolume', operator: '>', value: 1000000 },
+                ],
+              }}
+
               initialState={{
                 pagination: { paginationModel: { pageSize: 100 } },
-                sorting: {
-                  sortModel: [
-                    {
-                      field: 'priorityScore',
-                      sort: 'desc',
-                    },
-                  ],
-                },
+                // sorting: {
+                //   sortModel: [
+                //     {
+                //       field: 'priorityScore',
+                //       sort: 'desc',
+                //     },
+                //   ],
+                // },
+
                 filter: {
                   filterModel: {
                     items: [],
-                    quickFilterExcludeHiddenColumns: true,
+                    quickFilterExcludeHiddenColumns: false,
                   },
                 },
 
