@@ -817,7 +817,7 @@ const SymbolsList = () => {
               }}
               filterModel={{
                 items: [
-                  { field: 'averageVolume', operator: '>', value: 1000000 },
+                  { field: 'averageVolume', operator: '>', value: 500000 },
                 ],
               }}
 
