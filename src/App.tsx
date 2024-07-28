@@ -109,7 +109,7 @@ function App() {
   //   return <div>Oops... {error.message}</div>;
   // }
 
-  if (true) {
+  if (isAuthenticated) {
     return (
       <>
         {mainLoaderShow && (
