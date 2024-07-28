@@ -188,7 +188,7 @@ function App() {
         </Grid>
       </>
     );
-  } else {
+  } else if (!isLoading) {
     loginWithRedirect();
     return <div>Redirecting to login...</div>;
   }
