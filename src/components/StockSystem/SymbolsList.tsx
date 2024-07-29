@@ -209,20 +209,23 @@ const SymbolsList = () => {
     const limit = showOnlyChecked && currentWatchlistName ? watchlist[currentWatchlistName].length : ANALYZE_SYMBOLS_LIMIT;
     setAnalyzedCount(() => 0);
     setMaxAnalyzedCount(() => limit);
-    for (const i in suggestedSymbols) {
-
-      if (count < limit && !suggestedSymbols[i].recommendation) {
-        const symbol = suggestedSymbols[i].symbol;
+    const data = dataGridRef.current.state.filter.filteredRowsLookup;
+    
+    for (let i in data) {
+      if(dataGridRef.current.state.filter.filteredRowsLookup[i] === false) continue;
+      const index = Number(i);
+      if (count < limit && !suggestedSymbols[index].recommendation) {
+        const symbol = suggestedSymbols[index].symbol;
 
         if (showOnlyChecked && !watchlist[currentWatchlistName].includes(symbol)) continue;
 
         try {
           const analyzedSymbol = await analyzeSymbol(symbol);
-          const newSuggestedSymbols = updatedSuggestedSymbols(suggestedSymbols, analyzedSymbol.data, Number(i));
+          const newSuggestedSymbols = updatedSuggestedSymbols(suggestedSymbols, analyzedSymbol.data, index);
 
-          const rowExists = dataGridRef.current.getRow(newSuggestedSymbols[i].id) != null;
+          const rowExists = dataGridRef.current.getRow(newSuggestedSymbols[index].id) != null;
           if (rowExists) {
-            dataGridRef.current.updateRows([{ ...newSuggestedSymbols[i] }]);
+            dataGridRef.current.updateRows([{ ...newSuggestedSymbols[index] }]);
           }
 
           // setSuggestedSymbols(() => [...newSuggestedSymbols]);
@@ -391,7 +394,7 @@ const SymbolsList = () => {
 
     },
     {
-      field: 'id',
+      field: 'symbolNumber',
       headerName: 'Priority',
       width: 60,
       sortable: true,
@@ -712,10 +715,10 @@ const SymbolsList = () => {
           </Tooltip>
           <Tooltip title="Clear recommendations">
               <span>
-              <Button size="large" onClick={clearSuggestions} disabled={props.checkSymbolsLoader}>
-                <ReplayRoundedIcon />
-              </Button>
-                </span>
+                <Button size="large" onClick={clearSuggestions} disabled={props.checkSymbolsLoader}>
+                  <ReplayRoundedIcon />
+                </Button>
+              </span>
           </Tooltip>
 
         </ButtonGroup>
@@ -731,7 +734,7 @@ const SymbolsList = () => {
       const suggestedSymbols = await getSuggestedSymbols();
       setSuggestedSymbols(() => suggestedSymbols.map((symbol, index) => ({
         ...symbol,
-        id: index + 1,
+        id: index,
         symbolNumber: index + 1,
       })));
     };
@@ -746,7 +749,6 @@ const SymbolsList = () => {
       dataGridRef.current.updateRows([{ ...newSuggestedSymbols[symbolIndex] }]);
     }
   }, [symbolData]);
-
 
   // return useMemo(
   // () => (
@@ -793,6 +795,9 @@ const SymbolsList = () => {
       //         disableColumnFilter
               disableColumnSelector
               disableDensitySelector
+              // onStateChange={(state) => {
+              //   console.log(state);
+              // }}
               // disableColumnMenu
               disableRowSelectionOnClick
               density="standard"
