@@ -200,14 +200,14 @@ const Toolbox = (props: IToolboxProps) => {
                 </ToggleButton>
               </ToggleButtonGroup>
             </Box>
-            <Divider orientation="vertical" flexItem variant="middle" />
-            {user !== undefined && <Box>
+
+            {user !== undefined && <><Divider orientation="vertical" flexItem variant="middle" /><Box>
               <Avatar
                 alt={user.name}
                 src={user.picture}
                 sx={{ width: 32, height: 32 }}
                 />
-            </Box>}
+            </Box></>}
 
           </Hidden>
         </Toolbar>

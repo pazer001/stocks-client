@@ -178,12 +178,8 @@ function App() {
                 <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
                   <SymbolsList />
                 </Paper>
-
               </Grid>
-
             </Grid>
-
-
           </Grid>
         </Grid>
       </>
