@@ -11,8 +11,25 @@ import {
   // deepOrange,
   // lightBlue,
   // lime,
-  grey,
+  grey, deepOrange, lightBlue, lime,
 } from '@mui/material/colors';
+import {SMA} from "technicalindicators"
+
+const fixIndicatorArray = (indicatorArray: Array<any>, length: number) => {
+  const value = typeof indicatorArray[0] === 'number' ? undefined : {};
+  const paddingLength = length - indicatorArray.length;
+  const resultArray = new Array(length);
+
+  for (let i = 0; i < paddingLength; i++) {
+    resultArray[i] = value;
+  }
+
+  for (let i = paddingLength, j = 0; i < length; i++, j++) {
+    resultArray[i] = indicatorArray[j];
+  }
+
+  return resultArray;
+}
 
 const Chart = () => {
   // const selectedSymbol = useRecoilValue(getSelectedSymbol);
@@ -184,6 +201,36 @@ const Chart = () => {
               Number(data.point.high.toFixed(3)),
             ]),
           },
+          symbolState.symbolData ? {
+            name: 'SMA 200',
+            type: 'line',
+            data: fixIndicatorArray(SMA.calculate({period: 200, values: symbolState.symbolData.recommendations.map(rec => rec.point.close)}), symbolState.symbolData.recommendations.length),
+            smooth: true,
+            lineStyle: {
+              color: deepOrange.A200,
+              opacity: 0.5,
+            },
+          } : undefined,
+          symbolState.symbolData ? {
+            name: 'SMA 50',
+            type: 'line',
+            data: fixIndicatorArray(SMA.calculate({period: 50, values: symbolState.symbolData.recommendations.map(rec => rec.point.close)}), symbolState.symbolData.recommendations.length),
+            smooth: true,
+            lineStyle: {
+              color: lime.A400,
+              opacity: 0.5,
+            },
+          } : undefined,
+          symbolState.symbolData ? {
+            name: 'SMA 20',
+            type: 'line',
+            data: fixIndicatorArray(SMA.calculate({period: 20, values: symbolState.symbolData.recommendations.map(rec => rec.point.close)}), symbolState.symbolData.recommendations.length),
+            smooth: true,
+            lineStyle: {
+              color: lightBlue.A400,
+              opacity: 0.5,
+            },
+          } : undefined,
 
           // symbolState.symbolData?.buyThresholdData.closeAboveSMA100
           //   ? {
