@@ -32,6 +32,22 @@ export const extraDataAtom = atom({
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
+export interface HistoricalDataCombined {
+  normal: IRestructurePrices;
+  dividendsAdjusted: IRestructurePrices;
+}
+
+export interface IRestructurePrices {
+  date?: Array<Date>;
+  volume: Array<number>;
+  high: Array<number>;
+  low: Array<number>;
+  close: Array<number>;
+  open: Array<number>;
+  timestamp: Array<number>;
+}
+
+
 export const useExtraData = () => {
   const [extraData] = useRecoilState(extraDataAtom);
   // const economicEvents = useRecoilValue(getEconomicEvents)
@@ -47,8 +63,18 @@ export const useExtraData = () => {
   //   }
   // }
 
+  const historicalDataCombined = async (symbol: string, interval: string, startDate: number, endDate: number): Promise<HistoricalDataCombined> => {
+    try {
+      const historicalDataCombinedResponse = await axios.get(`${API_HOST}/stocks-adapter/historicalDataCombined/${symbol}/${interval}/${startDate}/${endDate}`);
+      return historicalDataCombinedResponse.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return {
     extraData,
+    historicalDataCombined
     // getEconomicEventsData,
     // economicEvents,
   }

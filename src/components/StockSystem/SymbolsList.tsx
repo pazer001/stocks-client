@@ -97,7 +97,7 @@ const SymbolsList = () => {
   const { getSuggestedSymbols, analyzeSymbol } = useSymbol();
   const dataGridRef = useGridApiRef();
   const [searchTerm, setSearchTerm] = useState<string>('');
-  // const { getEconomicEventsData } = useExtraData();
+  const { historicalDataCombined } = useExtraData();
   const [informativeEvent, setInformativeEvent] = useState<string>('');
 
   const handleInformativeEvent = async () => {
@@ -119,7 +119,17 @@ const SymbolsList = () => {
     const possibleAlertsStrings = ['Fed Interest Rate Decision', 'PPI', 'CPI', 'Core CPI', 'Core PPI', 'Core PCE Price Index', 'PCE Price index'];
 
 
-    // const getEconomicEventsDataResponse = await getEconomicEventsData('United States', date);
+    const startDate = DateTime.now().minus({ days: 1 }).toUnixInteger();
+    const endDate = DateTime.now().toUnixInteger();
+    const historicalDataCombinedResponse = await historicalDataCombined('^VIX', '1d', startDate, endDate);
+
+    if (historicalDataCombinedResponse !== undefined && historicalDataCombinedResponse.normal.close.length) {
+      const lastClose = historicalDataCombinedResponse.normal.close[historicalDataCombinedResponse.normal.close.length - 1];
+      if (lastClose > 20) {
+        setInformativeEvent('Market is volatile. Consider hedging your positions.');
+      }
+
+    }
     // if (getEconomicEventsDataResponse !== undefined) {
     //   getEconomicEventsDataResponse.forEach((event) => {
     //     if (possibleAlertsStrings.includes(event.eventName)) {
@@ -754,7 +764,7 @@ const SymbolsList = () => {
   // () => (
   return useMemo(() => <Box
     sx={{ height: 'calc(100dvh - 63px)', display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}>
-    {Boolean(informativeEvent) && <Alert severity="info" variant="outlined">{informativeEvent}</Alert>}
+    {Boolean(informativeEvent) && <Alert severity="warning" variant="outlined">{informativeEvent}</Alert>}
     <Filter />
     <Search checkSymbolsLoader={checkSymbolsLoader} />
     <AnalyzedCount analyzedCount={analyzedCount} maxAnalyzedCount={maxAnalyzedCount} />
