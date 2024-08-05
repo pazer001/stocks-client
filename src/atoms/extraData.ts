@@ -63,12 +63,13 @@ export const useExtraData = () => {
   //   }
   // }
 
-  const historicalDataCombined = async (symbol: string, interval: string, startDate: number, endDate: number): Promise<HistoricalDataCombined> => {
+  const historicalDataCombined = async (symbol: string, interval: string, startDate: number, endDate: number): Promise<HistoricalDataCombined | undefined> => {
     try {
       const historicalDataCombinedResponse = await axios.get(`${API_HOST}/stocks-adapter/historicalDataCombined/${symbol}/${interval}/${startDate}/${endDate}`);
       return historicalDataCombinedResponse.data;
     } catch (error) {
       console.error(error);
+      return undefined;
     }
   }
 
