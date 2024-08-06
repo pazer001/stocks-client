@@ -13,7 +13,7 @@ import {
   // lime,
   grey, deepOrange, lightBlue, lime,
 } from '@mui/material/colors';
-import {SMA} from "technicalindicators"
+import {SMA, EMA} from "technicalindicators"
 
 const fixIndicatorArray = (indicatorArray: Array<any>, length: number) => {
   const value = typeof indicatorArray[0] === 'number' ? undefined : {};
@@ -222,9 +222,9 @@ const Chart = () => {
             },
           } : undefined,
           symbolState.symbolData ? {
-            name: 'SMA 20',
+            name: 'EMA 20',
             type: 'line',
-            data: fixIndicatorArray(SMA.calculate({period: 20, values: symbolState.symbolData.recommendations.map(rec => rec.point.close)}), symbolState.symbolData.recommendations.length),
+            data: fixIndicatorArray(EMA.calculate({period: 20, values: symbolState.symbolData.recommendations.map(rec => rec.point.close)}), symbolState.symbolData.recommendations.length),
             smooth: true,
             lineStyle: {
               color: lightBlue.A400,

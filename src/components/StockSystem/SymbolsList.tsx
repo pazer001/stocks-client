@@ -139,7 +139,6 @@ const SymbolsList = () => {
     //   });
     //
     // }
-
   };
 
   useEffect(() => {
