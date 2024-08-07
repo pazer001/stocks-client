@@ -1,5 +1,5 @@
 // import './App.css';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   Button,
@@ -14,8 +14,17 @@ import {
   Paper,
   Snackbar,
   useTheme,
+  useMediaQuery,
+  Box
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
+
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import TipsAndUpdatesIcon from '@mui/icons-material/TipsAndUpdates';
+import WaterfallChartIcon from '@mui/icons-material/WaterfallChart';
+
 import LinearProgress from '@mui/material/LinearProgress';
 import Chart from './components/StockSystem/Chart';
 import SymbolsList from './components/StockSystem/SymbolsList';
@@ -24,7 +33,7 @@ import Toolbox from './components/StockSystem/Toolbox';
 import { getAlertMessage, getAlertShow, getMainLoaderShow } from './atoms/view';
 import { useRecoilValue } from 'recoil';
 import './App.css';
-import { useAuth0 } from '@auth0/auth0-react';
+// import { useAuth0 } from '@auth0/auth0-react';
 
 
 interface IConsentProps {
@@ -90,8 +99,8 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } =
-    useAuth0();
+  // const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } =
+  //   useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -99,6 +108,8 @@ function App() {
   const [showConsent, setShowConsent] = useState<boolean>(
     localStorage.getItem('consent') !== 'false',
   );
+  const [value, setValue] = useState(0);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 
 
@@ -109,7 +120,7 @@ function App() {
   //   return <div>Oops... {error.message}</div>;
   // }
 
-  if (isAuthenticated) {
+  // if (isAuthenticated) {
     return (
       <>
         {mainLoaderShow && (
@@ -175,8 +186,36 @@ function App() {
                 md={5}
                 xs={12}
               >
-                <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
-                  <SymbolsList />
+                <Paper sx={{ height: 'calc(100dvh - 64px)', display: 'flex', flexDirection: 'column' }} >
+                  <Grid container width={'100%'} flex={1}>
+                    <Grid item xs={12} flex={1} height={isMobile && value !==0 ? `calc(100dvh - 117px)`: 'initial'}>
+                      <Box sx={{display: value === 0 ? 'block': 'none'}}>
+                        <SymbolsList />
+                      </Box>
+                      <Box sx={{display: value === 1 ? 'block': 'none'}}>
+                        <SymbolInfo />
+                      </Box>
+                      <Box sx={{display: value === 2 ? 'block': 'none'}}>
+                        <Chart />
+                      </Box>
+                    </Grid>
+                    {isMobile && (
+                      <Grid item xs={12}>
+                        <BottomNavigation
+                          showLabels
+                          value={value}
+                          onChange={(_event, newValue) => {
+                            console.log(newValue);
+                            setValue(newValue);
+                          }}
+                        >
+                          <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
+                          <BottomNavigationAction disabled={false} sx={{'&[disabled]': {opacity: .1}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
+                          <BottomNavigationAction disabled={false} sx={{'&[disabled]': {opacity: .1}}} label="Graph" icon={<WaterfallChartIcon />} />
+                        </BottomNavigation>
+                      </Grid>
+                    )}
+                  </Grid>
                 </Paper>
               </Grid>
             </Grid>
@@ -184,10 +223,10 @@ function App() {
         </Grid>
       </>
     );
-  } else if (!isLoading) {
-    loginWithRedirect();
-    return <div>Redirecting to login...</div>;
-  }
+  // } else if (!isLoading) {
+  //   loginWithRedirect();
+  //   return <div>Redirecting to login...</div>;
+  // }
 }
 
 export default App;
