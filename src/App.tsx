@@ -33,6 +33,8 @@ import Toolbox from './components/StockSystem/Toolbox';
 import { getAlertMessage, getAlertShow, getMainLoaderShow } from './atoms/view';
 import { useRecoilValue } from 'recoil';
 import './App.css';
+import { useSymbol } from './atoms/symbol';
+import { useAuth0 } from '@auth0/auth0-react';
 // import { useAuth0 } from '@auth0/auth0-react';
 
 
@@ -99,8 +101,8 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  // const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } =
-  //   useAuth0();
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } =
+    useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -110,6 +112,7 @@ function App() {
   );
   const [value, setValue] = useState(0);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { selectedSymbol } = useSymbol();
 
 
 
@@ -120,7 +123,7 @@ function App() {
   //   return <div>Oops... {error.message}</div>;
   // }
 
-  // if (isAuthenticated) {
+  if (isAuthenticated) {
     return (
       <>
         {mainLoaderShow && (
@@ -210,8 +213,8 @@ function App() {
                           }}
                         >
                           <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
-                          <BottomNavigationAction disabled={false} sx={{'&[disabled]': {opacity: .1}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
-                          <BottomNavigationAction disabled={false} sx={{'&[disabled]': {opacity: .1}}} label="Graph" icon={<WaterfallChartIcon />} />
+                          <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
+                          <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Graph" icon={<WaterfallChartIcon />} />
                         </BottomNavigation>
                       </Grid>
                     )}
@@ -223,10 +226,10 @@ function App() {
         </Grid>
       </>
     );
-  // } else if (!isLoading) {
-  //   loginWithRedirect();
-  //   return <div>Redirecting to login...</div>;
-  // }
+  } else if (!isLoading) {
+    loginWithRedirect();
+    return <div>Redirecting to login...</div>;
+  }
 }
 
 export default App;
