@@ -213,6 +213,7 @@ export const useSymbol = () => {
   const { mainLoaderShow, setAlert } = useViewActions();
   const { interval, byType } = symbolState.settings;
   const selectedSignal = symbolState.selectedSignal;
+  const selectedSymbol = symbolState.selectedSymbol;
 
 
   useEffect(() => {
@@ -315,6 +316,7 @@ export const useSymbol = () => {
     getWatchlistSymbols,
     addWatchlistSymbols,
     setSelectSignal,
-    selectedSignal
+    selectedSignal,
+    selectedSymbol
   };
 };

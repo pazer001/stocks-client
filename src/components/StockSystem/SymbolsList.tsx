@@ -4,7 +4,7 @@ import {
   Avatar,
   Box, Button, ButtonGroup, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
   MenuItem, TextField,
-
+  useMediaQuery,
   Tooltip, Typography, useTheme,
 } from '@mui/material';
 import { green, red, grey, blue, yellow } from '@mui/material/colors';
@@ -99,6 +99,7 @@ const SymbolsList = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const { historicalDataCombined } = useExtraData();
   const [informativeEvent, setInformativeEvent] = useState<string>('');
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleInformativeEvent = async () => {
     const currentDate = DateTime.now();
@@ -758,11 +759,12 @@ const SymbolsList = () => {
       dataGridRef.current.updateRows([{ ...newSuggestedSymbols[symbolIndex] }]);
     }
   }, [symbolData]);
+  
 
   // return useMemo(
   // () => (
   return useMemo(() => <Box
-    sx={{ height: 'calc(100dvh - 63px)', display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}>
+    sx={{ height: `calc(100dvh - 63px - ${isMobile ? '54px': '0px'})`, display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}>
     {Boolean(informativeEvent) && <Alert severity="warning" variant="outlined">{informativeEvent}</Alert>}
     <Filter />
     <Search checkSymbolsLoader={checkSymbolsLoader} />
