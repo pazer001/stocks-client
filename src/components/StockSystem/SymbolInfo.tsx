@@ -118,14 +118,6 @@ const SymbolInfo = () => {
     return (value - min) / (max - min);
   };
 
-  const buyReasons = symbolData?.recommendations[selectedSignal].reasons.buy;
-  const sellReasons = symbolData?.recommendations[selectedSignal].reasons.sell;
-  const symbolBuy = symbolData?.recommendations[selectedSignal].reasons.buy.symbol;
-  const indexBuy = symbolData?.recommendations[selectedSignal].reasons.buy.index;
-  const sectorBuy = symbolData?.recommendations[selectedSignal].reasons.buy.sector;
-  const symbolSell = symbolData?.recommendations[selectedSignal].reasons.sell.symbol;
-  const indexSell = symbolData?.recommendations[selectedSignal].reasons.sell.index;
-  const sectorSell = symbolData?.recommendations[selectedSignal].reasons.sell.sector;
   const sectionIcon: Record<TDataSourceType, string> = {
     symbol: 'Symbol',
     sector: 'Sector',
@@ -259,7 +251,7 @@ const SymbolInfo = () => {
                         },
                       },
                       axisLabel: {
-                        fontSize: 0,
+                        show: false
                       },
                       title: {
                         offsetCenter: [0, '-10%'],
