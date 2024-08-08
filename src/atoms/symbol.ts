@@ -214,6 +214,7 @@ export const useSymbol = () => {
   const { interval, byType } = symbolState.settings;
   const selectedSignal = symbolState.selectedSignal;
   const selectedSymbol = symbolState.selectedSymbol;
+  const symbolData = symbolState.symbolData;
 
 
   useEffect(() => {
@@ -317,6 +318,7 @@ export const useSymbol = () => {
     addWatchlistSymbols,
     setSelectSignal,
     selectedSignal,
-    selectedSymbol
+    selectedSymbol,
+    symbolData
   };
 };

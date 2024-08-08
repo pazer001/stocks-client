@@ -111,7 +111,7 @@ function App() {
   );
   const [value, setValue] = useState(0);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { selectedSymbol } = useSymbol();
+  const { symbolData } = useSymbol();
 
 
 
@@ -214,8 +214,8 @@ function App() {
                             }}
                           >
                             <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
-                            <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
-                            <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Graph" icon={<WaterfallChartIcon />} />
+                            <BottomNavigationAction disabled={!symbolData} sx={{'&[disabled]': {opacity: .25}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
+                            <BottomNavigationAction disabled={!symbolData} sx={{'&[disabled]': {opacity: .25}}} label="Graph" icon={<WaterfallChartIcon />} />
                           </BottomNavigation>
                         </Grid>
                       </Grid>
