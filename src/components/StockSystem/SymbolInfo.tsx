@@ -25,6 +25,8 @@ import {
   // ListItemIcon,
   // ListItemText,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { startCase } from 'lodash';
@@ -38,6 +40,7 @@ const API_HOST = import.meta.env.VITE_API_HOST;
 // }
 
 const SymbolInfo = () => {
+  const theme = useTheme();
   const symbolData = useRecoilValue(getSymbolData);
   const selectedSignal = useRecoilValue(getSelectedSignal);
   const byType = useRecoilValue(getByType);
@@ -135,10 +138,12 @@ const SymbolInfo = () => {
     index: deepPurple[500],
   };
 
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
 
   return useMemo(
     () => (
-      <Box sx={{ height: '100%' }}>
+      <Box sx={{ height: isMobile ? 'calc(100dvh - 117px)' : '100%' }}>
         {symbolData && strategyModalOpen && strategyName && (
           <Dialog open={strategyModalOpen} onClose={() => setStrategyName('')}>
             <DialogTitle>{startCase(strategyName)}</DialogTitle>
@@ -194,8 +199,8 @@ const SymbolInfo = () => {
         />
 
         {symbolData && (
-          <Card sx={{ height: '100%', overflowY: 'auto' }}>
-            <CardContent>
+          <Card sx={{ height: '100%',  overscrollBehaviorY: 'none' }}>
+            <CardContent sx={{height: 'inherit'}}>
               <ReactECharts
                 option={{
                   series: [
@@ -301,7 +306,6 @@ const SymbolInfo = () => {
                   </Typography>
                 )}
 
-
                 <Typography><b>Stop
                   Loss:</b> {symbolData?.stopLoss[0].toFixed(1)}%</Typography>
                 <br />
@@ -317,19 +321,44 @@ const SymbolInfo = () => {
                 </Box>
                 <br />
 
+                <Box sx={{height: `calc(100dvh - ${isMobile ? '377': '311'}px)`, overflowY: 'auto'}}>
+                  {selectedSignal !== undefined && (
+                    <>
+                      {Boolean(
+                        Object.keys(symbolData?.recommendations[selectedSignal]
+                          .recommendation.buyThresholdsReasons).length,
+                      ) && (
+                        <>
+                          <b>Minimum Thresholds:</b>{' '}
+                          <List dense disablePadding>
+                            {(Object.keys(symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons) as TDataSourceType[]).map(
+                              (dataSource: TDataSourceType, index) => (
+                                symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons[dataSource]?.map(
+                                  (reason, reasonIndex) => (
+                                    <ListItem key={reasonIndex} dense disablePadding >
+                                      <ListItemAvatar>
+                                        <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
+                                          {sectionIcon[dataSource][0].toUpperCase()}
+                                        </Avatar>
+                                      </ListItemAvatar>
+                                      <ListItemText primary={startCase(reason)} />
+                                    </ListItem>
+                                  )
+                                ) || null  // Add this to handle null or undefined
+                              )
+                            )}
+                          </List>
 
-                {selectedSignal !== undefined && (
-                  <>
-                    {Boolean(
-                      Object.keys(symbolData?.recommendations[selectedSignal]
-                        .recommendation.buyThresholdsReasons).length,
-                    ) && (
-                      <>
-                        <b>Minimum Thresholds:</b>{' '}
+
+                        </>
+                      )}
+                      <br />
+                      
+                        <b>Reasons to buy:</b>{' '}
                         <List dense disablePadding>
-                          {(Object.keys(symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons) as TDataSourceType[]).map(
+                          {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.buy) as TDataSourceType[]).map(
                             (dataSource: TDataSourceType, index) => (
-                              symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons[dataSource]?.map(
+                              (symbolData?.recommendations[selectedSignal].reasons.buy[dataSource] || []).map(
                                 (reason, reasonIndex) => (
                                   <ListItem key={reasonIndex} dense disablePadding >
                                     <ListItemAvatar>
@@ -339,61 +368,37 @@ const SymbolInfo = () => {
                                     </ListItemAvatar>
                                     <ListItemText primary={startCase(reason)} />
                                   </ListItem>
-                                )
-                              ) || null  // Add this to handle null or undefined
-                            )
+                                ),
+                              )
+                            ),
                           )}
                         </List>
 
 
-                      </>
-                    )}
-                    <br />
-
-                    <b>Reasons to buy:</b>{' '}
-                    <List dense disablePadding>
-                      {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.buy) as TDataSourceType[]).map(
-                        (dataSource: TDataSourceType, index) => (
-                          (symbolData?.recommendations[selectedSignal].reasons.buy[dataSource] || []).map(
-                            (reason, reasonIndex) => (
-                              <ListItem key={reasonIndex} dense disablePadding >
-                                <ListItemAvatar>
-                                  <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
-                                    {sectionIcon[dataSource][0].toUpperCase()}
-                                  </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText primary={startCase(reason)} />
-                              </ListItem>
+                        <br />
+                        <b>Reasons to sell:</b>{' '}
+                        <List dense disablePadding>
+                          {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.sell) as TDataSourceType[]).map(
+                            (dataSource: TDataSourceType, index) => (
+                              (symbolData?.recommendations[selectedSignal].reasons.sell[dataSource] || []).map(
+                                (reason, reasonIndex) => (
+                                  <ListItem key={reasonIndex} dense disablePadding >
+                                    <ListItemAvatar>
+                                      <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
+                                        {sectionIcon[dataSource][0].toUpperCase()}
+                                      </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={startCase(reason)} />
+                                  </ListItem>
+                                ),
+                              )
                             ),
-                          )
-                        ),
-                      )}
-                    </List>
-
-
-                    <br />
-                    <b>Reasons to sell:</b>{' '}
-                    <List dense disablePadding>
-                      {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.sell) as TDataSourceType[]).map(
-                        (dataSource: TDataSourceType, index) => (
-                          (symbolData?.recommendations[selectedSignal].reasons.sell[dataSource] || []).map(
-                            (reason, reasonIndex) => (
-                              <ListItem key={reasonIndex} dense disablePadding >
-                                <ListItemAvatar>
-                                  <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
-                                    {sectionIcon[dataSource][0].toUpperCase()}
-                                  </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText primary={startCase(reason)} />
-                              </ListItem>
-                            ),
-                          )
-                        ),
-                      )}
-                    </List>
-
-                  </>
-                )}
+                          )}
+                        </List>
+                      
+                    </>
+                  )}
+                </Box>
               </div>
             </CardContent>
           </Card>

@@ -189,35 +189,39 @@ function App() {
                 xs={12}
               >
                 <Paper sx={{ height: 'calc(100dvh - 64px)', display: 'flex', flexDirection: 'column' }} >
-                  <Grid container width={'100%'} flex={1}>
-                    <Grid item xs={12} flex={1} height={isMobile && value !==0 ? `calc(100dvh - 117px)`: 'initial'}>
-                      <Box sx={{display: value === 0 ? 'block': 'none'}}>
-                        <SymbolsList />
-                      </Box>
-                      <Box sx={{display: value === 1 ? 'block': 'none'}}>
-                        <SymbolInfo />
-                      </Box>
-                      <Box sx={{display: value === 2 ? 'block': 'none'}}>
-                        <Chart />
-                      </Box>
-                    </Grid>
-                    {isMobile && (
-                      <Grid item xs={12}>
-                        <BottomNavigation
-                          showLabels
-                          value={value}
-                          onChange={(_event, newValue) => {
-                            console.log(newValue);
-                            setValue(newValue);
-                          }}
-                        >
-                          <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
-                          <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
-                          <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Graph" icon={<WaterfallChartIcon />} />
-                        </BottomNavigation>
+                {isMobile 
+                  ? (
+                      <Grid container width={'100%'} flex={1}>
+                        <Grid item xs={12} flex={1} height={isMobile && value !==0 ? `calc(100dvh - 117px)`: 'initial'}>
+                          <Box sx={{display: value === 0 ? 'block': 'none'}}>
+                            <SymbolsList />
+                          </Box>
+                          <Box sx={{display: value === 1 ? 'block': 'none'}}>
+                            <SymbolInfo />
+                          </Box>
+                          <Box sx={{display: value === 2 ? 'block': 'none'}}>
+                            <Chart />
+                          </Box>
+                        </Grid>
+                        
+                          <Grid item xs={12}>
+                            <BottomNavigation
+                              showLabels
+                              value={value}
+                              onChange={(_event, newValue) => {
+                                console.log(newValue);
+                                setValue(newValue);
+                              }}
+                            >
+                              <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
+                              <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
+                              <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Graph" icon={<WaterfallChartIcon />} />
+                            </BottomNavigation>
+                          </Grid>
                       </Grid>
-                    )}
-                  </Grid>
+                      )
+                    : <SymbolsList />
+                  }
                 </Paper>
               </Grid>
             </Grid>
