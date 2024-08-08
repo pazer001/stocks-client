@@ -203,21 +203,21 @@ function App() {
                             <Chart />
                           </Box>
                         </Grid>
-                        
-                          <Grid item xs={12}>
-                            <BottomNavigation
-                              showLabels
-                              value={value}
-                              onChange={(_event, newValue) => {
-                                console.log(newValue);
-                                setValue(newValue);
-                              }}
-                            >
-                              <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
-                              <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
-                              <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Graph" icon={<WaterfallChartIcon />} />
-                            </BottomNavigation>
-                          </Grid>
+                    
+                        <Grid item xs={12}>
+                          <BottomNavigation
+                            showLabels
+                            value={value}
+                            onChange={(_event, newValue) => {
+                              console.log(newValue);
+                              setValue(newValue);
+                            }}
+                          >
+                            <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
+                            <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
+                            <BottomNavigationAction disabled={!selectedSymbol} sx={{'&[disabled]': {opacity: .25}}} label="Graph" icon={<WaterfallChartIcon />} />
+                          </BottomNavigation>
+                        </Grid>
                       </Grid>
                       )
                     : <SymbolsList />
