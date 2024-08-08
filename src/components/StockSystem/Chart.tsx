@@ -14,6 +14,7 @@ import {
   grey, deepOrange, lightBlue, lime,
 } from '@mui/material/colors';
 import {SMA, EMA} from "technicalindicators"
+import { useMediaQuery, useTheme } from '@mui/material';
 
 const fixIndicatorArray = (indicatorArray: Array<any>, length: number) => {
   const value = typeof indicatorArray[0] === 'number' ? undefined : {};
@@ -32,6 +33,7 @@ const fixIndicatorArray = (indicatorArray: Array<any>, length: number) => {
 }
 
 const Chart = () => {
+  const theme = useTheme();
   // const selectedSymbol = useRecoilValue(getSelectedSymbol);
   const [symbolState] = useRecoilState(symbolAtom);
   const { setSelectSignal } = useSymbol();
@@ -446,6 +448,9 @@ const Chart = () => {
     'mouseover': mouseover,
   }), []); // dependencies array is empty, indicating this callback does not depend on any props or state
 
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+
   return useMemo(
     () => {
       return (
@@ -455,7 +460,7 @@ const Chart = () => {
             option={stockChartOptions}
             notMerge={true}
             lazyUpdate={true}
-            style={{ height: '87dvh', width: "96dvw" }}
+            style={{ height: isMobile ? 'calc(100dvh - 117px)': '100%', width: isMobile ? "97dvw": 'initial' }}
           />
         </>
       );
