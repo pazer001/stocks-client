@@ -765,7 +765,9 @@ const SymbolsList = () => {
   // () => (
   return useMemo(() => <Box
     sx={{ height: `calc(100dvh - 63px - ${isMobile ? '54px': '0px'})`, display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}>
-    {Boolean(informativeEvent) && <Alert severity="warning" variant="outlined">{informativeEvent}</Alert>}
+    {Boolean(informativeEvent) && <Alert severity="warning" variant="outlined" onClose={isMobile ? () => {
+      setInformativeEvent('');
+    }: undefined}>{informativeEvent}</Alert>}
     <Filter />
     <Search checkSymbolsLoader={checkSymbolsLoader} />
     <AnalyzedCount analyzedCount={analyzedCount} maxAnalyzedCount={maxAnalyzedCount} />
