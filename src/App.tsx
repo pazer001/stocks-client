@@ -35,7 +35,8 @@ import { useRecoilValue } from 'recoil';
 import './App.css';
 import { useSymbol } from './atoms/symbol';
 import { useAuth0 } from '@auth0/auth0-react';
-// import { useAuth0 } from '@auth0/auth0-react';
+import SwipeableViews from 'react-swipeable-views';
+
 
 
 interface IConsentProps {
@@ -116,12 +117,12 @@ function App() {
 
 
 
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-  // if (error) {
-  //   return <div>Oops... {error.message}</div>;
-  // }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Oops... {error.message}</div>;
+  }
 
   if (isAuthenticated) {
     return (
@@ -193,7 +194,7 @@ function App() {
                 {isMobile 
                   ? (
                       <Grid container width={'100%'} flex={1}>
-                        <Grid item xs={12} flex={1} height={isMobile && value !==0 ? `calc(100dvh - 117px)`: 'initial'}>
+                        {/* <Grid item xs={12} flex={1} height={value !==0 ? `calc(100dvh - 117px)`: 'initial'}>
                           <Box sx={{display: value === 0 ? 'block': 'none'}}>
                             <SymbolsList />
                           </Box>
@@ -203,6 +204,19 @@ function App() {
                           <Box sx={{display: value === 2 ? 'block': 'none'}}>
                             <Chart />
                           </Box>
+                        </Grid> */}
+                        <Grid item xs={12} flex={1}>
+                          <SwipeableViews disabled={!symbolData} index={value} onChangeIndex={(index) => setValue(index)}>
+                            <Box sx={{height: "calc(100dvh - 117px)", paddingInline:'1px'}}>
+                              <SymbolsList />
+                            </Box>
+                            <Box sx={{height: "calc(100dvh - 117px)", paddingInline:'1px'}}>
+                              <SymbolInfo />
+                            </Box>
+                            <Box sx={{height: "calc(100dvh - 117px)", paddingInline:'1px'}}>
+                              <Chart />
+                            </Box>
+                          </SwipeableViews>
                         </Grid>
                     
                         <Grid item xs={12}>
@@ -210,7 +224,6 @@ function App() {
                             showLabels
                             value={value}
                             onChange={(_event, newValue) => {
-                              console.log(newValue);
                               setValue(newValue);
                             }}
                           >
