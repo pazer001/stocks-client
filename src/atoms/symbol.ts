@@ -101,6 +101,8 @@ export interface SymbolData {
   riskLevel: TRiskLevel;
   symbol: string;
   priorityScore: number;
+  logo: string;
+  name: string;
 }
 
 enum ByType {

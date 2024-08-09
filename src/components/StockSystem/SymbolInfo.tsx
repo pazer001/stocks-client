@@ -193,6 +193,11 @@ const SymbolInfo = () => {
         {symbolData && (
           <Card sx={{ height: '100%',  overscrollBehaviorY: 'none' }}>
             <CardContent sx={{height: 'inherit'}}>
+              <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"} gap={theme.spacing(1)}>
+                <Avatar src={symbolData.logo} alt={symbolData.symbol} sx={{width: 24, height: 24}} />
+                <Typography variant="h6">{symbolData.symbol}</Typography>
+              </Box>
+              <Typography variant="body1">{symbolData.name}</Typography>
               <ReactECharts
                 option={{
                   series: [
