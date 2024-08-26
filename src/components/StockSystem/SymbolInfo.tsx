@@ -9,7 +9,7 @@ import {
 } from '../../atoms/symbol';
 import axios from 'axios';
 
-import { green, red, grey, deepOrange, deepPurple, pink } from '@mui/material/colors';
+import { green, red, grey, deepOrange, deepPurple, pink, blue, cyan, lime } from '@mui/material/colors';
 import {
   Avatar,
   Box,
@@ -19,6 +19,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle, IconButton, List, ListItem, ListItemAvatar, ListItemText,
+  Paper,
   // IconButton,
   // List,
   // ListItem,
@@ -32,12 +33,19 @@ import InfoIcon from '@mui/icons-material/Info';
 import { startCase } from 'lodash';
 import ReactECharts from 'echarts-for-react';
 import { DateTime } from 'luxon';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import PieChartIcon from '@mui/icons-material/PieChart';
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
 // function InfoIcon() {
 //   return null;
 // }
+
+const etfIcons: Record<'sector' | 'index', React.ReactElement> = {
+  sector: <PieChartIcon />,
+  index: <MonetizationOnIcon />,
+};
 
 const SymbolInfo = () => {
   const theme = useTheme();
@@ -49,8 +57,10 @@ const SymbolInfo = () => {
   const [strategyName, setStrategyName] = useState<string>('');
   const [strategyModalOpen, setStrategyModalOpen] = useState<boolean>(false);
   const [strategyDescription, setStrategyDescription] = useState<string>('');
-  const [indicatorInfoDialog, setIndicatorInfoDialog] =
-    useState<boolean>(false);
+  const [indicatorInfoDialog, setIndicatorInfoDialog] = useState<boolean>(false);
+  const reasonsInfoContainerRef = React.useRef<HTMLDivElement>(null);
+
+  console.log('symbolData', symbolData);
 
   useEffect(() => {
     const getStrategyDescription = async () => {
@@ -132,6 +142,10 @@ const SymbolInfo = () => {
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  // const reasonToBuy = Object.keys(symbolData?.recommendations[selectedSignal].reasons.buy) as TDataSourceType[];
+  // const hasMinimumThresholds = Boolean(Object.keys(symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons as Record<TDataSourceType, string[]>).length);
+  // const hasReasonToBuy = Object.values(symbolData?.recommendations[selectedSignal].reasons.buy as Record<TDataSourceType, string[]>).some((reasons) => reasons.length > 0);
+  // const hasReasonToSell = Object.values(symbolData?.recommendations[selectedSignal].reasons.sell as Record<TDataSourceType, string[]>).some((reasons) => reasons.length > 0);
 
   return useMemo(
     () => (
@@ -192,12 +206,13 @@ const SymbolInfo = () => {
 
         {symbolData && (
           <Card sx={{ height: '100%',  overscrollBehaviorY: 'none' }}>
-            <CardContent sx={{height: 'inherit'}}>
-              <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"} gap={theme.spacing(1)}>
-                <Avatar src={symbolData.logo} alt={symbolData.symbol} sx={{width: 24, height: 24}} />
-                <Typography variant="h6">{symbolData.symbol}</Typography>
+            <CardContent sx={{height: 'inherit', position: 'relative'}}>
+              <Box position='absolute' zIndex={1} top={'2px'} left={theme.spacing(1)}>
+                <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"} gap={theme.spacing(1)}>
+                  <Typography variant="caption">{symbolData.name}</Typography>
+                </Box>
               </Box>
-              <Typography variant="body1">{symbolData.name}</Typography>
+              
               <ReactECharts
                 option={{
                   series: [
@@ -242,17 +257,17 @@ const SymbolInfo = () => {
                         },
                       },
                       axisTick: {
-                        length: 12,
+                        length: isMobile ? 8 : 12,
                         lineStyle: {
                           color: 'auto',
-                          width: 2,
+                          width: isMobile ? 1 : 2,
                         },
                       },
                       splitLine: {
-                        length: 20,
+                        length: isMobile ? 15: 20,
                         lineStyle: {
                           color: 'auto',
-                          width: 5,
+                          width: isMobile ? 0.5 : 5,
                         },
                       },
                       axisLabel: {
@@ -264,7 +279,7 @@ const SymbolInfo = () => {
                         color: getRecommendationColor(),
                       },
                       detail: {
-                        fontSize: 30,
+                        fontSize: isMobile ? 16 : 30,
                         offsetCenter: [0, '-35%'],
                         valueAnimation: true,
                         formatter: function(value: number) {
@@ -285,11 +300,11 @@ const SymbolInfo = () => {
                 }}
                 notMerge={true}
                 lazyUpdate={true}
-                style={{ height: '200px' }}
+                style={{ height: isMobile ? '150px' : '200px' }}
               />
-              <div
+              <Box
                 className="symbolInfo-reasons"
-                style={{ marginTop: '-80px' }}
+                sx={{ marginTop: isMobile ? '-57px' : '-80px' }}
               >
                 {nextEarning && (
                   <Typography>
@@ -303,29 +318,45 @@ const SymbolInfo = () => {
                   </Typography>
                 )}
 
-                <Typography><b>Stop
+                <Typography marginBottom={theme.spacing(1)}><b>Stop
                   Loss:</b> {symbolData?.stopLoss[0].toFixed(1)}%</Typography>
-                <br />
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: '1em' }}>
-                  {(Object.keys(sectionIcon) as TDataSourceType[]).map((key) => (
-                    <React.Fragment key={key}>
-                      <Avatar alt={sectionIcon[key]} sx={{ width: 24, height: 24, bgcolor: sectionColor[key] }}>
-                        {sectionIcon[key][0].toUpperCase()}
-                      </Avatar>
-                      {sectionIcon[key]}
-                    </React.Fragment>
-                  ))}
+                <Box sx={{ display: 'flex', marginBottom: theme.spacing(2), gap: 1 }}>
+                  {(Object.keys(sectionIcon) as TDataSourceType[]).map((key) => {
+                    if (!symbolData.info[key].symbol) return null;
+                    return (
+                    <Box width='32%'>
+                      <Paper variant="outlined" sx={{marginBottom: theme.spacing(1), bgcolor: pink[900]}}><Typography variant='body2' borderRadius={'2px'} paddingInline={theme.spacing(1)}>{startCase(key)}</Typography></Paper>
+                      <Paper variant="outlined" key={key} sx={{display: 'flex', flexDirection: 'column', gap: 1,  padding: theme.spacing(1)}}>
+                        <Box display={'flex'} gap={1} width={'80%'}>
+                          <Avatar alt={sectionIcon[key]} sx={{ width: 24, height: 24, bgcolor: sectionColor[key] }} src={key === 'symbol' ? symbolData.info[key].logo : undefined} >
+                            {/* <Typography color="white">{sectionIcon[key][0].toUpperCase()}</Typography> */}
+                            {key !== 'symbol' && etfIcons[key]}
+                          </Avatar>
+                          {symbolData.info[key].symbol}
+                        </Box>
+                        <Typography noWrap variant="caption">{ 
+                          key === 'symbol' 
+                            ? symbolData.info[key].name
+                            : symbolData.info[key].etfTheme
+                        }</Typography>
+                      </Paper>
+                    </Box>
+                  )})}
                 </Box>
-                <br />
-
-                <Box sx={{height: `calc(100dvh - ${isMobile ? '377': '311'}px)`, overflowY: 'auto'}}>
+                <Paper 
+                  ref={reasonsInfoContainerRef} 
+                  variant="outlined" 
+                  sx={{
+                    height: `calc(100dvh - ${isMobile ? '382': '358'}px - ${nextEarning ? '24': '0'}px)`, 
+                    overflowY: 'auto', 
+                    padding: theme.spacing(1), 
+                    bgcolor: grey[900]
+                  }}
+                >
                   {selectedSignal !== undefined && (
                     <>
-                      {Boolean(
-                        Object.keys(symbolData?.recommendations[selectedSignal]
-                          .recommendation.buyThresholdsReasons).length,
-                      ) && (
-                        <>
+                      {Boolean(Object.keys(symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons as Record<TDataSourceType, string[]>).length) && (
+                        <Box display={'flex'} flexDirection={'column'} gap={1}>
                           <b>Minimum Thresholds:</b>{' '}
                           <List dense disablePadding>
                             {(Object.keys(symbolData?.recommendations[selectedSignal].recommendation.buyThresholdsReasons) as TDataSourceType[]).map(
@@ -334,11 +365,12 @@ const SymbolInfo = () => {
                                   (reason, reasonIndex) => (
                                     <ListItem key={reasonIndex} dense disablePadding >
                                       <ListItemAvatar>
-                                        <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
-                                          {sectionIcon[dataSource][0].toUpperCase()}
+                                        <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }} src={dataSource === 'symbol' ? symbolData.info[dataSource].logo : undefined}>
+                                          {/* <Typography color="white">{sectionIcon[dataSource][0].toUpperCase()}</Typography> */}
+                                          {dataSource !== 'symbol' && etfIcons[dataSource]}
                                         </Avatar>
                                       </ListItemAvatar>
-                                      <ListItemText primary={startCase(reason)} />
+                                      <ListItemText primary={<Typography variant='body2' noWrap>{startCase(reason)}</Typography>} />
                                     </ListItem>
                                   )
                                 ) || null  // Add this to handle null or undefined
@@ -346,11 +378,13 @@ const SymbolInfo = () => {
                             )}
                           </List>
 
-
-                        </>
+                          <br />
+                        </Box>
                       )}
-                      <br />
+                    
                       
+                      {Object.values(symbolData?.recommendations[selectedSignal].reasons.buy as Record<TDataSourceType, string[]>)?.some((reasons) => reasons.length > 0) && 
+                        (<Box display={'flex'} flexDirection={'column'} gap={1}>
                         <b>Reasons to buy:</b>{' '}
                         <List dense disablePadding>
                           {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.buy) as TDataSourceType[]).map(
@@ -359,44 +393,74 @@ const SymbolInfo = () => {
                                 (reason, reasonIndex) => (
                                   <ListItem key={reasonIndex} dense disablePadding >
                                     <ListItemAvatar>
-                                      <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
-                                        {sectionIcon[dataSource][0].toUpperCase()}
+                                      <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }} src={dataSource === 'symbol' ? symbolData.info[dataSource].logo : undefined}>
+                                        {/* <Typography color="white">{sectionIcon[dataSource][0].toUpperCase()}</Typography> */}
+                                        {dataSource !== 'symbol' && etfIcons[dataSource]}
                                       </Avatar>
                                     </ListItemAvatar>
-                                    <ListItemText primary={startCase(reason)} />
+                                    <ListItemText primary={<Typography variant='body2' noWrap>{startCase(reason)}</Typography>} />
                                   </ListItem>
                                 ),
                               )
                             ),
                           )}
                         </List>
-
-
                         <br />
-                        <b>Reasons to sell:</b>{' '}
-                        <List dense disablePadding>
-                          {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.sell) as TDataSourceType[]).map(
-                            (dataSource: TDataSourceType, index) => (
-                              (symbolData?.recommendations[selectedSignal].reasons.sell[dataSource] || []).map(
-                                (reason, reasonIndex) => (
-                                  <ListItem key={reasonIndex} dense disablePadding >
-                                    <ListItemAvatar>
-                                      <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }}>
-                                        {sectionIcon[dataSource][0].toUpperCase()}
-                                      </Avatar>
-                                    </ListItemAvatar>
-                                    <ListItemText primary={startCase(reason)} />
-                                  </ListItem>
-                                ),
-                              )
-                            ),
-                          )}
-                        </List>
+                        </Box>)
+                      }
                       
+                      {Object.values(symbolData?.recommendations[selectedSignal].reasons.sell as Record<TDataSourceType, string[]>).some((reasons) => reasons.length > 0) &&
+                        <Box display={'flex'} flexDirection={'column'} gap={1}>
+                          <b>Reasons to sell:</b>{' '}
+                          <List dense disablePadding>
+                            {/* {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.sell) as TDataSourceType[]).map((dataSource: TDataSourceType, index) => {
+                              return (
+                                <ListItem key={index} dense disablePadding >
+                                  <ListItemAvatar>
+                                    <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }} src={dataSource === 'symbol' ? symbolData.logo : undefined}>
+                                    <Typography color="white">{sectionIcon[dataSource][0].toUpperCase()}</Typography>
+                                    </Avatar>
+                                  </ListItemAvatar>
+                                  <ListItemText key={index} primary={startCase(dataSource)} secondary={(
+                                    <Box display={'flex'} flexDirection={'column'} gap={1}>
+                                      {
+                                        (symbolData?.recommendations[selectedSignal].reasons.sell[dataSource] || []).map(
+                                          (reason, reasonIndex) => (
+                                            <Typography key={reasonIndex}>{startCase(reason)}</Typography>
+                                          ),
+                                        )
+                                      }
+                                    </Box>
+                                  )} />
+                                </ListItem>
+                              ); 
+                            })} */}
+                            
+                            {(Object.keys(symbolData?.recommendations[selectedSignal].reasons.sell) as TDataSourceType[]).map(
+                              (dataSource: TDataSourceType, index) => (
+                                (symbolData?.recommendations[selectedSignal].reasons.sell[dataSource] || []).map(
+                                  (reason, reasonIndex) => (
+                                    <ListItem key={reasonIndex} dense disablePadding >
+                                      <ListItemAvatar>
+                                        <Avatar sx={{ width: 24, height: 24, bgcolor: sectionColor[dataSource] }} src={dataSource === 'symbol' ? symbolData.info[dataSource].logo : undefined}>
+                                          {/* <Typography color="white">{sectionIcon[dataSource][0].toUpperCase()}</Typography> */}
+                                          {dataSource !== 'symbol' && etfIcons[dataSource]}
+                                        </Avatar>
+                                      </ListItemAvatar>
+                                      <ListItemText primary={<Typography variant='body2' noWrap>{startCase(reason)}</Typography>} />
+                                    </ListItem>
+                                  ),
+                                )
+                              ),
+                            )} 
+                            
+                          </List>
+                        </Box> 
+                      }
                     </>
                   )}
-                </Box>
-              </div>
+                </Paper>
+              </Box>
             </CardContent>
           </Card>
         )}

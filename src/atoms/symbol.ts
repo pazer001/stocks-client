@@ -18,8 +18,26 @@ interface Recommendation {
 
 export type TRiskLevel = 'Low' | 'Medium' | 'High';
 export type TDataSourceType = 'symbol' | 'index' | 'sector';
+export type TSymbolInfo = {
+  index: {
+    etfTheme: string;
+    etfType: string;
+    symbol: string;
+  },
+  sector: {
+    etfTheme: string;
+    etfType: string;
+    symbol: string;
+  },
+  symbol: {
+    logo: string;
+    name: string;
+    symbol: string;
+  }
+};
 
 export interface SymbolData {
+  info: TSymbolInfo
   recommendations: Array<{
     point: {
       adjClose: number;
