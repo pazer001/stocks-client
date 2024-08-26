@@ -34,7 +34,7 @@ import { getAlertMessage, getAlertShow, getMainLoaderShow } from './atoms/view';
 import { useRecoilValue } from 'recoil';
 import './App.css';
 import { useSymbol } from './atoms/symbol';
-import { useAuth0 } from '@auth0/auth0-react';
+// import { useAuth0 } from '@auth0/auth0-react';
 import SwipeableViews from 'react-swipeable-views';
 
 
@@ -102,8 +102,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } =
-    useAuth0();
+  // const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -117,14 +116,14 @@ function App() {
 
 
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Oops... {error.message}</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
+  // if (error) {
+  //   return <div>Oops... {error.message}</div>;
+  // }
 
-  if (isAuthenticated) {
+  // if (isAuthenticated) {
     return (
       <>
         {mainLoaderShow && (
@@ -243,10 +242,10 @@ function App() {
         </Grid>
       </>
     );
-  } else if (!isLoading) {
-    loginWithRedirect();
-    return <div>Redirecting to login...</div>;
-  }
+  // } else if (!isLoading) {
+  //   loginWithRedirect();
+  //   return <div>Redirecting to login...</div>;
+  // }
 }
 
 export default App;
