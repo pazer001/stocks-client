@@ -15,7 +15,7 @@ import {
   Snackbar,
   useTheme,
   useMediaQuery,
-  Box
+  Box,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 
@@ -36,7 +36,7 @@ import './App.css';
 import { useSymbol } from './atoms/symbol';
 // import { useAuth0 } from '@auth0/auth0-react';
 import SwipeableViews from 'react-swipeable-views';
-
+import { useAuth0 } from '@auth0/auth0-react';
 
 
 interface IConsentProps {
@@ -102,7 +102,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  // const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -115,7 +115,6 @@ function App() {
   const { symbolData } = useSymbol();
 
 
-
   // if (isLoading) {
   //   return <div>Loading...</div>;
   // }
@@ -123,7 +122,7 @@ function App() {
   //   return <div>Oops... {error.message}</div>;
   // }
 
-  // if (isAuthenticated) {
+  if (isAuthenticated) {
     return (
       <>
         {mainLoaderShow && (
@@ -151,7 +150,7 @@ function App() {
           }}
         >
           <Grid item>
-            <Toolbox  />
+            <Toolbox />
           </Grid>
 
           <Grid item
@@ -189,9 +188,9 @@ function App() {
                 md={5}
                 xs={12}
               >
-                <Paper sx={{ height: 'calc(100dvh - 64px)', display: 'flex', flexDirection: 'column' }} >
-                {isMobile 
-                  ? (
+                <Paper sx={{ height: 'calc(100dvh - 64px)', display: 'flex', flexDirection: 'column' }}>
+                  {isMobile
+                    ? (
                       <Grid container width={'100%'} flex={1}>
                         {/* <Grid item xs={12} flex={1} height={value !==0 ? `calc(100dvh - 117px)`: 'initial'}>
                           <Box sx={{display: value === 0 ? 'block': 'none'}}>
@@ -205,19 +204,20 @@ function App() {
                           </Box>
                         </Grid> */}
                         <Grid item xs={12} flex={1}>
-                          <SwipeableViews disabled={!symbolData} index={value} onChangeIndex={(index) => setValue(index)}>
-                            <Box sx={{height: "calc(100dvh - 117px)", paddingInline:'1px'}}>
+                          <SwipeableViews disabled={!symbolData} index={value}
+                                          onChangeIndex={(index) => setValue(index)}>
+                            <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
                               <SymbolsList />
                             </Box>
-                            <Box sx={{height: "calc(100dvh - 117px)", paddingInline:'1px'}}>
+                            <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
                               <SymbolInfo />
                             </Box>
-                            <Box sx={{height: "calc(100dvh - 117px)", paddingInline:'1px'}}>
+                            <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
                               <Chart />
                             </Box>
                           </SwipeableViews>
                         </Grid>
-                    
+
                         <Grid item xs={12}>
                           <BottomNavigation
                             showLabels
@@ -227,12 +227,14 @@ function App() {
                             }}
                           >
                             <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
-                            <BottomNavigationAction disabled={!symbolData} sx={{'&[disabled]': {opacity: .25}}} label="Insights" icon={<TipsAndUpdatesIcon />} />
-                            <BottomNavigationAction disabled={!symbolData} sx={{'&[disabled]': {opacity: .25}}} label="Graph" icon={<WaterfallChartIcon />} />
+                            <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
+                                                    label="Insights" icon={<TipsAndUpdatesIcon />} />
+                            <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
+                                                    label="Graph" icon={<WaterfallChartIcon />} />
                           </BottomNavigation>
                         </Grid>
                       </Grid>
-                      )
+                    )
                     : <SymbolsList />
                   }
                 </Paper>
@@ -242,10 +244,10 @@ function App() {
         </Grid>
       </>
     );
-  // } else if (!isLoading) {
-  //   loginWithRedirect();
-  //   return <div>Redirecting to login...</div>;
-  // }
+  } else if (!isLoading) {
+    loginWithRedirect();
+    return <div>Redirecting to login...</div>;
+  }
 }
 
 export default App;
