@@ -8,6 +8,7 @@ import {
   Tooltip, Typography, useTheme,
 } from '@mui/material';
 import { green, red, grey, blue, yellow } from '@mui/material/colors';
+import { alpha } from '@mui/material/styles';
 
 import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
@@ -43,22 +44,19 @@ const ANALYZE_SYMBOLS_LIMIT = 200;
 
 
 const FlickerAnimation = styled.div`
-
     @keyframes flickerAnimation {
         0% {
-            opacity: 1;
+          text-shadow: ${red.A700} 0 0 0;
         }
         50% {
-            opacity: 0.3;
+          text-shadow: ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px;
         }
         100% {
-            opacity: 1;
+          text-shadow: ${red.A700} 0 0 0;
         }
     }
 
-    color: ${red.A700};
-    animation: flickerAnimation 1s infinite;
-
+    animation: flickerAnimation .7s infinite;
 `;
 
 
@@ -290,9 +288,9 @@ const SymbolsList = () => {
       return <FlickerAnimation>{value}</FlickerAnimation>;
     } else if (value > 1) {
       return value;
-    } else {
-      return '-';
     }
+
+    return '-';
   };
 
 
