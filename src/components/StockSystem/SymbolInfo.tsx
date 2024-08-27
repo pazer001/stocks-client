@@ -60,8 +60,6 @@ const SymbolInfo = () => {
   const [indicatorInfoDialog, setIndicatorInfoDialog] = useState<boolean>(false);
   const reasonsInfoContainerRef = React.useRef<HTMLDivElement>(null);
 
-  console.log('symbolData', symbolData);
-
   useEffect(() => {
     const getStrategyDescription = async () => {
       if (strategyName) {

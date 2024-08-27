@@ -18,6 +18,7 @@ import ShowChartRoundedIcon from '@mui/icons-material/ShowChartRounded';
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded';
 // import NewspaperIcon from '@mui/icons-material/Newspaper';
 import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
+import MoneyOffCsredIcon from '@mui/icons-material/MoneyOffCsred';
 import {
   getByType,
   getInterval,
@@ -310,11 +311,16 @@ const SymbolsList = () => {
   };
 
   const renderPrice = (price: number, isPennyStock: boolean) => {
-    return <Box textAlign="center"><Box><Typography
-      variant="caption">{price.toFixed(2)}</Typography></Box>{isPennyStock ?
-      <Box><Chip color="warning" label="Penny" size="small" variant="outlined" /></Box> : null}
-    </Box>;
-
+    return (
+      <Box alignItems={'center'}>
+          { isPennyStock 
+            ? <Tooltip placement='top' title={'Penny Stock'}><Chip icon={<MoneyOffCsredIcon fontSize='small'/>} color="warning" label={price.toFixed(2)} size="small" variant="outlined" /></Tooltip>
+            : <Typography variant="caption" >
+                  {price.toFixed(2)}
+              </Typography>
+          }
+      </Box>
+    )
   };
 
   const renderWatchlistCheckbox = useCallback((symbol: string, watchlist: Record<string, Array<string>>, currentWatchlistName: string) => {
@@ -450,7 +456,7 @@ const SymbolsList = () => {
     {
       field: 'lastClose',
       headerName: 'Price',
-      width: 70,
+      width: 80,
       sortable: false,
       filterable: false,
       renderCell: (params) => params.row.lastClose ? renderPrice(params.row.lastClose, params.row.isPennyStock) : '-',
