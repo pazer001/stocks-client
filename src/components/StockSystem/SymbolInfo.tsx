@@ -35,6 +35,7 @@ import ReactECharts from 'echarts-for-react';
 import { DateTime } from 'luxon';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import PieChartIcon from '@mui/icons-material/PieChart';
+import { FlickerAnimation } from './SymbolsList';
 
 const API_HOST = import.meta.env.VITE_API_HOST;
 
@@ -145,6 +146,11 @@ const SymbolInfo = () => {
   // const hasReasonToBuy = Object.values(symbolData?.recommendations[selectedSignal].reasons.buy as Record<TDataSourceType, string[]>).some((reasons) => reasons.length > 0);
   // const hasReasonToSell = Object.values(symbolData?.recommendations[selectedSignal].reasons.sell as Record<TDataSourceType, string[]>).some((reasons) => reasons.length > 0);
 
+  const nextEarningDate = nextEarning ? DateTime.fromSeconds(nextEarning)
+  .diff(DateTime.now(), 'days')
+  .toObject()
+  .days?.toFixed(0) : '';
+
   return useMemo(
     () => (
       <Box sx={{ height: isMobile ? 'calc(100dvh - 117px)' : '100%' }}>
@@ -204,7 +210,7 @@ const SymbolInfo = () => {
 
         {symbolData && (
           <Card sx={{ height: '100%',  overscrollBehaviorY: 'none' }}>
-            <CardContent sx={{height: 'inherit', position: 'relative'}}>
+            <CardContent sx={{height: 'inherit', position: 'relative', padding: theme.spacing(isMobile ? 1 : 3)}}>
               <Box position='absolute' zIndex={1} top={'2px'} left={theme.spacing(1)}>
                 <Box display={"flex"} justifyContent={"flex-start"} alignItems={"center"} gap={theme.spacing(1)}>
                   <Typography variant="caption">{symbolData.name}</Typography>
@@ -307,12 +313,11 @@ const SymbolInfo = () => {
                 {nextEarning && (
                   <Typography>
                     <b>Next earnings report: </b>
-                    {DateTime.fromSeconds(nextEarning).toISODate()} (
-                    {DateTime.fromSeconds(nextEarning)
-                      .diff(DateTime.now(), 'days')
-                      .toObject()
-                      .days?.toFixed(0)}{' '}
-                    Days)
+                    {DateTime.fromSeconds(nextEarning).toISODate()} 
+                    {nextEarningDate === '1'
+                      ? <>(<FlickerAnimation>{nextEarningDate} day</FlickerAnimation>)</>
+                      : <>({nextEarningDate} days)</>
+                    }
                   </Typography>
                 )}
 
@@ -345,7 +350,7 @@ const SymbolInfo = () => {
                   ref={reasonsInfoContainerRef} 
                   variant="outlined" 
                   sx={{
-                    height: `calc(100dvh - ${isMobile ? '382': '366'}px - ${nextEarning ? '24': '0'}px)`, 
+                    height: `calc(100dvh - ${isMobile ? '393': '366'}px - ${nextEarning ? '24': '0'}px)`, 
                     overflowY: 'auto', 
                     padding: theme.spacing(isMobile ? 1 : 3), 
                     bgcolor: grey[900]

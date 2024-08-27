@@ -43,7 +43,7 @@ import { useExtraData } from '../../atoms/extraData';
 const ANALYZE_SYMBOLS_LIMIT = 200;
 
 
-const FlickerAnimation = styled.div`
+export const FlickerAnimation = styled.span`
     @keyframes flickerAnimation {
         0% {
           text-shadow: ${red.A700} 0 0 0;
@@ -55,7 +55,7 @@ const FlickerAnimation = styled.div`
           text-shadow: ${red.A700} 0 0 0;
         }
     }
-
+    
     animation: flickerAnimation .7s infinite;
 `;
 
