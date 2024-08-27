@@ -165,8 +165,8 @@ function App() {
                   columnSpacing={1}
             >
               <Grid item
-                    xl={7}
-                    md={7}
+                    xl={6}
+                    md={6}
                     sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
               >
                 <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
@@ -175,8 +175,8 @@ function App() {
               </Grid>
               <Grid
                 item
-                xl={2}
-                md={5}
+                xl={3}
+                md={6}
                 sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
               >
                 <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
@@ -186,7 +186,7 @@ function App() {
               <Grid
                 item
                 xl={3}
-                md={5}
+                md={6}
                 xs={12}
               >
                 <Paper sx={{ height: 'calc(100dvh - 64px)', display: 'flex', flexDirection: 'column' }} >

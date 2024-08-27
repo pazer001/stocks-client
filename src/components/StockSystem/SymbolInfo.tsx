@@ -318,11 +318,11 @@ const SymbolInfo = () => {
 
                 <Typography marginBottom={theme.spacing(1)}><b>Stop
                   Loss:</b> {symbolData?.stopLoss[0].toFixed(1)}%</Typography>
-                <Box sx={{ display: 'flex', marginBottom: theme.spacing(2), gap: 1 }}>
-                  {(Object.keys(sectionIcon) as TDataSourceType[]).map((key) => {
+                <Box sx={{ display: 'flex', marginBlock: theme.spacing(2), gap: 1 }}>
+                  {(Object.keys(sectionIcon) as TDataSourceType[]).map((key, _, arr) => {
                     if (!symbolData.info[key].symbol) return null;
                     return (
-                    <Box width='32%'>
+                    <Box width={`${100 / arr.length - 1}%`}>
                       <Paper variant="outlined" sx={{marginBottom: theme.spacing(1), bgcolor: pink[900]}}><Typography variant='body2' borderRadius={'2px'} paddingInline={theme.spacing(1)}>{startCase(key)}</Typography></Paper>
                       <Paper variant="outlined" key={key} sx={{display: 'flex', flexDirection: 'column', gap: 1,  padding: theme.spacing(1)}}>
                         <Box display={'flex'} gap={1} width={'80%'}>
@@ -345,9 +345,9 @@ const SymbolInfo = () => {
                   ref={reasonsInfoContainerRef} 
                   variant="outlined" 
                   sx={{
-                    height: `calc(100dvh - ${isMobile ? '382': '358'}px - ${nextEarning ? '24': '0'}px)`, 
+                    height: `calc(100dvh - ${isMobile ? '382': '366'}px - ${nextEarning ? '24': '0'}px)`, 
                     overflowY: 'auto', 
-                    padding: theme.spacing(1), 
+                    padding: theme.spacing(isMobile ? 1 : 3), 
                     bgcolor: grey[900]
                   }}
                 >
