@@ -315,8 +315,8 @@ const SymbolInfo = () => {
                     <b>Next earnings report: </b>
                     {DateTime.fromSeconds(nextEarning).toISODate()} 
                     {nextEarningDate === '1'
-                      ? <>(<FlickerAnimation>{nextEarningDate} day</FlickerAnimation>)</>
-                      : <>({nextEarningDate} days)</>
+                      ? <> (<FlickerAnimation>{nextEarningDate} day</FlickerAnimation>)</>
+                      : <> ({nextEarningDate} days)</>
                     }
                   </Typography>
                 )}
