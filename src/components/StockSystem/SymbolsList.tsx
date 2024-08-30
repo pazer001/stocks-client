@@ -220,9 +220,9 @@ const SymbolsList = () => {
     setAnalyzedCount(() => 0);
     setMaxAnalyzedCount(() => limit);
     const data = dataGridRef.current.state.filter.filteredRowsLookup;
-    
+
     for (let i in data) {
-      if(dataGridRef.current.state.filter.filteredRowsLookup[i] === false) continue;
+      if (dataGridRef.current.state.filter.filteredRowsLookup[i] === false) continue;
       const index = Number(i);
       if (count < limit && !suggestedSymbols[index].recommendation) {
         const symbol = suggestedSymbols[index].symbol;
@@ -759,15 +759,20 @@ const SymbolsList = () => {
       dataGridRef.current.updateRows([{ ...newSuggestedSymbols[symbolIndex] }]);
     }
   }, [symbolData]);
-  
+
 
   // return useMemo(
   // () => (
   return useMemo(() => <Box
-    sx={{ height: `calc(100dvh - 63px - ${isMobile ? '54px': '0px'})`, display: 'flex', flexDirection: 'column', gap: theme.spacing(1) }}>
+    sx={{
+      height: `calc(100dvh - 63px - ${isMobile ? '54px' : '0px'})`,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: theme.spacing(1),
+    }}>
     {Boolean(informativeEvent) && <Alert severity="warning" variant="outlined" onClose={isMobile ? () => {
       setInformativeEvent('');
-    }: undefined}>{informativeEvent}</Alert>}
+    } : undefined}>{informativeEvent}</Alert>}
     <Filter />
     <Search checkSymbolsLoader={checkSymbolsLoader} />
     <AnalyzedCount analyzedCount={analyzedCount} maxAnalyzedCount={maxAnalyzedCount} />
@@ -808,10 +813,10 @@ const SymbolsList = () => {
       //         disableColumnFilter
               disableColumnSelector
               disableDensitySelector
-              // onStateChange={(state) => {
-              //   console.log(state);
-              // }}
-              // disableColumnMenu
+      // onStateChange={(state) => {
+      //   console.log(state);
+      // }}
+      // disableColumnMenu
               disableRowSelectionOnClick
               density="standard"
               onRowSelectionModelChange={handleCheckedSymbols}
@@ -833,22 +838,22 @@ const SymbolsList = () => {
                 watchlist: currentWatchlistName !== '',
                 name: false,
               }}
-              filterModel={{
-                items: [
-                  { field: 'averageVolume', operator: '>', value: 500000 },
-                ],
-              }}
+      // filterModel={{
+      //   items: [
+      //     { field: 'averageVolume', operator: '>', value: 500000 },
+      //   ],
+      // }}
 
               initialState={{
                 pagination: { paginationModel: { pageSize: 100 } },
-                // sorting: {
-                //   sortModel: [
-                //     {
-                //       field: 'priorityScore',
-                //       sort: 'desc',
-                //     },
-                //   ],
-                // },
+                sorting: {
+                  sortModel: [
+                    {
+                      field: 'priorityScore',
+                      sort: 'desc',
+                    },
+                  ],
+                },
 
                 filter: {
                   filterModel: {
