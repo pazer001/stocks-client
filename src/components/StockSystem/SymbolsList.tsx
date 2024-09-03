@@ -838,11 +838,11 @@ const SymbolsList = () => {
                 watchlist: currentWatchlistName !== '',
                 name: false,
               }}
-      // filterModel={{
-      //   items: [
-      //     { field: 'averageVolume', operator: '>', value: 500000 },
-      //   ],
-      // }}
+              filterModel={{
+                items: [
+                  { field: 'averageVolume', operator: '>', value: 500000 },
+                ],
+              }}
 
               initialState={{
                 pagination: { paginationModel: { pageSize: 100 } },
