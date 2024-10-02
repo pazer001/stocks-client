@@ -36,8 +36,6 @@ import './App.css';
 import { useSymbol } from './atoms/symbol';
 // import { useAuth0 } from '@auth0/auth0-react';
 import SwipeableViews from 'react-swipeable-views';
-import { useAuth0 } from '@auth0/auth0-react';
-
 
 interface IConsentProps {
   open: boolean;
@@ -102,7 +100,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
+  // const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -122,7 +120,7 @@ function App() {
   //   return <div>Oops... {error.message}</div>;
   // }
 
-  if (isAuthenticated) {
+  // if (isAuthenticated) {
     return (
       <>
         {mainLoaderShow && (
@@ -244,10 +242,10 @@ function App() {
         </Grid>
       </>
     );
-  } else if (!isLoading) {
-    loginWithRedirect();
-    return <div>Redirecting to login...</div>;
-  }
+  // } else if (!isLoading) {
+  //   loginWithRedirect();
+  //   return <div>Redirecting to login...</div>;
+  // }
 }
 
 export default App;

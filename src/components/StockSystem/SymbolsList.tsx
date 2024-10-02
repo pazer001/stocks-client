@@ -39,6 +39,7 @@ import styled from '@emotion/styled';
 import LinearProgress from '@mui/material/LinearProgress';
 import { FilterListRounded, PlaylistRemoveOutlined } from '@mui/icons-material';
 import { useExtraData } from '../../atoms/extraData';
+import numeral from 'numeral';
 
 const ANALYZE_SYMBOLS_LIMIT = 200;
 
@@ -396,6 +397,7 @@ const SymbolsList = () => {
     }
   };
 
+
   const columns: GridColDef[] = [
     {
       field: 'watchlist',
@@ -463,7 +465,18 @@ const SymbolsList = () => {
       field: 'averageVolume',
       headerName: 'Average Volume',
       width: 100,
+      renderCell: (params) => params.row.averageVolume ? numeral(params.row.averageVolume).format('0.0a') : '-',
       valueGetter: (value) => value !== undefined ? Number(Number(value).toFixed(0)) : '-',
+      sortComparator: (v1, v2) => Number(v1) - Number(v2),
+      sortable: true,
+      filterable: true,
+      type: 'number',
+    },
+    {
+      field: 'marketCapitalization',
+      headerName: 'Market Cap',
+      width: 100,
+      valueGetter: (value) => value !== undefined ? numeral(Number(value) * 1000).format('0.0a') : '-',
       sortComparator: (v1, v2) => Number(v1) - Number(v2),
       sortable: true,
       filterable: true,
@@ -478,15 +491,15 @@ const SymbolsList = () => {
     //   valueGetter: (value) => value !== undefined ? Number(value).toFixed(0) : '-',
     //   sortComparator: (v1, v2) => Number(v1) - Number(v2),
     // },
-    {
-      field: 'score',
-      headerName: 'Score',
-      width: 20,
-      valueGetter: (value) => value !== undefined ? Number(value).toFixed(0) : '-',
-      sortComparator: (v1, v2) => Number(v1) - Number(v2),
-      sortable: true,
-      filterable: false,
-    },
+    // {
+    //   field: 'score',
+    //   headerName: 'Score',
+    //   width: 20,
+    //   valueGetter: (value) => value !== undefined ? Number(value).toFixed(0) : '-',
+    //   sortComparator: (v1, v2) => Number(v1) - Number(v2),
+    //   sortable: true,
+    //   filterable: false,
+    // },
 
 
     // {
@@ -764,7 +777,7 @@ const SymbolsList = () => {
     }
   }, [symbolData]);
 
-
+  console.log({filteredSymbols})
   // return useMemo(
   // () => (
   return useMemo(() => <Box
