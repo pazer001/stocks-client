@@ -17,7 +17,7 @@ import {
   useMediaQuery,
   Box,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
@@ -34,9 +34,8 @@ import { getAlertMessage, getAlertShow, getMainLoaderShow } from './atoms/view';
 import { useRecoilValue } from 'recoil';
 import './App.css';
 import { useSymbol } from './atoms/symbol';
-// import { useAuth0 } from '@auth0/auth0-react';
 import SwipeableViews from 'react-swipeable-views';
-import { useAuth0 } from '@auth0/auth0-react';
+// import { useAuth0 } from '@auth0/auth0-react';
 
 interface IConsentProps {
   open: boolean;
@@ -101,7 +100,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
+  // const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -114,14 +113,14 @@ function App() {
   const { symbolData } = useSymbol();
 
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Oops... {error.message}</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
+  // if (error) {
+  //   return <div>Oops... {error.message}</div>;
+  // }
 
-  if (isAuthenticated) {
+  // if (isAuthenticated) {
     return (
       <>
         {mainLoaderShow && (
@@ -138,115 +137,72 @@ function App() {
             setShowConsent(false);
           }}
         />
-        <Grid
-          container
-          direction="column"
-          rowSpacing={1}
-          paddingBottom={theme.spacing(1)}
-          sx={{
-            // minHeight: '100dvh', // Adjust to 'minHeight' to ensure content covers the viewport height
-            // paddingBottom: '0', // Add padding at the bottom
-          }}
-        >
-          <Grid item>
+        <Grid container spacing={2} width={'100%'} overflow={'clip'} >
+          <Grid size={{ xs: 12 }}>
             <Toolbox />
           </Grid>
-
-          <Grid item
-                paddingLeft={theme.spacing(1)}
-                paddingRight={theme.spacing(1)}
-                flex={1}
-                width="100%"
-          >
-            <Grid container
-                  height="100%"
-                  columnSpacing={1}
+          <Grid container spacing={2} width={'100%'} sx={{marginInline: theme.spacing(2), paddingBottom: theme.spacing(2)}}>
+            <Grid
+              size={{ xs: 0, sm: 0, md: 5 }}
             >
-              <Grid item
-                    xl={6}
-                    md={6}
-                    sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
-              >
-                <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
-                  <Chart />
-                </Paper>
-              </Grid>
-              <Grid
-                item
-                xl={3}
-                md={6}
-                sx={{ display: { xs: 'none', sm: 'none', md: 'none', xl: 'block' } }}
-              >
-                <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
-                  <SymbolInfo />
-                </Paper>
-              </Grid>
-              <Grid
-                item
-                xl={3}
-                md={6}
-                xs={12}
-              >
-                <Paper sx={{ height: 'calc(100dvh - 64px)', display: 'flex', flexDirection: 'column' }}>
-                  {isMobile
-                    ? (
-                      <Grid container width={'100%'} flex={1}>
-                        {/* <Grid item xs={12} flex={1} height={value !==0 ? `calc(100dvh - 117px)`: 'initial'}>
-                          <Box sx={{display: value === 0 ? 'block': 'none'}}>
+              <Paper sx={{ height: `calc(100dvh - 80px)` }}>
+                <Chart />
+              </Paper>
+            </Grid>
+            <Grid
+              size={{ xs: 0, sm: 0, md: 3 }}
+            >
+              <Paper sx={{ height: 'calc(100dvh - 80px)' }}>
+                <SymbolInfo />
+              </Paper>
+            </Grid>
+            <Grid
+              size={{ xs: 12, sm: 12, md: 4 }}
+            >
+              <Paper sx={{ display: 'flex', flexDirection: 'column' }}>
+                {isMobile
+                  ? (
+                      <>
+                        <SwipeableViews disabled={!symbolData} index={value}
+                                        onChangeIndex={(index) => setValue(index)}>
+                          <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
                             <SymbolsList />
                           </Box>
-                          <Box sx={{display: value === 1 ? 'block': 'none'}}>
+                          <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
                             <SymbolInfo />
                           </Box>
-                          <Box sx={{display: value === 2 ? 'block': 'none'}}>
+                          <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
                             <Chart />
                           </Box>
-                        </Grid> */}
-                        <Grid item xs={12} flex={1}>
-                          <SwipeableViews disabled={!symbolData} index={value}
-                                          onChangeIndex={(index) => setValue(index)}>
-                            <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
-                              <SymbolsList />
-                            </Box>
-                            <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
-                              <SymbolInfo />
-                            </Box>
-                            <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
-                              <Chart />
-                            </Box>
-                          </SwipeableViews>
-                        </Grid>
+                        </SwipeableViews>
 
-                        <Grid item xs={12}>
-                          <BottomNavigation
-                            showLabels
-                            value={value}
-                            onChange={(_event, newValue) => {
-                              setValue(newValue);
-                            }}
-                          >
-                            <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
-                            <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
-                                                    label="Insights" icon={<TipsAndUpdatesIcon />} />
-                            <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
-                                                    label="Graph" icon={<WaterfallChartIcon />} />
-                          </BottomNavigation>
-                        </Grid>
-                      </Grid>
-                    )
-                    : <SymbolsList />
-                  }
-                </Paper>
-              </Grid>
+                        <BottomNavigation
+                          showLabels
+                          value={value}
+                          onChange={(_event, newValue) => {
+                            setValue(newValue);
+                          }}
+                        >
+                          <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
+                          <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
+                                                  label="Insights" icon={<TipsAndUpdatesIcon />} />
+                          <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
+                                                  label="Graph" icon={<WaterfallChartIcon />} />
+                        </BottomNavigation>
+                      </>
+                  )
+                  : <SymbolsList />
+                }
+              </Paper>
             </Grid>
           </Grid>
         </Grid>
       </>
     );
-  } else if (!isLoading) {
-    loginWithRedirect();
-    return <div>Redirecting to login...</div>;
-  }
+  // } else if (!isLoading) {
+  //   loginWithRedirect();
+  //   return <div>Redirecting to login...</div>;
+  // }
 }
 
 export default App;

@@ -308,7 +308,7 @@ const SymbolInfo = () => {
               />
               <Box
                 className="symbolInfo-reasons"
-                sx={{ marginTop: isMobile ? '-57px' : '-80px' }}
+                sx={{ marginTop: isMobile ? '-57px' : '-80px',display: 'flex', flexDirection: 'column', height: 'calc(100dvh - 233px)' }}
               >
                 {nextEarning && (
                   <Typography>
@@ -350,7 +350,7 @@ const SymbolInfo = () => {
                   ref={reasonsInfoContainerRef} 
                   variant="outlined" 
                   sx={{
-                    height: `calc(100dvh - ${isMobile ? '393': '366'}px - ${nextEarning ? '24': '0'}px)`, 
+                    flex: 1,
                     overflowY: 'auto', 
                     padding: theme.spacing(isMobile ? 1 : 3), 
                     bgcolor: grey[900]

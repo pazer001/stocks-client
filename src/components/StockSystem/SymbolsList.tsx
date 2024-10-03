@@ -472,16 +472,16 @@ const SymbolsList = () => {
       filterable: true,
       type: 'number',
     },
-    {
-      field: 'marketCapitalization',
-      headerName: 'Market Cap',
-      width: 100,
-      valueGetter: (value) => value !== undefined ? numeral(Number(value) * 1000).format('0.0a') : '-',
-      sortComparator: (v1, v2) => Number(v1) - Number(v2),
-      sortable: true,
-      filterable: true,
-      type: 'number',
-    },
+    // {
+    //   field: 'marketCapitalization',
+    //   headerName: 'Market Cap',
+    //   width: 100,
+    //   valueGetter: (value) => value !== undefined ? numeral(Number(value) * 1000).format('0.0a') : '-',
+    //   sortComparator: (v1, v2) => Number(v1) - Number(v2),
+    //   sortable: true,
+    //   filterable: true,
+    //   type: 'number',
+    // },
     // {
     //   field: 'priorityScore',
     //   headerName: 'Priority Score',
@@ -782,7 +782,7 @@ const SymbolsList = () => {
   // () => (
   return useMemo(() => <Box
     sx={{
-      height: `calc(100dvh - 63px - ${isMobile ? '54px' : '0px'})`,
+      height: `calc(100dvh - 78px - ${isMobile ? '54px' : '0px'})`,
       display: 'flex',
       flexDirection: 'column',
       gap: theme.spacing(1),
