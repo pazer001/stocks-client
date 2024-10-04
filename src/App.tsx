@@ -137,22 +137,24 @@ function App() {
             setShowConsent(false);
           }}
         />
-        <Grid container spacing={2} width={'100%'} overflow={'clip'} >
-          <Grid size={{ xs: 12 }}>
+        <Grid container width={'100%'} overflow={'clip'} spacing={isMobile? 1 : 0}>
+          <Grid size={{ xs: 12 }} height={'fit-content'}>
             <Toolbox />
           </Grid>
-          <Grid container spacing={2} width={'100%'} sx={{marginInline: theme.spacing(2), paddingBottom: theme.spacing(2)}}>
+          <Grid container spacing={1} width={'100%'} sx={{marginInline: theme.spacing(1)}}>
             <Grid
-              size={{ xs: 0, sm: 0, md: 5 }}
+              size={{ md: 5 }}
+              sx={{display: isMobile ? 'none' : 'block'}}
             >
-              <Paper sx={{ height: `calc(100dvh - 80px)` }}>
+              <Paper sx={{ height: `calc(100dvh - 68px)` }}>
                 <Chart />
               </Paper>
             </Grid>
             <Grid
-              size={{ xs: 0, sm: 0, md: 3 }}
+              size={{ md: 3 }}
+              sx={{display: isMobile ? 'none' : 'block'}}
             >
-              <Paper sx={{ height: 'calc(100dvh - 80px)' }}>
+              <Paper sx={{ height: 'calc(100dvh - 68px)' }}>
                 <SymbolInfo />
               </Paper>
             </Grid>
