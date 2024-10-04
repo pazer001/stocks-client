@@ -777,9 +777,6 @@ const SymbolsList = () => {
     }
   }, [symbolData]);
 
-  console.log({filteredSymbols})
-  // return useMemo(
-  // () => (
   return useMemo(() => <Box
     sx={{
       height: `calc(100dvh - 68px - ${isMobile ? '49px' : '0px'})`,
