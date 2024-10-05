@@ -23,7 +23,7 @@ import {
   getPricesMode,
   symbolAtom,
 } from '../../atoms/symbol';
-import Logo from '../../assets/horizontal-color-logo-no-background.svg?react';
+import Logo from '../../assets/horizontal-color-logo-no-background.svg';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -32,7 +32,7 @@ interface IToolboxProps {
 }
 
 const Toolbox = (props: IToolboxProps) => {
-  const {user } =
+  const { user } =
     useAuth0();
   const [, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
@@ -53,12 +53,12 @@ const Toolbox = (props: IToolboxProps) => {
           // disableGutters
           sx={{ justifyContent: 'space-between' }}
         >
-          <Logo style={{height: '100%', width: '174px' }}/>
-          <Box display={'flex'} justifyContent={'space-between'} width={'33%'} >
-          { hiddenUpMd 
-            ? null
-            : <>
-                <IconButton onClick={() => setShowSettings(true)} size="medium" sx={{marginInlineStart: 'auto'}}>
+          <Logo style={{ height: '100%', width: '174px' }} />
+          <Box display={'flex'} justifyContent={'space-between'} width={'33%'}>
+            {hiddenUpMd
+              ? null
+              : <>
+                <IconButton onClick={() => setShowSettings(true)} size="medium" sx={{ marginInlineStart: 'auto' }}>
                   <SettingsRoundedIcon />
                 </IconButton>
                 <Dialog
@@ -129,90 +129,90 @@ const Toolbox = (props: IToolboxProps) => {
                 </Dialog>
                 {/*</Grid>*/}
               </>
-          }
-          { hiddenDownMd 
-            ? null
-            :<>
-              <Box>
-                <ToggleButtonGroup
-                  onChange={(event, value) =>
-                    setSymbol((prevSymbol) => ({
-                      ...prevSymbol,
-                      settings: { ...prevSymbol.settings, byType: value },
-                    }))
-                  }
-                  exclusive
-                  color="primary"
-                  size="small"
-                  value={byType}
-                >
-                  <ToggleButton value="byWinRate">Win Rate</ToggleButton>
-                  <ToggleButton value="byProfit">Profit</ToggleButton>
-                  <ToggleButton value="byMixed">Mixed</ToggleButton>
-                </ToggleButtonGroup>
-                { hiddenDownSm 
-                  ? null
-                  : <IconButton onClick={() => setTypeDialogOpen(true)}>
+            }
+            {hiddenDownMd
+              ? null
+              : <>
+                <Box>
+                  <ToggleButtonGroup
+                    onChange={(event, value) =>
+                      setSymbol((prevSymbol) => ({
+                        ...prevSymbol,
+                        settings: { ...prevSymbol.settings, byType: value },
+                      }))
+                    }
+                    exclusive
+                    color="primary"
+                    size="small"
+                    value={byType}
+                  >
+                    <ToggleButton value="byWinRate">Win Rate</ToggleButton>
+                    <ToggleButton value="byProfit">Profit</ToggleButton>
+                    <ToggleButton value="byMixed">Mixed</ToggleButton>
+                  </ToggleButtonGroup>
+                  {hiddenDownSm
+                    ? null
+                    : <IconButton onClick={() => setTypeDialogOpen(true)}>
                       <HelpCenterRoundedIcon />
                     </IconButton>
-                }
-              </Box>
-              {Boolean(intervals.length) &&
-                <>
-                  <Divider orientation="vertical" flexItem variant="middle" />
-                  <Box>
-                    <ToggleButtonGroup
-                      onChange={(event, value) =>
-                        setSymbol((prevSymbol) => ({
-                          ...prevSymbol,
-                          settings: { ...prevSymbol.settings, interval: value },
-                        }))
-                      }
-                      exclusive
-                      color="primary"
-                      size="small"
-                      value={interval}
-                    >
+                  }
+                </Box>
+                {Boolean(intervals.length) &&
+                  <>
+                    <Divider orientation="vertical" flexItem variant="middle" />
+                    <Box>
+                      <ToggleButtonGroup
+                        onChange={(event, value) =>
+                          setSymbol((prevSymbol) => ({
+                            ...prevSymbol,
+                            settings: { ...prevSymbol.settings, interval: value },
+                          }))
+                        }
+                        exclusive
+                        color="primary"
+                        size="small"
+                        value={interval}
+                      >
                         {intervals.map((interval) => (
                           <ToggleButton key={interval} value={interval} size="small">
                             {interval}
                           </ToggleButton>
                         ))}
-                    </ToggleButtonGroup>
-                  </Box>
-                </>
-              }
-              <Divider orientation="vertical" flexItem variant="middle" />
-              <Box>
-                <ToggleButtonGroup
-                  onChange={(event, value) =>
-                    setSymbol((prevSymbol) => ({
-                      ...prevSymbol,
-                      settings: { ...prevSymbol.settings, pricesMode: value },
-                    }))
-                  }
-                  exclusive
-                  color="primary"
-                  size="small"
-                  value={pricesMode}
-                >
-                  <ToggleButton value="normal">Normal</ToggleButton>
-                  <ToggleButton value="dividendsAdjusted">
-                    Adjust for Dividends
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
+                      </ToggleButtonGroup>
+                    </Box>
+                  </>
+                }
+                <Divider orientation="vertical" flexItem variant="middle" />
+                <Box>
+                  <ToggleButtonGroup
+                    onChange={(event, value) =>
+                      setSymbol((prevSymbol) => ({
+                        ...prevSymbol,
+                        settings: { ...prevSymbol.settings, pricesMode: value },
+                      }))
+                    }
+                    exclusive
+                    color="primary"
+                    size="small"
+                    value={pricesMode}
+                  >
+                    <ToggleButton value="normal">Normal</ToggleButton>
+                    <ToggleButton value="dividendsAdjusted">
+                      Adjust for Dividends
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Box>
 
-              {user !== undefined && <><Divider orientation="vertical" flexItem variant="middle" /><Box>
-                <Avatar
-                  alt={user.name}
-                  src={user.picture}
-                  sx={{ width: 32, height: 32 }}
+                {user !== undefined && <><Divider orientation="vertical" flexItem variant="middle" /><Box>
+                  <Avatar
+                    alt={user.name}
+                    src={user.picture}
+                    sx={{ width: 32, height: 32 }}
                   />
-              </Box></>}
+                </Box></>}
 
-            </>
-          }
+              </>
+            }
           </Box>
         </Toolbar>
       </AppBar>
