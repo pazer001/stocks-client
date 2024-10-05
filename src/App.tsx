@@ -37,8 +37,6 @@ import { useSymbol } from './atoms/symbol';
 import SwipeableViews from 'react-swipeable-views';
 import { useAuth0 } from '@auth0/auth0-react';
 
-// import { useAuth0 } from '@auth0/auth0-react';
-
 interface IConsentProps {
   open: boolean;
   handleClose: () => void;
@@ -114,7 +112,6 @@ function App() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { symbolData } = useSymbol();
 
-
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -148,7 +145,7 @@ function App() {
               size={{ md: 5 }}
               sx={{ display: isMobile ? 'none' : 'block' }}
             >
-              <Paper sx={{ height: `calc(100dvh - 68px)` }}>
+              <Paper sx={{ height: `calc(100dvh - 64px)` }}>
                 <Chart />
               </Paper>
             </Grid>
@@ -156,7 +153,7 @@ function App() {
               size={{ md: 3 }}
               sx={{ display: isMobile ? 'none' : 'block' }}
             >
-              <Paper sx={{ height: 'calc(100dvh - 68px)' }}>
+              <Paper sx={{ height: 'calc(100dvh - 64px)' }}>
                 <SymbolInfo />
               </Paper>
             </Grid>
