@@ -10,7 +10,19 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { RecoilRoot } from 'recoil';
 import './index.css';
 import { Auth0Provider } from '@auth0/auth0-react';
-
+// #d9d9d9
+// #F5793B
+// #0c056d
+// #06144c
+// #c4d0ff
+// #8aa1ff
+// #78ac2a
+// #4dce02
+// #11a075
+// #f2f2f2
+// #bfbfbf
+// #f79a6b
+// #ed2a2d
 
 export const darkTheme = createTheme({
   palette: {

@@ -8,6 +8,7 @@ import {
   Divider,
   Hidden,
   IconButton,
+  SvgIcon,
   ToggleButton,
   ToggleButtonGroup,
   Toolbar,
@@ -22,7 +23,7 @@ import {
   getPricesMode,
   symbolAtom,
 } from '../../atoms/symbol';
-import Logo from '../../assets/symbata-high-resolution-logo-color-on-transparent-background.svg';
+import NewLogo from '../../assets/horizontal-color-logo-no-background.svg?react';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -55,7 +56,7 @@ const Toolbox = (props: IToolboxProps) => {
           {/*      alignItems="center">*/}
           {/*  <Grid item xs>*/}
           {/*<div>*/}
-          <img src={Logo} alt="Symdata" style={{ maxWidth: '100px' }} />
+            <NewLogo style={{height: '64px', width: '100px' }}/>
           {/*</div>*/}
           {/*</Grid>*/}
           <Hidden mdUp>
