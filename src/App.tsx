@@ -35,6 +35,8 @@ import { useRecoilValue } from 'recoil';
 import './App.css';
 import { useSymbol } from './atoms/symbol';
 import SwipeableViews from 'react-swipeable-views';
+import { useAuth0 } from '@auth0/auth0-react';
+
 // import { useAuth0 } from '@auth0/auth0-react';
 
 interface IConsentProps {
@@ -100,7 +102,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  // const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
+  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -113,14 +115,14 @@ function App() {
   const { symbolData } = useSymbol();
 
 
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-  // if (error) {
-  //   return <div>Oops... {error.message}</div>;
-  // }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (error) {
+    return <div>Oops... {error.message}</div>;
+  }
 
-  // if (isAuthenticated) {
+  if (isAuthenticated) {
     return (
       <>
         {mainLoaderShow && (
@@ -137,14 +139,14 @@ function App() {
             setShowConsent(false);
           }}
         />
-        <Grid container width={'100%'} overflow={'clip'} spacing={isMobile? 1 : 0}>
+        <Grid container width={'100%'} overflow={'clip'} spacing={isMobile ? 1 : 0}>
           <Grid size={{ xs: 12 }} height={'fit-content'}>
             <Toolbox />
           </Grid>
-          <Grid container spacing={1} width={'100%'} sx={{marginInline: theme.spacing(1)}}>
+          <Grid container spacing={1} width={'100%'} sx={{ marginInline: theme.spacing(1) }}>
             <Grid
               size={{ md: 5 }}
-              sx={{display: isMobile ? 'none' : 'block'}}
+              sx={{ display: isMobile ? 'none' : 'block' }}
             >
               <Paper sx={{ height: `calc(100dvh - 68px)` }}>
                 <Chart />
@@ -152,7 +154,7 @@ function App() {
             </Grid>
             <Grid
               size={{ md: 3 }}
-              sx={{display: isMobile ? 'none' : 'block'}}
+              sx={{ display: isMobile ? 'none' : 'block' }}
             >
               <Paper sx={{ height: 'calc(100dvh - 68px)' }}>
                 <SymbolInfo />
@@ -164,34 +166,34 @@ function App() {
               <Paper sx={{ display: 'flex', flexDirection: 'column' }}>
                 {isMobile
                   ? (
-                      <>
-                        <SwipeableViews disabled={!symbolData} index={value}
-                                        onChangeIndex={(index) => setValue(index)}>
-                          <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
-                            <SymbolsList />
-                          </Box>
-                          <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
-                            <SymbolInfo />
-                          </Box>
-                          <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
-                            <Chart />
-                          </Box>
-                        </SwipeableViews>
+                    <>
+                      <SwipeableViews disabled={!symbolData} index={value}
+                                      onChangeIndex={(index) => setValue(index)}>
+                        <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
+                          <SymbolsList />
+                        </Box>
+                        <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
+                          <SymbolInfo />
+                        </Box>
+                        <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
+                          <Chart />
+                        </Box>
+                      </SwipeableViews>
 
-                        <BottomNavigation
-                          showLabels
-                          value={value}
-                          onChange={(_event, newValue) => {
-                            setValue(newValue);
-                          }}
-                        >
-                          <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
-                          <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
-                                                  label="Insights" icon={<TipsAndUpdatesIcon />} />
-                          <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
-                                                  label="Graph" icon={<WaterfallChartIcon />} />
-                        </BottomNavigation>
-                      </>
+                      <BottomNavigation
+                        showLabels
+                        value={value}
+                        onChange={(_event, newValue) => {
+                          setValue(newValue);
+                        }}
+                      >
+                        <BottomNavigationAction label="Suggestions" icon={<QueryStatsIcon />} />
+                        <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
+                                                label="Insights" icon={<TipsAndUpdatesIcon />} />
+                        <BottomNavigationAction disabled={!symbolData} sx={{ '&[disabled]': { opacity: .25 } }}
+                                                label="Graph" icon={<WaterfallChartIcon />} />
+                      </BottomNavigation>
+                    </>
                   )
                   : <SymbolsList />
                 }
@@ -201,10 +203,10 @@ function App() {
         </Grid>
       </>
     );
-  // } else if (!isLoading) {
-  //   loginWithRedirect();
-  //   return <div>Redirecting to login...</div>;
-  // }
+  } else if (!isLoading) {
+    loginWithRedirect();
+    return <div>Redirecting to login...</div>;
+  }
 }
 
 export default App;
