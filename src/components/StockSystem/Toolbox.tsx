@@ -7,6 +7,7 @@ import {
   DialogContentText,
   Divider,
   IconButton,
+  SvgIcon,
   Theme,
   ToggleButton,
   ToggleButtonGroup,
@@ -23,7 +24,7 @@ import {
   getPricesMode,
   symbolAtom,
 } from '../../atoms/symbol';
-import Logo from '../../assets/horizontal-color-logo-no-background.svg';
+import logo from '../../assets/horizontal-color-logo-no-background.svg';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -53,12 +54,14 @@ const Toolbox = (props: IToolboxProps) => {
           // disableGutters
           sx={{ justifyContent: 'space-between' }}
         >
-          <Logo style={{ height: '100%', width: '174px' }} />
-          <Box display={'flex'} justifyContent={'space-between'} width={'33%'}>
-            {hiddenUpMd
-              ? null
-              : <>
-                <IconButton onClick={() => setShowSettings(true)} size="medium" sx={{ marginInlineStart: 'auto' }}>
+          
+          <img style={{height: '100%', width: '174px'}} src={logo}/>
+          
+          <Box display={'flex'} justifyContent={'space-between'} width={'33%'} >
+          { hiddenUpMd 
+            ? null
+            : <>
+                <IconButton onClick={() => setShowSettings(true)} size="medium" sx={{marginInlineStart: 'auto'}}>
                   <SettingsRoundedIcon />
                 </IconButton>
                 <Dialog
