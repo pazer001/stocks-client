@@ -47,16 +47,16 @@ const ANALYZE_SYMBOLS_LIMIT = 200;
 export const FlickerAnimation = styled.span`
     @keyframes flickerAnimation {
         0% {
-          text-shadow: ${red.A700} 0 0 0;
+            text-shadow: ${red.A700} 0 0 0;
         }
         50% {
-          text-shadow: ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px;
+            text-shadow: ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px, ${red.A700} 0 0 20px;
         }
         100% {
-          text-shadow: ${red.A700} 0 0 0;
+            text-shadow: ${red.A700} 0 0 0;
         }
     }
-    
+
     animation: flickerAnimation .7s infinite;
 `;
 
@@ -312,14 +312,16 @@ const SymbolsList = () => {
   const renderPrice = (price: number, isPennyStock: boolean) => {
     return (
       <Box alignItems={'center'}>
-          { isPennyStock 
-            ? <Tooltip placement='top' title={'Penny Stock'}><Chip icon={<MoneyOffCsredIcon fontSize='small'/>} color="warning" label={price.toFixed(2)} size="small" variant="outlined" /></Tooltip>
-            : <Typography variant="caption" >
-                  {price.toFixed(2)}
-              </Typography>
-          }
+        {isPennyStock
+          ? <Tooltip placement="top" title={'Penny Stock'}><Chip icon={<MoneyOffCsredIcon fontSize="small" />}
+                                                                 color="warning" label={price.toFixed(2)} size="small"
+                                                                 variant="outlined" /></Tooltip>
+          : <Typography variant="caption">
+            {price.toFixed(2)}
+          </Typography>
+        }
       </Box>
-    )
+    );
   };
 
   const renderWatchlistCheckbox = useCallback((symbol: string, watchlist: Record<string, Array<string>>, currentWatchlistName: string) => {
@@ -472,16 +474,16 @@ const SymbolsList = () => {
       filterable: true,
       type: 'number',
     },
-    // {
-    //   field: 'marketCapitalization',
-    //   headerName: 'Market Cap',
-    //   width: 100,
-    //   valueGetter: (value) => value !== undefined ? numeral(Number(value) * 1000).format('0.0a') : '-',
-    //   sortComparator: (v1, v2) => Number(v1) - Number(v2),
-    //   sortable: true,
-    //   filterable: true,
-    //   type: 'number',
-    // },
+    {
+      field: 'marketCapitalization',
+      headerName: 'Market Cap',
+      width: 100,
+      valueGetter: (value) => value !== undefined ? numeral(Number(value) * 1000).format('0.0a') : '-',
+      sortComparator: (v1, v2) => Number(v1) - Number(v2),
+      sortable: true,
+      filterable: true,
+      type: 'number',
+    },
     // {
     //   field: 'priorityScore',
     //   headerName: 'Priority Score',
