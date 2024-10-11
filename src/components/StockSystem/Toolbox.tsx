@@ -138,27 +138,22 @@ const Toolbox = (props: IToolboxProps) => {
               ? null
               : <Box display={'flex'} gap={2}>
                   <ToggleButtonGroup
-                    onChange={(event, value) =>
-                      setSymbol((prevSymbol) => ({
-                        ...prevSymbol,
-                        settings: { ...prevSymbol.settings, byType: value },
-                      }))
-                    }
-                    exclusive
-                    color="primary"
-                    size="small"
-                    value={byType}
-                  >
-                    <ToggleButton value="byWinRate">Win Rate</ToggleButton>
-                    <ToggleButton value="byProfit">Profit</ToggleButton>
-                    <ToggleButton value="byMixed">Mixed</ToggleButton>
-                  </ToggleButtonGroup>
-                  {hiddenDownSm
-                    ? null
-                    : <IconButton onClick={() => setTypeDialogOpen(true)}>
-                      <HelpCenterRoundedIcon />
-                    </IconButton>
+                  onChange={(event, value) =>
+                    setSymbol((prevSymbol) => ({
+                      ...prevSymbol,
+                      settings: { ...prevSymbol.settings, pricesMode: value },
+                    }))
                   }
+                  exclusive
+                  color="primary"
+                  size="small"
+                  value={pricesMode}
+                >
+                  <ToggleButton value="normal">Normal</ToggleButton>
+                  <ToggleButton value="dividendsAdjusted">
+                    Adjust for Dividends
+                  </ToggleButton>
+                </ToggleButtonGroup>
                 {Boolean(intervals.length) &&
                   <>
                     <Divider orientation="vertical" flexItem variant="middle" />
@@ -184,22 +179,28 @@ const Toolbox = (props: IToolboxProps) => {
                 }
                 <Divider orientation="vertical" flexItem variant="middle" />
                 <ToggleButtonGroup
-                  onChange={(event, value) =>
-                    setSymbol((prevSymbol) => ({
-                      ...prevSymbol,
-                      settings: { ...prevSymbol.settings, pricesMode: value },
-                    }))
+                    onChange={(event, value) =>
+                      setSymbol((prevSymbol) => ({
+                        ...prevSymbol,
+                        settings: { ...prevSymbol.settings, byType: value },
+                      }))
+                    }
+                    exclusive
+                    color="primary"
+                    size="small"
+                    value={byType}
+                  >
+                    <ToggleButton value="byWinRate">Win Rate</ToggleButton>
+                    <ToggleButton value="byProfit">Profit</ToggleButton>
+                    <ToggleButton value="byMixed">Mixed</ToggleButton>
+                  </ToggleButtonGroup>
+                  {hiddenDownSm
+                    ? null
+                    : <IconButton onClick={() => setTypeDialogOpen(true)}>
+                      <HelpCenterRoundedIcon />
+                    </IconButton>
                   }
-                  exclusive
-                  color="primary"
-                  size="small"
-                  value={pricesMode}
-                >
-                  <ToggleButton value="normal">Normal</ToggleButton>
-                  <ToggleButton value="dividendsAdjusted">
-                    Adjust for Dividends
-                  </ToggleButton>
-                </ToggleButtonGroup>
+              
               </Box>
             }
           </Box>
