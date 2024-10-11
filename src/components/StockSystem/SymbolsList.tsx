@@ -404,7 +404,8 @@ const SymbolsList = () => {
     {
       field: 'watchlist',
       headerName: '',
-      width: 20,
+      minWidth: 20,
+      flex: 1,
       sortable: false,
       filterable: false,
       hideable: true,
@@ -414,14 +415,16 @@ const SymbolsList = () => {
     {
       field: 'symbolNumber',
       headerName: 'Priority',
-      width: 60,
+      minWidth: 60,
+      flex: 1,
       sortable: true,
       filterable: false,
     },
     {
       field: 'symbol',
       headerName: 'Symbol',
-      width: 120,
+      minWidth: 100,
+      flex: 1,
       sortable: false,
       filterable: true,
       renderCell: (params) => <Box display="flex" alignItems="center"
@@ -429,8 +432,9 @@ const SymbolsList = () => {
     },
     {
       field: 'recommendation',
-      headerName: 'Recommendation',
-      width: 20,
+      headerName: 'Status',
+      minWidth: 56,
+      flex: 1,
       renderCell: (params) => <Box display="flex" alignItems="center"
                                    height="100%">{getRecommendationSymbol(params.row.recommendation)}</Box>,
       sortable: false,
@@ -441,7 +445,8 @@ const SymbolsList = () => {
       field: 'stopLoss',
       headerName: 'SL',
       // valueGetter: (params) => `${params.row.stopLoss ? `${params.row.stopLoss.toFixed(2)}%` : '-'}`,
-      width: 80,
+      minWidth: 80,
+      flex: 1,
       sortable: false,
       filterable: false,
       renderCell: (params) => renderStopLoss(params.row.stopLoss || []),
@@ -449,7 +454,8 @@ const SymbolsList = () => {
     {
       field: 'nextEarningReport',
       headerName: 'Earning Report',
-      width: 20,
+      minWidth: 50,
+      flex: 1,
       sortable: false,
       filterable: false,
       renderCell: (params) => nextEarningReportValue(params.row.nextEarningReport),
@@ -458,7 +464,8 @@ const SymbolsList = () => {
     {
       field: 'lastClose',
       headerName: 'Price',
-      width: 80,
+      minWidth: 80,
+      flex: 1,
       sortable: false,
       filterable: false,
       renderCell: (params) => params.row.lastClose ? renderPrice(params.row.lastClose, params.row.isPennyStock) : '-',
@@ -466,7 +473,8 @@ const SymbolsList = () => {
     {
       field: 'averageVolume',
       headerName: 'Average Volume',
-      width: 100,
+      minWidth: 100,
+      flex: 1,
       renderCell: (params) => params.row.averageVolume ? numeral(params.row.averageVolume).format('0.0a') : '-',
       valueGetter: (value) => value !== undefined ? Number(Number(value).toFixed(0)) : '-',
       sortComparator: (v1, v2) => Number(v1) - Number(v2),
@@ -477,7 +485,8 @@ const SymbolsList = () => {
     {
       field: 'marketCapitalization',
       headerName: 'Market Cap',
-      width: 100,
+      minWidth: 100,
+      flex: 1,
       valueGetter: (value) => value !== undefined ? numeral(Number(value) * 1000).format('0.0a') : '-',
       sortComparator: (v1, v2) => Number(v1) - Number(v2),
       sortable: true,
@@ -659,9 +668,7 @@ const SymbolsList = () => {
       }
     };
     return useMemo(() =>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-
-
+      <Box sx={{ display: 'flex', alignItems: 'center'}}>
         <TextField
           select
           disabled={Object.keys(watchlist).length === 0}
@@ -670,7 +677,6 @@ const SymbolsList = () => {
           size="small"
           value={currentWatchlistName}
           onChange={(e) => setCurrentWatchlistName(e.target.value as string)}
-          sx={{ width: '70%' }}
         >
           {Object.keys(watchlist).map((watchlistName) => (
             <MenuItem dense key={watchlistName}
@@ -877,7 +883,6 @@ const SymbolsList = () => {
                     quickFilterExcludeHiddenColumns: false,
                   },
                 },
-
               }}
     />
 
