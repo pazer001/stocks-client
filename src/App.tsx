@@ -164,8 +164,7 @@ function App() {
                 {isMobile
                   ? (
                     <>
-                      <SwipeableViews disabled={!symbolData} index={value}
-                                      onChangeIndex={(index) => setValue(index)}>
+                      <SwipeableViews disabled={true} index={value}>
                         <Box sx={{ height: 'calc(100dvh - 117px)', paddingInline: '1px' }}>
                           <SymbolsList />
                         </Box>
