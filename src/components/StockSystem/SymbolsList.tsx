@@ -285,9 +285,9 @@ const SymbolsList = () => {
 
 
   const nextEarningReportValue = (value: number) => {
-    if (value === 1) {
+    if (value === 2) {
       return <FlickerAnimation>{value}</FlickerAnimation>;
-    } else if (value > 1) {
+    } else if (value > 2) {
       return value;
     }
 

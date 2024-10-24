@@ -1,4 +1,3 @@
-// import './App.css';
 import { useState } from 'react';
 import {
   Alert,
@@ -100,7 +99,7 @@ const Consent = (props: IConsentProps) => {
 };
 
 function App() {
-  const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
+  const { isLoading, error } = useAuth0();
   const theme = useTheme();
   const mainLoaderShow = useRecoilValue(getMainLoaderShow);
   const alertShow = useRecoilValue(getAlertShow);
@@ -119,7 +118,7 @@ function App() {
     return <div>Oops... {error.message}</div>;
   }
 
-  if (isAuthenticated) {
+  if (!isLoading) {
     return (
       <>
         {mainLoaderShow && (
@@ -199,9 +198,6 @@ function App() {
         </Grid>
       </>
     );
-  } else if (!isLoading) {
-    loginWithRedirect();
-    return <div>Redirecting to login...</div>;
   }
 }
 
