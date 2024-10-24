@@ -2,11 +2,15 @@ import React, { useState } from 'react';
 import {
   AppBar, Avatar,
   Box,
+  Button,
   Dialog,
   DialogContent,
   DialogContentText,
   Divider,
   IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
   SvgIcon,
   Theme,
   ToggleButton,
@@ -28,14 +32,14 @@ import logo from '../../assets/horizontal-color-logo-no-background.svg';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Interval } from 'luxon';
+import { Login, Logout } from '@mui/icons-material';
 
 interface IToolboxProps {
 
 }
 
 const Toolbox = (props: IToolboxProps) => {
-  const { user } =
-    useAuth0();
+  const { user, loginWithRedirect, logout } = useAuth0();
   const [, setSymbol] = useRecoilState(symbolAtom);
   const byType = useRecoilValue(getByType);
   const interval = useRecoilValue(getInterval);
@@ -46,6 +50,26 @@ const Toolbox = (props: IToolboxProps) => {
   const hiddenUpMd = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
   const hiddenDownMd = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
   const hiddenDownSm = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openUserMenu = Boolean(anchorEl);
+  const handleClickUserMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogin = () => {
+    loginWithRedirect();
+    setAnchorEl(null);
+  }
+
+  const handleLogout = () => {
+    logout();
+    setAnchorEl(null);
+  }
 
   return (
     <>
@@ -59,81 +83,6 @@ const Toolbox = (props: IToolboxProps) => {
           <img style={{height: '100%', width: '174px'}} src={logo}/>
           
           <Box display={'flex'} justifyContent={'space-between'} >
-          { hiddenUpMd 
-            ? null
-            : <>
-                <IconButton onClick={() => setShowSettings(true)} size="medium" sx={{marginInlineStart: 'auto'}}>
-                  <SettingsRoundedIcon />
-                </IconButton>
-                <Dialog
-                  open={showSettings}
-                  onClose={() => setShowSettings(false)}
-                  fullWidth
-                >
-                  <DialogContent>
-                    <ToggleButtonGroup
-                      onChange={(event, value) =>
-                        setSymbol((prevSymbol) => ({
-                          ...prevSymbol,
-                          settings: { ...prevSymbol.settings, byType: value },
-                        }))
-                      }
-                      exclusive
-                      color="primary"
-                      size="small"
-                      value={byType}
-                    >
-                      <ToggleButton value="byWinRate">Win Rate</ToggleButton>
-                      <ToggleButton value="byProfit">Profit</ToggleButton>
-                      <ToggleButton value="byMixed">Mixed</ToggleButton>
-                    </ToggleButtonGroup>
-                    <hr />
-                    <ToggleButtonGroup
-                      onChange={(event, value) =>
-                        setSymbol((prevSymbol) => ({
-                          ...prevSymbol,
-                          settings: { ...prevSymbol.settings, interval: value },
-                        }))
-                      }
-                      exclusive
-                      color="primary"
-                      size="small"
-                      value={interval}
-                    >
-                      {Boolean(intervals.length) &&
-                        intervals.map((interval) => (
-                          <ToggleButton
-                            key={interval}
-                            value={interval}
-                            size="small"
-                          >
-                            {interval}
-                          </ToggleButton>
-                        ))}
-                    </ToggleButtonGroup>
-                    <hr />
-                    <ToggleButtonGroup
-                      onChange={(event, value) =>
-                        setSymbol((prevSymbol) => ({
-                          ...prevSymbol,
-                          settings: { ...prevSymbol.settings, pricesMode: value },
-                        }))
-                      }
-                      exclusive
-                      color="primary"
-                      size="small"
-                      value={pricesMode}
-                    >
-                      <ToggleButton value="normal">Normal</ToggleButton>
-                      <ToggleButton value="dividendsAdjusted">
-                        Adjust for Dividends
-                      </ToggleButton>
-                    </ToggleButtonGroup>
-                  </DialogContent>
-                </Dialog>
-                {/*</Grid>*/}
-              </>
-            }
             {hiddenDownMd
               ? null
               : <Box display={'flex'} gap={2}>
@@ -205,18 +154,120 @@ const Toolbox = (props: IToolboxProps) => {
             }
           </Box>
           <Box display={'flex'}>
-            {user !== undefined && 
-              <>
-                <Divider orientation="vertical" flexItem variant="middle" />
-                <Box>
-                  <Avatar
-                    alt={user?.name}
-                    src={user?.picture}
-                    sx={{ width: 32, height: 32 }}
-                  />
-                </Box>
-              </>
-            }
+              <Box display={'flex'} alignItems={'center'}>
+              { hiddenUpMd 
+              ? null
+              : <>
+                  <IconButton onClick={() => setShowSettings(true)}>
+                    <SettingsRoundedIcon sx={{fontSize: '32px'}} />
+                  </IconButton>
+                  <Dialog
+                    open={showSettings}
+                    onClose={() => setShowSettings(false)}
+                    fullWidth
+                  >
+                    <DialogContent>
+                      <ToggleButtonGroup
+                        onChange={(event, value) =>
+                          setSymbol((prevSymbol) => ({
+                            ...prevSymbol,
+                            settings: { ...prevSymbol.settings, byType: value },
+                          }))
+                        }
+                        exclusive
+                        color="primary"
+                        size="small"
+                        value={byType}
+                      >
+                        <ToggleButton value="byWinRate">Win Rate</ToggleButton>
+                        <ToggleButton value="byProfit">Profit</ToggleButton>
+                        <ToggleButton value="byMixed">Mixed</ToggleButton>
+                      </ToggleButtonGroup>
+                      <hr />
+                      <ToggleButtonGroup
+                        onChange={(event, value) =>
+                          setSymbol((prevSymbol) => ({
+                            ...prevSymbol,
+                            settings: { ...prevSymbol.settings, interval: value },
+                          }))
+                        }
+                        exclusive
+                        color="primary"
+                        size="small"
+                        value={interval}
+                      >
+                        {Boolean(intervals.length) &&
+                          intervals.map((interval) => (
+                            <ToggleButton
+                              key={interval}
+                              value={interval}
+                              size="small"
+                            >
+                              {interval}
+                            </ToggleButton>
+                          ))}
+                      </ToggleButtonGroup>
+                      <hr />
+                      <ToggleButtonGroup
+                        onChange={(event, value) =>
+                          setSymbol((prevSymbol) => ({
+                            ...prevSymbol,
+                            settings: { ...prevSymbol.settings, pricesMode: value },
+                          }))
+                        }
+                        exclusive
+                        color="primary"
+                        size="small"
+                        value={pricesMode}
+                      >
+                        <ToggleButton value="normal">Normal</ToggleButton>
+                        <ToggleButton value="dividendsAdjusted">
+                          Adjust for Dividends
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </DialogContent>
+                  </Dialog>
+                  </>
+                }
+
+                {user
+                  ? <>
+                      <IconButton
+                        id="user-menu-button"
+                        aria-controls={openUserMenu ? 'user-menu-button' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={openUserMenu ? 'true' : undefined}
+                        onClick={handleClickUserMenu}
+                        >
+                        <Avatar
+                          alt={user?.name}
+                          src={user?.picture}
+                          sx={{ width: 32, height: 32 }}
+                        />
+                      </IconButton>
+                      <Menu
+                        id="user-menu"
+                        anchorEl={anchorEl}
+                        open={openUserMenu}
+                        onClose={handleCloseUserMenu}
+                        MenuListProps={{
+                          'aria-labelledby': 'user-menu-button',
+                        }}
+                      >
+                        <MenuItem onClick={handleLogout}>
+                          <ListItemIcon>
+                            <Logout fontSize="small" />
+                          </ListItemIcon>
+                          Logout
+                        </MenuItem>
+                      </Menu>
+                    </>
+                    : <Button variant='text' color='inherit' size='large' startIcon={<Login />} onClick={handleLogin}>
+                        login
+                      </Button>
+                }
+                
+              </Box>
           </Box>
         </Toolbar>
       </AppBar>
