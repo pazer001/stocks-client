@@ -55,6 +55,13 @@ export const FlickerAnimation = styled.span`
         100% {
             text-shadow: ${red.A700} 0 0 0;
         }
+        /* from {
+          text-shadow: 0 0 0px ${red.A700}, 0 0 0px ${red.A700}, 0 0 0px ${red.A700},
+          0 0 0px ${red.A700};
+        } to {
+          text-shadow: 0 0 10px ${red.A700}, 0 0 20px ${red.A700}, 0 0 30px ${red.A700},
+          0 0 40px ${red.A700};
+        } */
     }
 
     animation: flickerAnimation .7s infinite;
@@ -285,9 +292,9 @@ const SymbolsList = () => {
 
 
   const nextEarningReportValue = (value: number) => {
-    if (value === 1) {
-      return <FlickerAnimation>{value}</FlickerAnimation>;
-    } else if (value > 1) {
+    if (value <= 3) {
+      return <FlickerAnimation>2</FlickerAnimation>;
+    } else if (value > 3) {
       return value;
     }
 
